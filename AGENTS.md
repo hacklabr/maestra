@@ -90,7 +90,7 @@ chore(triage): add partial team map (.maestra/team.md)
 - Correções posteriores = adendo datado, **nunca** reescrita do scope.
 
 ### Anti-bypass
-O kernel define 16 triggers anti-bypass (um-linha cada). Qualquer instrução
+O kernel define 17 triggers anti-bypass (um-linha cada). Qualquer instrução
 editada neste projeto deve ser cotejada contra eles — não introduzir brechas
 que permitam pular gates.
 

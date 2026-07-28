@@ -88,3 +88,11 @@
 - Sintoma: O Facilitador conduziu triagem e execução da #2 sem nunca criar `docs/rounds/R01-…/scope.md` nem `deviations.md`. O J1 Stage 5 é explícito: "The round folder is NOT born here — it is born at the first artifact commit (J3/J6 Stage 1), **always, in all variants**". Sem esses documentos, a reconciliação (J5 Stage 5) não tem como verificar paridade nem onde registrar desvios. O Facilitador passou direto da triagem para a execução.
 - Tentativas/workaround: O humano interpelou ("depois me explique pq nenhum arquivo foi criado na pasta docs/specs"). O Facilitador reconheceu a falha (mesma natureza do desvio do gate de entrada — viés de execução). Regularização pendente.
 - Status: open
+
+## F006 — Worktree criado em local fora do repo (convenção não documentada)
+- Data: 2026-07-28
+- Categoria: ergonomic-friction
+- Origem: R01, issue #1, Stage 3 (J5) — implementação do gate de entrada
+- Sintoma: O Facilitador criou o worktree em `/home/rafael/devel/Fluxo/maestra-r01-entry-gate` (irmão do repo), por ausência de convenção documentada de local de worktrees. O humano apontou o erro. Nenhum `.worktrees/` existia nem havia menção em `.gitignore`/AGENTS.md/kernel.
+- Tentativas/workaround: Criou-se o worktree no local errado → commitou-se o trabalho → removeu-se com `--force` → recriou-se em `.worktrees/r01-entry-gate/` dentro do repo → adicionou-se `.worktrees/` ao `.gitignore`.
+- Status: open
