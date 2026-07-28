@@ -259,4 +259,26 @@ describe("tool execution — posts via platform adapter (GitHub × GitLab)", () 
     expect(result).toMatch(/^Error: Invalid payload/)
     expect(posted).toHaveLength(0)
   })
+
+  it("normalizes payload passed as a JSON string (host serialization mismatch)", async () => {
+    const posted = makeForge("github")
+    // The host does not re-parse tool args through zod; object args can arrive
+    // as a JSON string. The tool must parse it transparently.
+    const result = await maestraEmitEventTool.execute(
+      { epic: 12, type: "A", payload: '{"elicitation_questions": 3, "derivable_questions": 0}' as unknown as Record<string, unknown> },
+      ctx(),
+    )
+    expect(posted).toHaveLength(1)
+    expect(posted[0].body).toBe("**Event A** — triage: 3 elicitation questions; derivable questions asked: 0 — facilitator")
+    expect(result).toMatchObject({ metadata: { type: "A", epic: 12 } })
+  })
+
+  it("returns a clean error when payload string is not valid JSON", async () => {
+    makeForge()
+    const result = await maestraEmitEventTool.execute(
+      { epic: 12, type: "A", payload: "{not json" as unknown as Record<string, unknown> },
+      ctx(),
+    )
+    expect(result).toMatch(/^Error: payload is a string that is not valid JSON/)
+  })
 })
