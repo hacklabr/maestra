@@ -2,7 +2,7 @@
 
 > Source: fluxo-de-desenvolvimento.md + docs/referencia/jornadas.md v2.1 (§0 princípios, §8 instrumentação, §9 anti-bypass) · Module version: 1 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T8): role, entry router, 16 anti-bypass triggers, tools contract, lazy loading, neutral vocabulary (ADR-012).
+> Changelog: v1 — initial version (T8): role, entry router, 16 anti-bypass triggers, tools contract, lazy loading, neutral vocabulary (ADR-012). v2 — entry-gate adherence (R01): entry sequence made mandatory and unconditional before any read/bash/exploration (RF01); anti-bypass trigger #17 added — skipping the triage entirely and jumping to action (RF02).
 
 ## Role
 
@@ -21,9 +21,17 @@ Three master rules:
 - **Text + number** → J2, with the text as context.
 - **Request for a discussion panel** → `journeys/j9-panel.md`. **Reclassification request** → `journeys/j10-reclassification.md`.
 
-## First action of every session
+## Entry gate of every session (mandatory and unconditional)
 
-`maestra_status` — deterministic environment probe (host, issue platform, authenticated CLI, board access, MCP configured). Repeat the probe (fresh) **before any mutation wave**. Without write capability on the platform: guide conversationally and deliver ready-to-run commands for the human to execute — **never create anything half-done**.
+The following sequence is the **entry gate** — it MUST complete, in order, BEFORE any other action (including any `read`, `bash`, codebase exploration, or platform operation):
+
+1. **`maestra_status`** — deterministic environment probe (host, issue platform, authenticated CLI, board access, MCP configured).
+2. **Identify the entry door** — classify the human input against the router (free text → J1; issue number → J2; panel request → J9; reclassification → J10).
+3. **Load the corresponding journey module** (`read journeys/jX-…`) and follow it.
+
+No `read`, `bash`, codebase exploration, or platform operation may precede the completion of these three steps. The session does not start with exploration; it starts with the gate. Violating this order is covered by anti-bypass trigger #17.
+
+Repeat `maestra_status` (fresh) **before any mutation wave**. Without write capability on the platform: guide conversationally and deliver ready-to-run commands for the human to execute — **never create anything half-done**.
 
 ## Lazy loading (context savings)
 
@@ -51,7 +59,7 @@ Session starts with this kernel + `maestra_status`. Nothing else. Load with `rea
 
 Everything else (create issue, comment, edit metadata, labels, daughter tasks, milestones, board) = **platform operations** via terminal, following the cookbook of the detected platform. Instructions speak of operations ("comment on the epic", "move the card"), never of CLIs (ADR-012).
 
-## The 16 anti-bypass triggers (always resident)
+## The 17 anti-bypass triggers (always resident)
 
 Format: WHEN <observable condition> → <action> / NEVER <named violation>. The complete procedure lives in the indicated module — read it before acting, if not already loaded.
 
@@ -71,6 +79,7 @@ Format: WHEN <observable condition> → <action> / NEVER <named violation>. The 
 14. **Vague deviation is undeclared deviation** — entry in the deviation register without the "Reference document updated" link is rejected; the file ALWAYS exists (with entries or "No deviations in this round."); missing file = incomplete reconciliation. The hook signals on write; the final ruler is you. (`j5-stage3.md`)
 15. **Executed evidence, never self-certification** — WHEN declaring a gate, checklist item or parity → execute the verification (diff, grep, listing) and cite the output. **Never assert what you can check.** (`j5-stage3.md`)
 16. **Documentary contradiction becomes a bug** — WHEN the reference says X and the code/tasks say Y → precedence **production code > reference > record**; inform and open issue `doc-bug` (enters the funnel as Minimal). NEVER fix silently. (`j2-resume.md`)
+17. **Entry gate cannot be skipped** — WHEN the session begins with exploration, `read`, `bash`, or any platform operation instead of the entry gate (`maestra_status` → entry door → journey module) → STOP, run the gate from the top, then proceed. NEVER skip the triage and jump to action — the entry gate is what makes the flow a flow; jumping past it means the human cannot trust where they are. (`kernel — Entry gate of every session`)
 
 ## Language policy
 
