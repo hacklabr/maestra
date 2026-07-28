@@ -1,10 +1,10 @@
 # J9 — Ad-hoc Discussion Panel (shell-specialist architecture)
 
-> Source: docs/referencia/jornadas.md v2.3 (§6 J9, §7.9; G-08) + decisão humana (shell-specialist) · Module version: 3 — 2026-07-28
+> Source: docs/referencia/jornadas.md v2.4 (§6 J9, §7.9; G-08) + decisão humana (shell-specialist) · Module version: 4 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 (T9) — curated roster of 12 personas + W-04. v2 (journeys v2.3, human decision) — **roster eliminated**: ONE shell subagent `maestra/specialist` + `persona::<id>@<panelId>` marker expanded by the plugin hook from the installed catalog (`instructions/catalog/`); WHOLE catalog invocable; native grep/glob search (no dedicated tool, with documented promotion trigger); W-04 deleted (no more installed subset). v3 — unified canonical self-declaration format: `[<id>]` (exact id of the marker), aligned with persona-expansion hook and shell base prompt.
+> Changelog: v1 (T9) — curated roster of 12 personas + W-04. v2 (journeys v2.3, human decision) — **roster eliminated**: ONE shell subagent `maestra/specialist` + `persona::<id>@<panelId>` marker expanded by the plugin hook from the installed catalog (`instructions/catalog/`); WHOLE catalog invocable; native grep/glob search (no dedicated tool, with documented promotion trigger); W-04 deleted (no more installed subset). v3 — unified canonical self-declaration format: `[<id>]` (exact id of the marker), aligned with persona-expansion hook and shell base prompt. v4 — trigger qualifier clarified: "multiple domains" with concrete example; single-domain → ADR without panel.
 
-**Trigger:** human summoning (free, at any time) or your suggestion (only when these instructions indicate — decision with lasting consequence touching multiple domains). **Vocabulary collision:** the panel never uses "round" alone — "discussion round" or "panel"; the turns of the panel are "turns".
+**Trigger:** human summoning (free, at any time) or your suggestion (only when these instructions indicate — decision with lasting consequence touching multiple domains, e.g., security + performance + data model; single-domain decisions go straight to ADR without a panel). **Vocabulary collision:** the panel never uses "round" alone — "discussion round" or "panel"; the turns of the panel are "turns".
 
 ## STAGE 1 — Summoning
 

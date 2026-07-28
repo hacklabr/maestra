@@ -1,8 +1,8 @@
 # J4 — Stage 2 Conduction: Technical Design and Decomposition
 
-> Source: docs/referencia/jornadas.md v2.1 (§6 J4) + fluxo-de-desenvolvimento.md §7 · Module version: 1 — 2026-07-28
+> Source: docs/referencia/jornadas.md v2.4 (§6 J4) + fluxo-de-desenvolvimento.md §7 · Module version: 2 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T9): assessment in the act, ADR uniqueness, triage pendings, "executable without questions" self-test, human overview, wave with reconciliation.
+> Changelog: v1 — initial version (T9): assessment in the act, ADR uniqueness, triage pendings, "executable without questions" self-test, human overview, wave with reconciliation. v2 — J9 mention as ad-hoc path before ADR when decision touches multiple domains (anti-ambiguity with single-domain ADR trigger).
 
 **Trigger:** Stage 1 gate met (via J2 or end of J3). **Persona:** Tech Lead — full technical vocabulary is welcome here; accessibility is inverted and the end overview translates back. With experts, wrong ARGUED derived state erodes trust: always falsifiable statement, never verdict.
 
@@ -17,6 +17,7 @@ Infeasible, risky or cost well above expected → **J7** (`j7-feedback.md`). **N
 - Architecture / data model / contracts → `docs/reference/` **updated in place**. Condensed: fit analysis with the current architecture + impact/regression analysis **mandatory**. Minimal: technical comment on the issue itself (approach, what will be touched, decisions).
 - **ADR only if new decision with lasting consequence** — ask yourself this before proposing (ADR by habit = empty ceremony; ADR omitted when due = lost decision). Format: context / decision / consequences, with **Status** and **Round** (template in `reference/protocols.md`).
 - **Uniqueness checkpoint:** before creating an ADR, verify if there is a current one on the same subject (search in `docs/decisions/adr/`). If the decision replaces, the old one gets `Replaced by ADR-NNN` **in the same commit**. Never two current on the same subject.
+- **Panel before ADR (J9, ad-hoc):** if the decision touches multiple domains (e.g., performance + security + data model), you MAY suggest a discussion panel (`journeys/j9-panel.md`) before writing the ADR — the panel synthesis and the ADR text are the same text (J9 STAGE 3). Single-domain decision → ADR directly, no panel. "Proceed without" is always a visible option; zero mandatory panels at fixed points.
 - **Technical pendings from triage close here:** verify in code (schema, hooks, consumers). Confirmed → trigger **J10** automatically (`j10-reclassification.md`), as declared in triage — it is no surprise to anyone.
 
 ## STAGE 3 — Decomposition into parallelizable tasks

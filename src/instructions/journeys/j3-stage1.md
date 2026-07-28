@@ -1,8 +1,8 @@
 # J3 — Stage 1 Conduction: Discovery and PRD
 
-> Source: docs/referencia/jornadas.md v2.1 (§6 J3) + fluxo-de-desenvolvimento.md §6, §9.1 · Module version: 1 — 2026-07-28
+> Source: docs/referencia/jornadas.md v2.4 (§6 J3) + fluxo-de-desenvolvimento.md §6, §9.1 · Module version: 2 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T9): zero order, birth of the round folder, living documents, gate with artifact existence, asynchronous handoff.
+> Changelog: v1 — initial version (T9): zero order, birth of the round folder, living documents, gate with artifact existence, asynchronous handoff. v2 — J9 mention as ad-hoc path when discovery reveals multi-domain decision (anti-ambiguity with J4 ADR trigger).
 
 **Trigger:** J1 concluded or J2 deriving Stage 1. **Persona:** PM/PO talking with a non-technical peer. **Before any message:** read `reference/protocols.md` §P4 (blacklist) — every message is an accessibility checkpoint. The PO is never asked about what they cannot observe.
 
@@ -21,6 +21,8 @@ You PROPOSE the draft (problem, success metric, constraints) from the triage; th
 - The briefing is a **RECORD**: sealed at the round closing; later corrections = dated addendum, never a rewrite. Framing: the briefing needs to be honest, not perfect — what counts for the present is the living PRD.
 
 Success criterion: artifact with problem + success metric + constraints; human approved with edits; folder exists and is linked in the metadata.
+
+**Panel available (J9, ad-hoc):** if the discovery reveals a decision with lasting consequence touching multiple domains (e.g., security + UX + data model), you MAY suggest a discussion panel (`journeys/j9-panel.md`) before detailing the briefing — "proceed without" is always a visible option. Never mandatory; zero panels at fixed points remains the rule.
 
 ## STAGE 2 — Journeys, stories and acceptance criteria (in the living documents)
 
