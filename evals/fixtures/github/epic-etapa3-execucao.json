@@ -1,100 +1,100 @@
 {
   "id": "epic-etapa3-execucao",
-  "descricao": "Épico #12 em execução (etapa-3), tarefa #24 em andamento — palco dos cenários J8 (lacuna, requisito novo, invalidação, arcos de persona).",
+  "description": "Epic #12 in execution (stage-3), task #24 in progress — stage for the J8 scenarios (gap, new requirement, invalidation, persona arcs).",
   "digests": {
     "12": {
-      "plataforma": {
+      "platform": {
         "kind": "github",
         "host": "github.com",
-        "projeto": "acme/loja"
+        "project": "acme/loja"
       },
       "issue": {
-        "numero": 12,
+        "number": 12,
         "id": 9002,
-        "titulo": "Implementar exportação de relatórios",
-        "estado": "open",
+        "title": "Implement report export",
+        "state": "open",
         "url": "https://github.com/acme/loja/issues/12"
       },
       "labels": {
-        "variante": "variante-condensado",
-        "etapas": [],
-        "marcadores": []
+        "variant": "variant-condensed",
+        "stages": [],
+        "markers": []
       },
-      "metadados": {
-        "variante": "condensado",
-        "etapaAtual": "etapa-3",
-        "epico": null,
-        "rodada": "R02",
-        "subestado": "em-execucao"
+      "metadata": {
+        "variant": "condensed",
+        "currentStage": "stage-3",
+        "epic": null,
+        "round": "R02",
+        "substate": "in-execution"
       },
-      "pai": null,
-      "filhos": [
+      "parent": null,
+      "children": [
         {
-          "numero": 21,
-          "titulo": "Implementação — fatia 1",
-          "estado": "closed",
-          "variante": null,
-          "etapas": [
-            "etapa-3"
+          "number": 21,
+          "title": "Implementation — slice 1",
+          "state": "closed",
+          "variant": null,
+          "stages": [
+            "stage-3"
           ],
           "assignees": [
             "joao"
           ]
         },
         {
-          "numero": 24,
-          "titulo": "Implementação — exportação CSV",
-          "estado": "open",
-          "variante": null,
-          "etapas": [
-            "etapa-3"
+          "number": 24,
+          "title": "Implementation — CSV export",
+          "state": "open",
+          "variant": null,
+          "stages": [
+            "stage-3"
           ],
           "assignees": [
             "debora"
           ]
         },
         {
-          "numero": 27,
-          "titulo": "Reconciliação da rodada",
-          "estado": "open",
-          "variante": null,
-          "etapas": [
-            "etapa-3"
+          "number": 27,
+          "title": "Round reconciliation",
+          "state": "open",
+          "variant": null,
+          "stages": [
+            "stage-3"
           ],
           "assignees": [
             "joao"
           ]
         }
       ],
-      "comentarios": [],
+      "comments": [],
       "board": {
-        "coluna": "Em andamento"
+        "column": "In progress"
       },
       "gate": {
-        "porEtapa": {
-          "etapa-3": {
-            "fechadas": 1,
+        "perStage": {
+          "stage-3": {
+            "closed_": 1,
             "total": 3
           }
         },
-        "semEtapa": 0,
-        "reconciliacao": {
-          "existe": true,
-          "estado": "open",
-          "numero": 27
+        "noStage": 0,
+        "reconciliation": {
+          "exists": true,
+          "state": "open",
+          "number": 27
         }
       },
-      "artefatos": [],
-      "hierarquia": {
-        "tipo": "sub-issues",
+      "artifacts": [],
+      "hierarchy": {
+        "type": "sub-issues",
         "taskCompletion": null,
-        "dessincronia": []
+        "desync": []
       },
-      "paginacao": {
-        "filhosTruncados": false,
-        "comentariosTruncados": false
+      "pagination": {
+        "childrenTruncated": false,
+        "commentsTruncated": false
       },
-      "erros": []
+      "errors": []
     }
   },
   "execRoutes": [

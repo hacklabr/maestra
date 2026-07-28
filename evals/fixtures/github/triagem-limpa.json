@@ -1,9 +1,9 @@
 {
   "id": "triagem-limpa",
-  "descricao": "Ambiente pronto para J1 (Entry Point A): status ok, nenhum épico aberto semelhante (dedup), criação de issues gravada.",
+  "description": "Environment ready for J1 (Entry Point A): status ok, no similar open epic (dedup), issue creation recorded.",
   "status": {
     "host": "opencode",
-    "plataforma": {
+    "platform": {
       "kind": "github",
       "cli": "ok",
       "mcp": "absent",

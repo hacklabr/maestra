@@ -21,26 +21,26 @@ const GITLAB_FORGE: ForgeContext = { kind: "gitlab", host: "gitlab.com", project
 const GH_ISSUE = {
   number: 42,
   id: 123456789,
-  title: "Implementar exportação de relatórios",
-  body: "**Variante:** condensado · **Épico:** #7",
+  title: "Implement report export",
+  body: "**Variant:** condensed · **Epic:** #7",
   state: "open",
-  labels: [{ name: "variante-condensado" }],
+  labels: [{ name: "variant-condensed" }],
   assignees: [{ login: "maria" }],
   html_url: "https://github.com/acme/loja/issues/42",
 }
-const GH_CHILD = { ...GH_ISSUE, number: 43, title: "Mini-briefing", state: "closed", labels: [{ name: "etapa-1" }] }
+const GH_CHILD = { ...GH_ISSUE, number: 43, title: "Mini-briefing", state: "closed", labels: [{ name: "stage-1" }] }
 const GL_ISSUE = {
   iid: 42,
   id: 196035106,
-  title: "Implementar exportação de relatórios",
-  description: "**Variante:** condensado · **Épico:** #7",
+  title: "Implement report export",
+  description: "**Variant:** condensed · **Epic:** #7",
   state: "opened",
-  labels: ["variante-condensado"],
+  labels: ["variant-condensed"],
   assignees: [{ username: "maria" }],
   web_url: "https://gitlab.com/grupo/loja/-/issues/42",
   task_completion_status: null,
 }
-const GL_CHILD = { ...GL_ISSUE, iid: 43, title: "Mini-briefing", state: "closed", labels: ["etapa-1"] }
+const GL_CHILD = { ...GL_ISSUE, iid: 43, title: "Mini-briefing", state: "closed", labels: ["stage-1"] }
 
 interface ContractCell {
   name: string
@@ -56,14 +56,14 @@ const CELLS: ContractCell[] = [
     makeAdapter: (exec) => createGitHubAdapter(GITHUB_FORGE, exec),
     routes: [
       [/issues\/42\/sub_issues/, json([GH_CHILD])],
-      [/issues\/42\/comments/, json([{ user: { login: "rafael" }, body: "comentário", created_at: "2026-07-28T10:00:00Z" }])],
+      [/issues\/42\/comments/, json([{ user: { login: "rafael" }, body: "comment", created_at: "2026-07-28T10:00:00Z" }])],
       [/issues\/42\/parent/, json({ number: 7 })],
       [/issues\/42$/, json(GH_ISSUE)],
-      [/issues\?labels=variante-completo/, json([])],
-      [/issues\?labels=variante-condensado/, json([GH_ISSUE])],
-      [/issues\?labels=variante-minimo/, json([])],
-      [/issues\?labels=variante-tecnica/, json([])],
-      [/graphql/, json({ data: { repository: { issue: { projectItems: { nodes: [{ fieldValues: { nodes: [{ name: "Em andamento", field: { name: "Status" } }] } }] } } } } })],
+      [/issues\?labels=variant-full/, json([])],
+      [/issues\?labels=variant-condensed/, json([GH_ISSUE])],
+      [/issues\?labels=variant-minimal/, json([])],
+      [/issues\?labels=variant-technical/, json([])],
+      [/graphql/, json({ data: { repository: { issue: { projectItems: { nodes: [{ fieldValues: { nodes: [{ name: "In progress", field: { name: "Status" } }] } }] } } } } })],
     ],
   },
   {
@@ -72,12 +72,12 @@ const CELLS: ContractCell[] = [
     makeAdapter: (exec) => createGitLabAdapter(GITLAB_FORGE, exec),
     routes: [
       [/issues\/42\/links/, json([GL_CHILD])],
-      [/issues\/42\/notes/, json([{ system: false, author: { username: "rafael" }, body: "comentário", created_at: "2026-07-28T10:00:00Z" }])],
+      [/issues\/42\/notes/, json([{ system: false, author: { username: "rafael" }, body: "comment", created_at: "2026-07-28T10:00:00Z" }])],
       [/issues\/42$/, json(GL_ISSUE)],
-      [/issues\?labels=variante-completo/, json([])],
-      [/issues\?labels=variante-condensado/, json([GL_ISSUE])],
-      [/issues\?labels=variante-minimo/, json([])],
-      [/issues\?labels=variante-tecnica/, json([])],
+      [/issues\?labels=variant-full/, json([])],
+      [/issues\?labels=variant-condensed/, json([GL_ISSUE])],
+      [/issues\?labels=variant-minimal/, json([])],
+      [/issues\?labels=variant-technical/, json([])],
     ],
   },
 ]
@@ -94,9 +94,9 @@ describe.each(CELLS)("adapter contract ($name)", ({ forge, makeAdapter, routes }
     const issue = await adapter.getIssue(ref())
     expect(issue).toMatchObject({
       number: 42,
-      title: "Implementar exportação de relatórios",
+      title: "Implement report export",
       state: "open",
-      labels: ["variante-condensado"],
+      labels: ["variant-condensed"],
       assignees: ["maria"],
     })
     expect(issue.url).toContain("http")
@@ -112,19 +112,19 @@ describe.each(CELLS)("adapter contract ($name)", ({ forge, makeAdapter, routes }
   it("listComments maps author, body and timestamp", async () => {
     const { adapter } = setup()
     const comments = await adapter.listComments(ref())
-    expect(comments).toEqual([{ author: "rafael", body: "comentário", createdAt: "2026-07-28T10:00:00Z" }])
+    expect(comments).toEqual([{ author: "rafael", body: "comment", createdAt: "2026-07-28T10:00:00Z" }])
   })
 
   it("postComment issues exactly one write carrying the body", async () => {
     const { adapter, calls } = setup()
-    await adapter.postComment(ref(), "corpo do comentário")
+    await adapter.postComment(ref(), "comment body")
     expect(calls).toHaveLength(1)
-    expect(calls[0].args.join(" ")).toContain("corpo do comentário")
+    expect(calls[0].args.join(" ")).toContain("comment body")
   })
 
   it("getParent resolves the parent issue number", async () => {
     const { adapter } = setup()
-    // GitHub: /parent endpoint. GitLab: P1 metadata line ("**Épico:** #7").
+    // GitHub: /parent endpoint. GitLab: P1 metadata line ("**Epic:** #7").
     expect(await adapter.getParent(ref())).toBe(7)
   })
 
@@ -134,13 +134,13 @@ describe.each(CELLS)("adapter contract ($name)", ({ forge, makeAdapter, routes }
     // contract cell's issue has no status label, so GitLab returns null here;
     // the COLUMN-PRESENT case is covered in the platform-specific suite.
     const column = await adapter.getBoardColumn(ref())
-    expect(column === "Em andamento" || column === null).toBe(true)
+    expect(column === "In progress" || column === null).toBe(true)
   })
 
-  it("listEpics sweeps variante labels and dedupes", async () => {
+  it("listEpics sweeps variant labels and dedupes", async () => {
     const { adapter } = setup()
     const epics = await adapter.listEpics()
     expect(epics).toHaveLength(1)
-    expect(epics[0]).toMatchObject({ number: 42, labels: ["variante-condensado"] })
+    expect(epics[0]).toMatchObject({ number: 42, labels: ["variant-condensed"] })
   })
 })

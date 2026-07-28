@@ -1,10 +1,10 @@
 {
   "iid": 42,
   "id": 196035106,
-  "title": "Implementar exportação de relatórios",
-  "description": "## Resumo\n\nExportar relatórios em CSV e Excel.\n\n**Variante:** condensado · **Etapa atual:** etapa-2 · **Épico:** #42 · **Rodada:** R02\n\n---\n\n## Detalhes para execução\n\n- [ ] #43\n- [x] #44\n- [ ] #45",
+  "title": "Implement report export",
+  "description": "## Summary\n\nExport reports in CSV and Excel.\n\n**Variant:** condensed · **Current stage:** stage-2 · **Epic:** #42 · **Round:** R02\n\n---\n\n## Execution details\n\n- [ ] #43\n- [x] #44\n- [ ] #45",
   "state": "opened",
-  "labels": ["variante-condensado"],
+  "labels": ["variant-condensed"],
   "assignees": [{ "username": "rafael" }],
   "web_url": "https://gitlab.com/grupo/loja/-/issues/42",
   "task_completion_status": { "count": 3, "completed_count": 1 }

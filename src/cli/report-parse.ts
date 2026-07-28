@@ -9,46 +9,46 @@ import type { CommentFacts } from "../platform/types.js"
  */
 
 export type ParsedEvent =
-  | { type: "A"; elicitacao: number; derivaveis: number }
-  | { type: "B"; rodadas: number }
-  | { type: "C"; criterio: string }
-  | { type: "D"; de: string; para: string; criterio: string }
-  | { type: "E"; demanda: number | "pendente" }
-  | { type: "F"; rodada: string; durante: number; naReconciliacao: number }
+  | { type: "A"; elicitation: number; derivable: number }
+  | { type: "B"; correctionRounds: number }
+  | { type: "C"; criterion: string }
+  | { type: "D"; from: string; to: string; criterion: string }
+  | { type: "E"; demand: number | "pending" }
+  | { type: "F"; round: string; during: number; atReconciliation: number }
   | { type: "override" }
 
-const EVENT_MARKER = /^\*\*(Evento [A-F]|Registro de override)\*\*/m
+const EVENT_MARKER = /^\*\*(Event [A-F]|Override register)\*\*/m
 
 const PARSERS: Array<{ type: ParsedEvent["type"]; re: RegExp; map: (m: RegExpMatchArray) => ParsedEvent }> = [
   {
     type: "A",
-    re: /^\*\*Evento A\*\* — triagem: (\d+) perguntas de elicitação; deriváveis perguntadas: (\d+) — facilitador\s*$/m,
-    map: (m) => ({ type: "A", elicitacao: Number(m[1]), derivaveis: Number(m[2]) }),
+    re: /^\*\*Event A\*\* — triage: (\d+) elicitation questions; derivable questions asked: (\d+) — facilitator\s*$/m,
+    map: (m) => ({ type: "A", elicitation: Number(m[1]), derivable: Number(m[2]) }),
   },
   {
     type: "B",
-    re: /^\*\*Evento B\*\* — entendimento: (\d+) rodada\(s\) de correção até a confirmação — facilitador\s*$/m,
-    map: (m) => ({ type: "B", rodadas: Number(m[1]) }),
+    re: /^\*\*Event B\*\* — understanding: (\d+) correction round\(s\) until confirmation — facilitator\s*$/m,
+    map: (m) => ({ type: "B", correctionRounds: Number(m[1]) }),
   },
   {
     type: "C",
-    re: /^\*\*Evento C\*\* — "não sei" no critério: (\S+) — facilitador\s*$/m,
-    map: (m) => ({ type: "C", criterio: m[1] }),
+    re: /^\*\*Event C\*\* — "don't know" on criterion: (\S+) — facilitator\s*$/m,
+    map: (m) => ({ type: "C", criterion: m[1] }),
   },
   {
     type: "D",
-    re: /^\*\*Evento D\*\* — override: (.+?) → (.+?); critério contestado: "(.+?)" — facilitador\s*$/m,
-    map: (m) => ({ type: "D", de: m[1], para: m[2], criterio: m[3] }),
+    re: /^\*\*Event D\*\* — override: (.+?) → (.+?); disputed criterion: "(.+?)" — facilitator\s*$/m,
+    map: (m) => ({ type: "D", from: m[1], to: m[2], criterion: m[3] }),
   },
   {
     type: "E",
-    re: /^\*\*Evento E\*\* — recusa J8 \(requisito novo\); demanda criada: (#\d+|pendente) — facilitador\s*$/m,
-    map: (m) => ({ type: "E", demanda: m[1] === "pendente" ? "pendente" : Number(m[1].slice(1)) }),
+    re: /^\*\*Event E\*\* — J8 refusal \(new requirement\); demand created: (#\d+|pending) — facilitator\s*$/m,
+    map: (m) => ({ type: "E", demand: m[1] === "pending" ? "pending" : Number(m[1].slice(1)) }),
   },
   {
     type: "F",
-    re: /^\*\*Evento F\*\* — rodada (\S+): desvios durante=(\d+), na-reconciliação=(\d+) — facilitador\s*$/m,
-    map: (m) => ({ type: "F", rodada: m[1], durante: Number(m[2]), naReconciliacao: Number(m[3]) }),
+    re: /^\*\*Event F\*\* — round (\S+): deviations during=(\d+), at-reconciliation=(\d+) — facilitator\s*$/m,
+    map: (m) => ({ type: "F", round: m[1], during: Number(m[2]), atReconciliation: Number(m[3]) }),
   },
 ]
 
@@ -57,7 +57,7 @@ function parseOne(body: string): ParsedEvent | null {
     const m = p.re.exec(body)
     if (m) return p.map(m)
   }
-  if (/^\*\*Registro de override\*\* — facilitador\s*$/m.test(body)) return { type: "override" }
+  if (/^\*\*Override register\*\* — facilitator\s*$/m.test(body)) return { type: "override" }
   return null
 }
 

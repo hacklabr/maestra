@@ -8,7 +8,7 @@
               "fieldValues": {
                 "nodes": [
                   { "name": "high", "field": { "name": "Priority" } },
-                  { "name": "Em andamento", "field": { "name": "Status" } }
+                  { "name": "In progress", "field": { "name": "Status" } }
                 ]
               }
             }

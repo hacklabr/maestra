@@ -17,7 +17,7 @@ import { auditEpic, buildReport, renderReport, type EpicSnapshot, type ReportRes
  *   maestra-report [--directory <path>] [--epics 12,15,20]
  */
 
-const RECONCILIACAO_TITLE = /reconcilia/i
+const RECONCILIATION_TITLE = /reconcil/i
 
 export interface ReportDeps {
   /** Injectable for tests. Defaults to the real resolveForge. */
@@ -50,15 +50,15 @@ function parseArgs(argv: string[]): CliArgs {
   return args
 }
 
-const USAGE = `maestra-report — auditoria de presence-gap da instrumentação A–F
+const USAGE = `maestra-report — A–F instrumentation presence-gap audit
 
-Uso: maestra-report [--directory <path>] [--epics 12,15,20]
+Usage: maestra-report [--directory <path>] [--epics 12,15,20]
 
-  --directory  Repositório alvo (default: cwd)
-  --epics      Auditar apenas os épicos listados (default: sweep — todas as
-               issues com label variante-*, qualquer estado)
+  --directory  Target repository (default: cwd)
+  --epics      Audit only the listed epics (default: sweep — all
+               issues with variant-* label, any state)
 
-Exit 0: instrumentação íntegra. Exit 1: presence-gaps ou limiares estourados.`
+Exit 0: instrumentation intact. Exit 1: presence-gaps or thresholds exceeded.`
 
 async function fetchSnapshot(
   resolved: ResolvedForge,
@@ -74,13 +74,13 @@ async function fetchSnapshot(
     adapter.getBoardColumn(ref).catch(() => null), // P6: board is a touchpoint, never a gate
   ])
 
-  const reconciliacaoChild = children.find((c) => RECONCILIACAO_TITLE.test(c.title))
+  const reconciliacaoChild = children.find((c) => RECONCILIATION_TITLE.test(c.title))
 
   // E parity state leg: verify that each demand issue linked by an E event exists.
   const demandNumbers = [
     ...new Set(
       comments
-        .map((c) => /\*\*Evento E\*\*[^\n]*demanda criada: #(\d+)/.exec(c.body)?.[1])
+        .map((c) => /\*\*Event E\*\*[^\n]*demand created: #(\d+)/.exec(c.body)?.[1])
         .filter((n): n is string => n !== undefined)
         .map(Number),
     ),
@@ -98,9 +98,9 @@ async function fetchSnapshot(
   return {
     issue,
     comments,
-    reconciliacao: reconciliacaoChild
-      ? { existe: true, estado: reconciliacaoChild.state, numero: reconciliacaoChild.number }
-      : { existe: false, estado: null, numero: null },
+    reconciliation: reconciliacaoChild
+      ? { exists: true, state: reconciliacaoChild.state, number: reconciliacaoChild.number }
+      : { exists: false, state: null, number: null },
     boardColumn,
     demandsExist,
   }
@@ -120,8 +120,8 @@ export async function main(argv: string[], deps: ReportDeps = {}): Promise<numbe
   const resolved = await resolve(args.directory)
   if (!resolved) {
     error(
-      "maestra-report: plataforma de issues não detectada neste repositório. " +
-        "Configure .maestra/config.md (plataforma, host, projeto) ou rode maestra_status para diagnosticar.",
+      "maestra-report: issue platform not detected for this repository. " +
+        "Configure .maestra/config.md (platform, host, project) or run maestra_status to diagnose.",
     )
     return 1
   }
@@ -136,7 +136,7 @@ export async function main(argv: string[], deps: ReportDeps = {}): Promise<numbe
       const epics = await adapter.listEpics()
       epicNumbers = epics.map((e) => e.number)
     } catch (e: unknown) {
-      error(`maestra-report: falha ao listar épicos: ${e instanceof Error ? e.message : String(e)}`)
+      error(`maestra-report: failed to list epics: ${e instanceof Error ? e.message : String(e)}`)
       return 1
     }
   }
@@ -147,7 +147,7 @@ export async function main(argv: string[], deps: ReportDeps = {}): Promise<numbe
     try {
       comments = await adapter.listComments({ forge, number })
     } catch (e: unknown) {
-      error(`maestra-report: falha ao ler comentários de #${number}: ${e instanceof Error ? e.message : String(e)}`)
+      error(`maestra-report: failed to read comments on #${number}: ${e instanceof Error ? e.message : String(e)}`)
       return 1
     }
     const snapshot = await fetchSnapshot(resolved, number, comments)
@@ -155,8 +155,8 @@ export async function main(argv: string[], deps: ReportDeps = {}): Promise<numbe
   }
 
   const result: ReportResult = buildReport(audits)
-  const plataforma = `${forge.kind} · ${forge.host} · ${forge.project}`
-  log(renderReport(result, plataforma))
+  const platform = `${forge.kind} · ${forge.host} · ${forge.project}`
+  log(renderReport(result, platform))
   return result.exitCode
 }
 
@@ -165,7 +165,7 @@ if (invokedAsScript) {
   main(process.argv.slice(2)).then(
     (code) => process.exit(code),
     (e: unknown) => {
-      console.error(`maestra-report: erro inesperado: ${e instanceof Error ? e.message : String(e)}`)
+      console.error(`maestra-report: unexpected error: ${e instanceof Error ? e.message : String(e)}`)
       process.exit(1)
     },
   )

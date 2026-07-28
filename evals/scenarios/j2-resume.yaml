@@ -1,0 +1,115 @@
+# J2 — state derivation (branches B1–B6): zero questions about state
+# present on the platform; falseable summary with next action.
+
+- description: "J2 B1 no labels: offers 3 options; NEVER assumes Minimal nor persona"
+  vars:
+    fixture: fixtures/github/epic-sem-labels.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j2-resume.md"]
+    entry: "42"
+    requiredPatterns:
+      - "[Cc]lassify now"
+      - "standalone"
+      - "[Ss]tage 1,? 2 (or|and) 3|tell me the stage|tell (me )?which stage"
+    forbiddenPatterns:
+      - "assume Minimal"
+      - "Minimal by default"
+      - "you'?re in Stage|you are in Stage"
+  assert:
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs
+
+- description: "J2 B2 contradictory state: evidence + falseable hypothesis + 1-sentence correction"
+  vars:
+    fixture: fixtures/github/epic-labels-contraditorias.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j2-resume.md"]
+    entry: "12"
+    expectedCallOrder:
+      - "tool:maestra_issue_digest"
+    requiredPatterns:
+      - "conflict|contradict|signals"
+      - "Stage 3"
+  assert:
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/falseable-summary.mjs
+
+- description: "J2 B4 sub-issue: digest the PARENT before deriving; conversation anchored on the child"
+  vars:
+    fixture: fixtures/github/sub-issue.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j2-resume.md"]
+    entry: "47"
+    expectedCallOrder:
+      - "tool:maestra_issue_digest\\(\\{\"issue\":47\\}\\)"
+      - "tool:maestra_issue_digest\\(\\{\"issue\":12\\}\\)"
+    requiredPatterns:
+      - "#12|epic"
+  assert:
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/falseable-summary.mjs
+
+- description: "J2 B5 orphan: parent epic closed → informs and treats as standalone focus"
+  vars:
+    fixture: fixtures/github/epic-orfa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j2-resume.md"]
+    entry: "48"
+    expectedCallOrder:
+      - "tool:maestra_issue_digest\\(\\{\"issue\":48\\}\\)"
+      - "tool:maestra_issue_digest\\(\\{\"issue\":13\\}\\)"
+    requiredPatterns:
+      - "closed"
+      - "standalone"
+  assert:
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/falseable-summary.mjs
+
+- description: "J2 B6 closed-without-reconciliation (FM-13): named anomaly + retroactive reconciliation; never reopens in silence"
+  vars:
+    fixture: fixtures/github/epic-fechado-sem-reconciliacao.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j2-resume.md"]
+    entry: "55"
+    requiredPatterns:
+      - "closed without|without the final review|not delivered"
+      - "retroactive"
+    forbiddenPatterns:
+      - "I'll reopen"
+      - "reopening"
+  assert:
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs
+    - type: javascript
+      value: file://asserts/falseable-summary.mjs
+
+- description: "J2 override present: override shown as a fact of the derivation, without judgment"
+  vars:
+    fixture: fixtures/github/epic-override-presente.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j2-resume.md"]
+    entry: "18"
+    requiredPatterns:
+      - "override|reclassif"
+      - "Minimal"
+  assert:
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/falseable-summary.mjs

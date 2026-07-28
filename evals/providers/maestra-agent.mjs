@@ -14,8 +14,8 @@ const MAX_STEPS_PER_TURN = 12
  * vars: {
  *   fixture: "fixtures/github/x.json"     (github state — digests/status/execRoutes)
  *   repo: "fixtures/repo/x.json"          (virtual fs scaffold, optional)
- *   modules: ["jornadas/j1-triagem.md"]   (journey modules loaded into system)
- *   entry: "texto livre ou número"        (first human turn)
+ *   modules: ["journeys/j1-triage.md"]    (journey modules loaded into system)
+ *   entry: "free text or number"          (first human turn)
  *   humanScript: ["...", "..."]           (subsequent scripted human turns)
  *   mockSteps: [...]                      (mock model script — dry-run mode)
  * }
@@ -47,8 +47,8 @@ function asArray(value) {
 }
 
 export async function runScenario(vars) {
-  if (!vars.fixture) throw new Error("scenario sem vars.fixture")
-  if (!vars.entry) throw new Error("scenario sem vars.entry")
+  if (!vars.fixture) throw new Error("scenario missing vars.fixture")
+  if (!vars.entry) throw new Error("scenario missing vars.entry")
 
   const fixture = await loadGitHubFixture(vars.fixture)
   const repo = vars.repo ? await loadRepoFixture(vars.repo) : { files: {} }
@@ -91,6 +91,6 @@ export async function runScenario(vars) {
   // Preserve global call order across turns: the stub records in execution order.
   transcript.calls = stub.calls
   transcript.files = stub.files
-  transcript.mesa = stub.mesa
+  transcript.panel = stub.panel
   return transcript
 }

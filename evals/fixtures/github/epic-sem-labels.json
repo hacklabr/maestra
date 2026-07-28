@@ -1,52 +1,52 @@
 {
   "id": "epic-sem-labels",
-  "descricao": "Issue #42 sem nenhuma label de fluxo nem linha de metadados — branch B1 (nunca assumir; oferecer 3 opções).",
+  "description": "Issue #42 with no flow labels and no metadata line — branch B1 (never assume; offer 3 options).",
   "digests": {
     "42": {
-      "plataforma": {
+      "platform": {
         "kind": "github",
         "host": "github.com",
-        "projeto": "acme/loja"
+        "project": "acme/loja"
       },
       "issue": {
-        "numero": 42,
+        "number": 42,
         "id": 9001,
-        "titulo": "Relatório quebra quando filtro tem acento",
-        "estado": "open",
+        "title": "Report breaks when filter has accent",
+        "state": "open",
         "url": "https://github.com/acme/loja/issues/42"
       },
       "labels": {
-        "variante": null,
-        "etapas": [],
-        "marcadores": []
+        "variant": null,
+        "stages": [],
+        "markers": []
       },
-      "metadados": null,
-      "pai": null,
-      "filhos": [],
-      "comentarios": [],
+      "metadata": null,
+      "parent": null,
+      "children": [],
+      "comments": [],
       "board": {
-        "coluna": null
+        "column": null
       },
       "gate": {
-        "porEtapa": {},
-        "semEtapa": 0,
-        "reconciliacao": {
-          "existe": false,
-          "estado": null,
-          "numero": null
+        "perStage": {},
+        "noStage": 0,
+        "reconciliation": {
+          "exists": false,
+          "state": null,
+          "number": null
         }
       },
-      "artefatos": [],
-      "hierarquia": {
-        "tipo": "sub-issues",
+      "artifacts": [],
+      "hierarchy": {
+        "type": "sub-issues",
         "taskCompletion": null,
-        "dessincronia": []
+        "desync": []
       },
-      "paginacao": {
-        "filhosTruncados": false,
-        "comentariosTruncados": false
+      "pagination": {
+        "childrenTruncated": false,
+        "commentsTruncated": false
       },
-      "erros": []
+      "errors": []
     }
   },
   "execRoutes": [

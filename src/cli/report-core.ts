@@ -25,36 +25,36 @@ export type Severity = "gap" | "threshold" | "signal"
 
 export interface Finding {
   severity: Severity
-  codigo: string
-  mensagem: string
+  code: string
+  message: string
 }
 
 export interface EpicSnapshot {
   issue: IssueFacts
   comments: CommentFacts[]
   /** Reconciliation task state (children scan — same rule as the digest). */
-  reconciliacao: { existe: boolean; estado: "open" | "closed" | null; numero: number | null }
+  reconciliation: { exists: boolean; state: "open" | "closed" | null; number: number | null }
   boardColumn: string | null
   /** Demand issue number → exists on the platform (for E parity, state leg). */
   demandsExist: Map<number, boolean>
 }
 
 export interface EpicAudit {
-  numero: number
-  titulo: string
-  variante: string | null
+  number: number
+  title: string
+  variant: string | null
   findings: Finding[]
-  eStats: { recusas: number; criadas: number }
+  eStats: { refusals: number; created: number }
 }
 
 export interface ReportResult {
   epics: EpicAudit[]
   global: Finding[]
-  resumo: { epics: number; gaps: number; thresholds: number; signals: number }
+  summary: { epics: number; gaps: number; thresholds: number; signals: number }
   exitCode: 0 | 1
 }
 
-const BOARD_DONE = /entregue|done/i
+const BOARD_DONE = /delivered|done/i
 
 function eventsOfType<T extends ParsedEvent["type"]>(events: ParsedEvent[], type: T) {
   return events.filter((e): e is Extract<ParsedEvent, { type: T }> => e.type === type)
@@ -62,137 +62,137 @@ function eventsOfType<T extends ParsedEvent["type"]>(events: ParsedEvent[], type
 
 /** Audits one epic snapshot. Pure. */
 export function auditEpic(snap: EpicSnapshot): EpicAudit {
-  const { issue, comments, reconciliacao, boardColumn, demandsExist } = snap
+  const { issue, comments, reconciliation, boardColumn, demandsExist } = snap
   const labels = classifyLabels(issue.labels)
   const { events, drift } = parseEventComments(comments)
   const findings: Finding[] = []
-  const isMinima = labels.variante === "variante-minimo"
+  const isMinimal = labels.variant === "variant-minimal"
   const hasF = eventsOfType(events, "F").length > 0
 
   // --- Format drift (layer 3: unparseable marked comments) ---
   for (const line of drift) {
     findings.push({
       severity: "gap",
-      codigo: "DRIFT",
-      mensagem: `linha de evento/override irreconhecível (drift de formato): "${line}"`,
+      code: "DRIFT",
+      message: `unparseable event/override line (format drift): "${line}"`,
     })
   }
 
-  // --- Presence-gap: variante label → evento A (triagem registrada) ---
-  if (labels.variante && eventsOfType(events, "A").length === 0) {
+  // --- Presence-gap: variant label → event A (triage instrumented) ---
+  if (labels.variant && eventsOfType(events, "A").length === 0) {
     findings.push({
       severity: "gap",
-      codigo: "PRESENCA-A",
-      mensagem: `épico tem label ${labels.variante} mas nenhum Evento A — a triagem não foi instrumentada (ou aconteceu fora do plugin).`,
+      code: "PRESENCE-A",
+      message: `epic has label ${labels.variant} but no Event A — triage was not instrumented (or happened outside the plugin).`,
     })
   }
 
   // --- FM-13: epic closed without reconciliation (the two-click bypass) ---
-  // reconciliationDone: task closed (all variants with children) or, on Mínima
+  // reconciliationDone: task closed (all variants with children) or, on Minimal
   // (single issue, checkbox reconciliation), the F event as the executed verdict.
-  const reconciliationDone = reconciliacao.existe ? reconciliacao.estado === "closed" : isMinima && hasF
+  const reconciliationDone = reconciliation.exists ? reconciliation.state === "closed" : isMinimal && hasF
   if (issue.state === "closed" && !reconciliationDone) {
     const boardNote = boardColumn && BOARD_DONE.test(boardColumn)
-      ? ` — e o board já está em "${boardColumn}": o bypass foi executado por completo`
+      ? ` — and the board already shows "${boardColumn}": the bypass was fully executed`
       : ""
     findings.push({
       severity: "gap",
-      codigo: "FM-13",
-      mensagem:
-        `épico FECHADO sem reconciliação (${reconciliacao.existe ? `tarefa #${reconciliacao.numero} ainda aberta` : "nenhuma tarefa/evento de reconciliação"})${boardNote}. ` +
-        `Rodada "entregue" pela UI, não pela régua — abrir reconciliação retroativa (J2 branch B6).`,
+      code: "FM-13",
+      message:
+        `epic CLOSED without reconciliation (${reconciliation.exists ? `task #${reconciliation.number} still open` : "no reconciliation task/event"}).${boardNote} ` +
+        `Round "delivered" via UI, not via the rule — open retroactive reconciliation (J2 branch B6).`,
     })
   }
 
-  // --- Presence-gap: rodada fechada → evento F ---
-  // Closed rodada legs: reconciliation task closed (any variant) or Mínima closed
+  // --- Presence-gap: round closed → event F ---
+  // Closed round legs: reconciliation task closed (any variant) or Minimal closed
   // WITH reconciliation done (hasF covers it; if missing, FM-13 above already
   // names the anomaly — no double finding).
-  const rodadaFechada = reconciliacao.existe && reconciliacao.estado === "closed"
-  if (rodadaFechada && !hasF) {
+  const roundClosed = reconciliation.exists && reconciliation.state === "closed"
+  if (roundClosed && !hasF) {
     findings.push({
       severity: "gap",
-      codigo: "PRESENCA-F",
-      mensagem: `tarefa de reconciliação #${reconciliacao.numero} fechada, mas nenhum Evento F — fechamento não instrumentado.`,
+      code: "PRESENCE-F",
+      message: `reconciliation task #${reconciliation.number} closed, but no Event F — closure not instrumented.`,
     })
   }
 
-  // --- Presence-gap: label override-registrado → evento D ---
-  if (labels.marcadores.includes("override-registrado") && eventsOfType(events, "D").length === 0) {
+  // --- Presence-gap: label override-registered → event D ---
+  if (labels.markers.includes("override-registered") && eventsOfType(events, "D").length === 0) {
     findings.push({
       severity: "gap",
-      codigo: "PRESENCA-D",
-      mensagem: `label override-registrado presente mas nenhum Evento D — override sem instrumentação de direção/critério.`,
+      code: "PRESENCE-D",
+      message: `label override-registered present but no Event D — override without direction/criterion instrumentation.`,
     })
   }
 
   // --- Threshold A: derivable questions asked anyway — target ZERO ---
   for (const a of eventsOfType(events, "A")) {
-    if (a.derivaveis > THRESHOLDS.derivableQuestionsMax) {
+    if (a.derivable > THRESHOLDS.derivableQuestionsMax) {
       findings.push({
         severity: "threshold",
-        codigo: "A-DERIVAVEL",
-        mensagem: `Evento A registra ${a.derivaveis} pergunta(s) derivável(is) feita(s) mesmo assim — alvo zero. Falha de derivação: revisar instructions da triagem.`,
+        code: "A-DERIVABLE",
+        message: `Event A records ${a.derivable} derivable question(s) asked anyway — target zero. Derivation failure: review triage instructions.`,
       })
     }
-    const cap = isMinima ? 3 : 5
-    if (a.elicitacao > cap) {
+    const cap = isMinimal ? 3 : 5
+    if (a.elicitation > cap) {
       findings.push({
         severity: "signal",
-        codigo: "SINAL-A-CAP",
-        mensagem: `triagem com ${a.elicitacao} perguntas de elicitação (backstop: ≤${cap}${isMinima ? " na Mínima" : ""}). Creep de interrogatório?`,
+        code: "SIGNAL-A-CAP",
+        message: `triage with ${a.elicitation} elicitation questions (backstop: ≤${cap}${isMinimal ? " on Minimal" : ""}). Interrogation creep?`,
       })
     }
   }
 
   // --- Signal B: correction rounds > 1 = comprehension-failure proxy ---
   for (const b of eventsOfType(events, "B")) {
-    if (b.rodadas > 1) {
+    if (b.correctionRounds > 1) {
       findings.push({
         severity: "signal",
-        codigo: "SINAL-B",
-        mensagem: `entendimento confirmado após ${b.rodadas} rodadas de correção (>1 = proxy de falha de compreensão).`,
+        code: "SIGNAL-B",
+        message: `understanding confirmed after ${b.correctionRounds} correction rounds (>1 = comprehension-failure proxy).`,
       })
     }
   }
 
-  // --- Threshold F: late-declaration ratio per rodada ---
+  // --- Threshold F: late-declaration ratio per round ---
   for (const f of eventsOfType(events, "F")) {
-    const total = f.durante + f.naReconciliacao
-    if (total > 0 && f.durante / total < THRESHOLDS.fDeclaredDuringMin) {
+    const total = f.during + f.atReconciliation
+    if (total > 0 && f.during / total < THRESHOLDS.fDeclaredDuringMin) {
       findings.push({
         severity: "threshold",
-        codigo: "F-TARDIO",
-        mensagem:
-          `rodada ${f.rodada}: ${f.durante} desvio(s) declarado(s) durante × ${f.naReconciliacao} descoberto(s) na conferência ` +
-          `(${Math.round((100 * f.durante) / total)}% durante — alvo ≥80%, piso 50%). ` +
-          `Declaração tardia: o touchpoint de execução (J5 Etapa 2) está falhando.`,
+        code: "F-LATE",
+        message:
+          `round ${f.round}: ${f.during} deviation(s) declared during execution × ${f.atReconciliation} discovered at reconciliation ` +
+          `(${Math.round((100 * f.during) / total)}% during — target ≥80%, floor 50%). ` +
+          `Late declaration: the execution touchpoint (J5 Stage 2) is failing.`,
       })
     }
   }
 
   // --- E parity inputs (aggregate computed at report level) + broken links ---
   const eEvents = eventsOfType(events, "E")
-  let criadas = 0
+  let created = 0
   for (const e of eEvents) {
-    if (e.demanda === "pendente") continue
-    if (demandsExist.get(e.demanda) === false) {
+    if (e.demand === "pending") continue
+    if (demandsExist.get(e.demand) === false) {
       findings.push({
         severity: "gap",
-        codigo: "E-LINK",
-        mensagem: `Evento E aponta demanda criada #${e.demanda}, mas a issue não existe — recusa registrada, demanda perdida.`,
+        code: "E-LINK",
+        message: `Event E points to demand created #${e.demand}, but the issue does not exist — refusal registered, demand lost.`,
       })
-    } else if (demandsExist.get(e.demanda) === true) {
-      criadas++
+    } else if (demandsExist.get(e.demand) === true) {
+      created++
     }
   }
 
   return {
-    numero: issue.number,
-    titulo: issue.title,
-    variante: labels.variante,
+    number: issue.number,
+    title: issue.title,
+    variant: labels.variant,
     findings,
-    eStats: { recusas: eEvents.length, criadas },
+    eStats: { refusals: eEvents.length, created },
   }
 }
 
@@ -200,68 +200,68 @@ export function auditEpic(snap: EpicSnapshot): EpicAudit {
 export function buildReport(audits: EpicAudit[]): ReportResult {
   const global: Finding[] = []
 
-  const recusas = audits.reduce((n, a) => n + a.eStats.recusas, 0)
-  const criadas = audits.reduce((n, a) => n + a.eStats.criadas, 0)
-  if (recusas > 0) {
-    const divergence = (recusas - criadas) / recusas
+  const refusals = audits.reduce((n, a) => n + a.eStats.refusals, 0)
+  const created = audits.reduce((n, a) => n + a.eStats.created, 0)
+  if (refusals > 0) {
+    const divergence = (refusals - created) / refusals
     if (divergence > THRESHOLDS.eDivergenceMax) {
       global.push({
         severity: "threshold",
-        codigo: "E-DIVERGENCIA",
-        mensagem:
-          `paridade E quebrada: ${recusas} recusa(s) J8 × ${criadas} demanda(s) criada(s) ` +
-          `(divergência ${Math.round(divergence * 100)}% > ${THRESHOLDS.eDivergenceMax * 100}%). ` +
-          `Suspeita de bypass silencioso — auditar diffs das tarefas contra o escopo original.`,
+        code: "E-DIVERGENCE",
+        message:
+          `E parity broken: ${refusals} J8 refusal(s) × ${created} demand(s) created ` +
+          `(divergence ${Math.round(divergence * 100)}% > ${THRESHOLDS.eDivergenceMax * 100}%). ` +
+          `Suspected silent bypass — audit task diffs against original scope.`,
       })
     }
   }
 
   const all = [...audits.flatMap((a) => a.findings), ...global]
-  const resumo = {
+  const summary = {
     epics: audits.length,
     gaps: all.filter((f) => f.severity === "gap").length,
     thresholds: all.filter((f) => f.severity === "threshold").length,
     signals: all.filter((f) => f.severity === "signal").length,
   }
-  return { epics: audits, global, resumo, exitCode: resumo.gaps + resumo.thresholds > 0 ? 1 : 0 }
+  return { epics: audits, global, summary, exitCode: summary.gaps + summary.thresholds > 0 ? 1 : 0 }
 }
 
-const SEVERITY_MARK: Record<Severity, string> = { gap: "✗ GAP", threshold: "✗ LIMIAR", signal: "○ sinal" }
+const SEVERITY_MARK: Record<Severity, string> = { gap: "✗ GAP", threshold: "✗ THRESHOLD", signal: "○ signal" }
 
-/** Renders the PT-BR report. Pure. */
-export function renderReport(result: ReportResult, plataforma: string): string {
+/** Renders the report. Pure. */
+export function renderReport(result: ReportResult, platform: string): string {
   const lines: string[] = [
-    `maestra-report — auditoria de instrumentação A–F (${plataforma})`,
-    `Leitor provisório dos sinais (G-15): instrumentação sem leitor definido é decorativa.`,
+    `maestra-report — A–F instrumentation audit (${platform})`,
+    `Provisional signal reader (G-15): instrumentation without a defined reader is decorative.`,
     "",
   ]
 
   if (result.epics.length === 0) {
-    lines.push("Nenhum épico com label de variante encontrado — nada a auditar.", "")
+    lines.push("No epic with a variant label found — nothing to audit.", "")
   }
 
   for (const epic of result.epics) {
-    lines.push(`ÉPICO #${epic.numero} — ${epic.variante ?? "sem variante"} — "${epic.titulo}"`)
+    lines.push(`EPIC #${epic.number} — ${epic.variant ?? "no variant"} — "${epic.title}"`)
     if (epic.findings.length === 0) {
-      lines.push("  ✓ sem gaps")
+      lines.push("  ✓ no gaps")
     }
     for (const f of epic.findings) {
-      lines.push(`  ${SEVERITY_MARK[f.severity]} [${f.codigo}] ${f.mensagem}`)
+      lines.push(`  ${SEVERITY_MARK[f.severity]} [${f.code}] ${f.message}`)
     }
     lines.push("")
   }
 
   for (const f of result.global) {
-    lines.push(`${SEVERITY_MARK[f.severity]} [${f.codigo}] ${f.mensagem}`)
+    lines.push(`${SEVERITY_MARK[f.severity]} [${f.code}] ${f.message}`)
   }
   if (result.global.length > 0) lines.push("")
 
-  const { epics, gaps, thresholds, signals } = result.resumo
-  lines.push(`RESUMO: ${epics} épico(s) auditado(s) · ${gaps} gap(s) · ${thresholds} limiar(es) · ${signals} sinal(is)`)
+  const { epics, gaps, thresholds, signals } = result.summary
+  lines.push(`SUMMARY: ${epics} epic(s) audited · ${gaps} gap(s) · ${thresholds} threshold(s) · ${signals} signal(s)`)
   lines.push(
     result.exitCode === 0
-      ? "Resultado: OK — instrumentação íntegra."
-      : "Resultado: FALHOU — presence-gaps/limiares estourados. Revise antes do próximo dogfood.",
+      ? "Result: OK — instrumentation intact."
+      : "Result: FAILED — presence-gaps/thresholds exceeded. Review before the next dogfood.",
   )
   return lines.join("\n")
 }

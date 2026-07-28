@@ -22,13 +22,13 @@ import { EXPANSION_FAILURE_SIGNATURE } from "./persona-expansion.js"
  * The facilitator itself is never spawned via the shell → never enters the
  * map → structurally excluded from ask_peer (pending decision #2).
  */
-const SHELL_AGENT = "maestra/especialista"
+const SHELL_AGENT = "maestra/specialist"
 
 const NO_MARKER_WARNING = [
   "",
-  "[maestra] Shell spawnado SEM marker persona:: — esta sessão NÃO poderá usar ask_peer",
-  "(caller-identity falha fechada) e não será encontrada por peers.",
-  "Respawne com `persona::<id>@<mesaId>` na primeira linha do prompt.",
+  "[maestra] Shell spawned WITHOUT persona:: marker — this session CANNOT use ask_peer",
+  "(caller-identity fails closed) and will not be found by peers.",
+  "Respawn with `persona::<id>@<panelId>` on the first line of the prompt.",
 ].join("\n")
 
 export function createPeerTrackerHook() {

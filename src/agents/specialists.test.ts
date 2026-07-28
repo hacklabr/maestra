@@ -26,12 +26,12 @@ describe("buildShellAgentMarkdown (design A: ONE shell subagent)", () => {
   it("base prompt declares persona-on-delegation contract", () => {
     const md = buildShellAgentMarkdown("opencode")
 
-    expect(md).toContain("persona é definida integralmente pelo prompt de delegação")
-    expect(md).toContain("declare sua persona na primeira linha")
+    expect(md).toContain("persona is defined entirely by the delegation prompt")
+    expect(md).toContain("declare your persona on the first line")
     expect(md).toContain("ask_peer")
   })
 
   it("generates exactly ONE shell file", () => {
-    expect(SHELL_AGENT_FILENAME).toBe("especialista.md")
+    expect(SHELL_AGENT_FILENAME).toBe("specialist.md")
   })
 })

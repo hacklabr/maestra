@@ -1,29 +1,29 @@
-# Templates de Artefatos
+# Artifact Templates
 
 > Source: fluxo-de-desenvolvimento.md §11 + docs/referencia/jornadas.md §5/J9 (v2.1) · Module version: 2 — 2026-07-28
-> Anti-drift: templates verbatim da fonte; slots em `{MAIUSCULO}`. Divergência é finding, nunca ajuste silencioso.
-> Changelog: v1 (T10-L3): 7 templates da camada de linguagem · v2 (T10 final): 6 templates restantes — conjunto completo.
+> Anti-drift: verbatim templates from the source; slots in `{UPPERCASE}`. Divergence is a finding, never a silent adjustment.
+> Changelog: v1 (T10-L3): 7 templates of the language layer · v2 (T10 final): 6 remaining templates — complete set.
 
-## Entregues (conjunto completo — T10)
+## Delivered (complete set — T10)
 
-| Arquivo | Conteúdo | Fonte |
+| File | Content | Source |
 |---|---|---|
-| `issue-duas-camadas.md` | Issue P1 (Resumo + metadados + Detalhes para execução) | jornadas §5 P1/P1.1 |
-| `tarefa-implementacao.md` | Tarefa de implementação (Etapa 3), duas camadas | fluxo §11.1 + jornadas P1 |
-| `tarefa-artefato.md` | Tarefa de artefato (Etapas 1/2), classe REFERÊNCIA×REGISTRO declarada | fluxo §11.2 + jornadas §4 |
-| `adr.md` | ADR com status + checkpoint de unicidade | fluxo §11.5 + jornadas J4 |
-| `motivacao.md` | Motivação de refatoração (variante Técnica) + trava anti-auto-aprovação | fluxo §11.6 + jornadas J6 |
-| `dor-resumo.md` | DoR: checklist do gate E1 + tabela por variante | fluxo §6 + §11.7 |
-| `escopo.md` | Escopo da rodada (REGISTRO) | fluxo §11.3 |
-| `desvios.md` | Desvios da rodada (REGISTRO) + regras P3/#14 | fluxo §11.4 + jornadas §5 P3 |
-| `retro.md` | Retro da rodada (REGISTRO) — template derivado (Q2) | jornadas J5 Etapa 4 + fluxo §9.4/§10 |
-| `mesa/posicao.md` | Posição de mesa por turno (REGISTRO auxiliar) — template derivado | jornadas J9 (G-08) |
-| `override-comentario.md` | Referência do registro P3 (emitido pela tool, nunca à mão) | jornadas §5 P3 + emit-event.ts |
-| `team.md` | Mapa de equipe `.maestra/team.md` | jornadas §5 P5 |
-| `config.md` | Config `.maestra/config.md` (formato exato do parser) | src/platform/config.ts (ADR-014) |
+| `two-layer-issue.md` | P1 issue (Summary + metadata + Details for execution) | jornadas §5 P1/P1.1 |
+| `implementation-task.md` | Implementation task (Stage 3), two layers | fluxo §11.1 + jornadas P1 |
+| `artifact-task.md` | Artifact task (Stages 1/2), REFERENCE×RECORD class declared | fluxo §11.2 + jornadas §4 |
+| `adr.md` | ADR with status + uniqueness checkpoint | fluxo §11.5 + jornadas J4 |
+| `motivation.md` | Refactoring motivation (Technical variant) + anti-auto-approval lock | fluxo §11.6 + jornadas J6 |
+| `dor-summary.md` | DoR: S1 gate checklist + table per variant | fluxo §6 + §11.7 |
+| `scope.md` | Round scope (RECORD) | fluxo §11.3 |
+| `deviations.md` | Round deviations (RECORD) + P3/#14 rules | fluxo §11.4 + jornadas §5 P3 |
+| `retro.md` | Round retro (RECORD) — derived template (Q2) | jornadas J5 Stage 4 + fluxo §9.4/§10 |
+| `panel/position.md` | Per-turn panel position (auxiliary RECORD) — derived template | jornadas J9 (G-08) |
+| `override-comment.md` | P3 register reference (emitted by the tool, never by hand) | jornadas §5 P3 + emit-event.ts |
+| `team.md` | Team map `.maestra/team.md` | jornadas §5 P5 |
+| `config.md` | Config `.maestra/config.md` (exact parser format) | src/platform/config.ts (ADR-014) |
 
-**Templates derivados (fonte não fixa formato interno):** `retro.md`, `mesa/posicao.md` — marcados como derivados no cabeçalho; ajuste de formato exige registro no Audit Log do jornadas.md.
+**Derived templates (source does not fix internal format):** `retro.md`, `panel/position.md` — marked as derived in the header; format change requires a register in the Audit Log of jornadas.md.
 
-## Pendentes
+## Pending
 
-Nenhum.
+None.

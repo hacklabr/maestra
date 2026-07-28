@@ -1,11 +1,11 @@
 {
   "id": "rodada-tecnica",
-  "descricao": "Rodada R03 (Técnica): motivacao.md com meta mensurável e as duas listas, SEM aprovação da Etapa 1 ainda — palco da trava anti-auto-aprovação (gatilho #3) e da caracterização bloqueante (#8).",
+  "description": "Round R03 (Technical): motivation.md with a measurable goal and the two lists, WITHOUT Stage 1 approval yet — stage for the anti-self-approval lock (trigger #3) and blocking characterization (#8).",
   "files": {
-    "docs/referencia/prd.md": "# PRD vivo\n\n## RF-01 — Listagem de pedidos\n\nO usuário vê seus pedidos ordenados por data.\n",
-    "docs/referencia/arquitetura.md": "# Arquitetura (interna)\n\nMódulo de pagamentos acoplado ao módulo de pedidos via chamadas diretas.\n",
-    "docs/rodadas/R03-2027-01-refatoracao-pagamentos/motivacao.md": "# Refatoração: módulo de pagamentos\n\n## Problema\n\nAcoplamento pagamentos×pedidos gera bugs recorrentes (7 bugs em 3 meses na área) e trava a evolução do checkout.\n\n## Meta mensurável\n\nDesacoplar o módulo de pagamentos para permitir a feature de pagamento recorrente, com tempo de resposta da listagem mantido abaixo de 400ms.\n\n## Análise de impacto\n\nToca `src/pagamentos/` e os pontos de chamada em `src/pedidos/`.\n\n## Inegociáveis\n\n- O usuário não pode perceber mudança no fluxo de checkout.\n\n## O que pode mudar de propósito\n\n- (lista vazia)\n",
-    "docs/rodadas/R03-2027-01-refatoracao-pagamentos/desvios.md": "# Desvios da rodada R03 — refatoração de pagamentos\n\nNenhum desvio nesta rodada.\n",
-    ".maestra/team.md": "# Mapa de equipe\n\n- @rafael — Produto (PO)\n- @tiago — Engenharia (tech lead sênior)\n- @joao — Entrega (dev pleno full-stack)\n- @quesia — Entrega (QA)\n"
+    "docs/reference/prd.md": "# Living PRD\n\n## RF-01 — Order listing\n\nThe user sees their orders sorted by date.\n",
+    "docs/reference/architecture.md": "# Architecture (internal)\n\nPayments module coupled to the orders module via direct calls.\n",
+    "docs/rounds/R03-2027-01-payments-refactoring/motivation.md": "# Refactoring: payments module\n\n## Problem\n\nThe payments×orders coupling causes recurring bugs (7 bugs in 3 months in the area) and blocks checkout evolution.\n\n## Measurable goal\n\nDecouple the payments module to enable the recurring payment feature, with the listing response time kept below 400ms.\n\n## Impact analysis\n\nTouches `src/payments/` and the call sites in `src/orders/`.\n\n## Non-negotiables\n\n- The user cannot perceive a change in the checkout flow.\n\n## What can change\n\n- (empty list)\n",
+    "docs/rounds/R03-2027-01-payments-refactoring/deviations.md": "# Round R03 deviations — payments refactoring\n\nNo deviations in this round.\n",
+    ".maestra/team.md": "# Team map\n\n- @rafael — Product (PO)\n- @tiago — Engineering (senior tech lead)\n- @joao — Delivery (mid-level full-stack dev)\n- @quesia — Delivery (QA)\n"
   }
 }

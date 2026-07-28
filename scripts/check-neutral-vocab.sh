@@ -10,7 +10,7 @@ FAIL=0
 
 is_excluded() {
   case "$1" in
-    *referencia/cookbook-github.md | *referencia/cookbook-gitlab.md | *templates/config.md) return 0 ;;
+    *reference/cookbook-github.md | *reference/cookbook-gitlab.md | *templates/config.md) return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -23,6 +23,8 @@ while IFS= read -r file; do
     content="${hit#*:}"
     case "$content" in
       *"fonte diz"*) continue ;; # anti-drift source citation — allowed
+      *"source says"*) continue ;; # anti-drift source citation (EN) — allowed
+      *"source said"*) continue ;; # anti-drift source citation (EN, past tense) — allowed
     esac
     # Pointers AT the cookbook files are legitimate (the kernel must name them);
     # strip the filenames before testing for real dialect terms.

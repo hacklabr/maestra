@@ -94,8 +94,8 @@ export async function detectForge(directory: string, opts: DetectOptions = {}): 
   const persist = opts.persist ?? true
 
   const config = await readFluxoConfig(directory)
-  if (config?.plataforma && config.host && config.projeto) {
-    return { kind: config.plataforma, host: config.host, project: config.projeto }
+  if (config?.platform && config.host && config.project) {
+    return { kind: config.platform, host: config.host, project: config.project }
   }
 
   const remote = await gitRemoteUrl(exec, directory)
@@ -112,7 +112,7 @@ export async function detectForge(directory: string, opts: DetectOptions = {}): 
 
   const forge: ForgeContext = { kind, host, project }
   if (persist) {
-    await writeFluxoConfig(directory, { plataforma: kind, host, projeto: project })
+    await writeFluxoConfig(directory, { platform: kind, host, project })
   }
   return forge
 }

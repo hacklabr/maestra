@@ -1,7 +1,7 @@
 {
   "id": "repo-sem-team",
-  "descricao": "Repo sem .maestra/team.md (primeira triagem do repositório) — dispara o mapeamento de equipe da J1 Etapa 4 (palco do FM-04) e garante que nada da conversa anterior persistiu (palco do FM-06).",
+  "description": "Repo without .maestra/team.md (first repository triage) — triggers the J1 Stage 4 team mapping (FM-04 stage) and ensures nothing from a previous conversation persisted (FM-06 stage).",
   "files": {
-    "docs/referencia/prd.md": "# PRD vivo\n\n## RF-01 — Listagem de pedidos\n\nO usuário vê seus pedidos ordenados por data.\n"
+    "docs/reference/prd.md": "# Living PRD\n\n## RF-01 — Order listing\n\nThe user sees their orders sorted by date.\n"
   }
 }

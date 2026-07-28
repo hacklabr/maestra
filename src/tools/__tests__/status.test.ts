@@ -20,11 +20,11 @@ afterEach(() => {
 async function makeRepo(platform: "github" | "gitlab"): Promise<string> {
   const dir = mkdtempSync(join(tmpdir(), `maestra-status-${platform}-`))
   await mkdir(join(dir, ".maestra"), { recursive: true })
-  await mkdir(join(dir, "docs", "referencia"), { recursive: true })
-  await mkdir(join(dir, "docs", "rodadas"), { recursive: true })
+  await mkdir(join(dir, "docs", "reference"), { recursive: true })
+  await mkdir(join(dir, "docs", "rounds"), { recursive: true })
   await writeFile(
     join(dir, ".maestra", "config.md"),
-    `- plataforma: ${platform}\n- host: ${platform === "github" ? "github.com" : "gitlab.com"}\n- projeto: ${platform === "github" ? "acme/loja" : "grupo/loja"}\n`,
+    `- platform: ${platform}\n- host: ${platform === "github" ? "github.com" : "gitlab.com"}\n- project: ${platform === "github" ? "acme/loja" : "grupo/loja"}\n`,
   )
   return dir
 }
@@ -50,7 +50,7 @@ describe("maestra_status", () => {
     const report = parse(await maestraStatusTool.execute({}, ctx(dir)))
 
     expect(report.host.id).toBe("opencode")
-    expect(report.plataforma).toEqual({ kind: "github", host: "github.com", projeto: "acme/loja" })
+    expect(report.platform).toEqual({ kind: "github", host: "github.com", project: "acme/loja" })
     expect(report.cli.gh).toEqual({ present: true, authenticated: true, version: "gh version 2.96.0 (2026-07-03)" })
     expect(report.cli.glab.present).toBe(false)
     expect(report.reachability).toEqual({ url: "https://api.github.com/meta", status: 200 })
@@ -63,8 +63,8 @@ describe("maestra_status", () => {
       board: "read",
       hierarchy: "sub-issues",
     })
-    expect(report.repo).toEqual({ referenciaDocs: true, rodadas: true, teamMd: false, maestraConfig: true })
-    expect(report.notes.join(" ")).toContain("ESCRITA")
+    expect(report.repo).toEqual({ referenceDocs: true, rounds: true, teamMd: false, maestraConfig: true })
+    expect(report.notes.join(" ")).toContain("WRITE")
   })
 
   it("GitLab self-hosted: glab authed with --hostname, Developer → read-write board", async () => {
@@ -72,7 +72,7 @@ describe("maestra_status", () => {
     await mkdir(join(dir, ".maestra"), { recursive: true })
     await writeFile(
       join(dir, ".maestra", "config.md"),
-      "- plataforma: gitlab\n- host: gitlab.acme.com\n- projeto: grupo/loja\n",
+      "- platform: gitlab\n- host: gitlab.acme.com\n- project: grupo/loja\n",
     )
     const { exec, calls } = makeExecStub([
       [/^gh --version/, { stderr: "command not found", code: 127 }],
@@ -85,13 +85,13 @@ describe("maestra_status", () => {
 
     const report = parse(await maestraStatusTool.execute({}, ctx(dir)))
 
-    expect(report.plataforma).toEqual({ kind: "gitlab", host: "gitlab.acme.com", projeto: "grupo/loja" })
+    expect(report.platform).toEqual({ kind: "gitlab", host: "gitlab.acme.com", project: "grupo/loja" })
     expect(report.cli.glab).toEqual({ present: true, authenticated: true, version: "glab version 1.46.1" })
     expect(calls.some((c) => c.args.includes("--hostname") && c.args.includes("gitlab.acme.com"))).toBe(true)
     expect(report.reachability).toEqual({ url: "https://gitlab.acme.com/api/v4/version", status: 401 })
     expect(report.board).toBe("read-write")
     expect(report.capabilities.hierarchy).toBe("links+tasklist")
-    expect(report.repo.referenciaDocs).toBe(false)
+    expect(report.repo.referenceDocs).toBe(false)
   })
 
   it("no platform detected: notes instruct the one-time question", async () => {
@@ -105,11 +105,11 @@ describe("maestra_status", () => {
     setExec(exec)
 
     const report = parse(await maestraStatusTool.execute({}, ctx(dir)))
-    expect(report.plataforma).toBeNull()
+    expect(report.platform).toBeNull()
     expect(report.capabilities.platform).toBeNull()
     expect(report.capabilities.hierarchy).toBe("none")
     expect(report.capabilities.cli).toBe(false)
-    expect(report.notes.join(" ")).toContain("pergunte UMA vez")
+    expect(report.notes.join(" ")).toContain("ask ONCE")
   })
 
   it("gh present but not authenticated → note + cli capability false", async () => {
@@ -125,6 +125,6 @@ describe("maestra_status", () => {
     const report = parse(await maestraStatusTool.execute({}, ctx(dir)))
     expect(report.cli.gh.authenticated).toBe(false)
     expect(report.capabilities.cli).toBe(false)
-    expect(report.notes.join(" ")).toContain("NÃO autenticado")
+    expect(report.notes.join(" ")).toContain("NOT authenticated")
   })
 })

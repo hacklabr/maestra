@@ -1,37 +1,37 @@
 {
   "id": "epic-completa",
-  "descricao": "Épico #60 variante COMPLETA com todas as 6 tarefas de artefato da Etapa 1 fechadas (briefing, PRD, jornadas, critérios, escopo, parecer) — gate da Etapa 1 cumprido; palco da onda da Etapa 2 (fatia do funil da Completa).",
+  "description": "Epic #60 Full variant with all 6 Stage 1 artifact tasks closed (briefing, PRD, journeys, criteria, scope, assessment) — Stage 1 gate met; stage for the Stage 2 wave (Full funnel slice).",
   "digests": {
     "60": {
-      "plataforma": { "kind": "github", "host": "github.com", "projeto": "acme/marketplace" },
-      "issue": { "numero": 60, "id": 9060, "titulo": "Marketplace de serviços (plataforma nova)", "estado": "open", "url": "https://github.com/acme/marketplace/issues/60" },
-      "labels": { "variante": "variante-completo", "etapas": [], "marcadores": [] },
-      "metadados": { "variante": "completo", "etapaAtual": "etapa-1", "epico": null, "rodada": "R01", "subestado": "em-artefatos" },
-      "pai": null,
-      "filhos": [
-        { "numero": 61, "titulo": "Briefing da rodada", "estado": "closed", "variante": null, "etapas": ["etapa-1"], "assignees": ["rafael"] },
-        { "numero": 62, "titulo": "PRD vivo (RF/RNF)", "estado": "closed", "variante": null, "etapas": ["etapa-1"], "assignees": ["rafael"] },
-        { "numero": 63, "titulo": "Mapa de jornadas", "estado": "closed", "variante": null, "etapas": ["etapa-1"], "assignees": ["rafael"] },
-        { "numero": 64, "titulo": "Critérios de aceite + fora de escopo", "estado": "closed", "variante": null, "etapas": ["etapa-1"], "assignees": ["rafael"] },
-        { "numero": 65, "titulo": "Escopo da rodada", "estado": "closed", "variante": null, "etapas": ["etapa-1"], "assignees": ["rafael"] },
-        { "numero": 66, "titulo": "Parecer de viabilidade", "estado": "closed", "variante": null, "etapas": ["etapa-1"], "assignees": ["maria"] }
+      "platform": { "kind": "github", "host": "github.com", "project": "acme/marketplace" },
+      "issue": { "number": 60, "id": 9060, "title": "Services marketplace (new platform)", "state": "open", "url": "https://github.com/acme/marketplace/issues/60" },
+      "labels": { "variant": "variant-full", "stages": [], "markers": [] },
+      "metadata": { "variant": "full", "currentStage": "stage-1", "epic": null, "round": "R01", "substate": "in-artifacts" },
+      "parent": null,
+      "children": [
+        { "number": 61, "title": "Round briefing", "state": "closed", "variant": null, "stages": ["stage-1"], "assignees": ["rafael"] },
+        { "number": 62, "title": "Living PRD (RF/RNF)", "state": "closed", "variant": null, "stages": ["stage-1"], "assignees": ["rafael"] },
+        { "number": 63, "title": "Journey map", "state": "closed", "variant": null, "stages": ["stage-1"], "assignees": ["rafael"] },
+        { "number": 64, "title": "Acceptance criteria + out of scope", "state": "closed", "variant": null, "stages": ["stage-1"], "assignees": ["rafael"] },
+        { "number": 65, "title": "Round scope", "state": "closed", "variant": null, "stages": ["stage-1"], "assignees": ["rafael"] },
+        { "number": 66, "title": "Feasibility assessment", "state": "closed", "variant": null, "stages": ["stage-1"], "assignees": ["maria"] }
       ],
-      "comentarios": [
-        { "tipo": "facilitador", "autor": "maria", "data": "2026-07-25T10:00:00Z", "corpo": "Parecer de viabilidade registrado: aprovado com ressalva no gateway de pagamento. — facilitador" }
+      "comments": [
+        { "type": "facilitator", "author": "maria", "date": "2026-07-25T10:00:00Z", "body": "Feasibility assessment registered: approved with a reservation on the payment gateway. — facilitator" }
       ],
-      "board": { "coluna": "Em andamento" },
+      "board": { "column": "In progress" },
       "gate": {
-        "porEtapa": { "etapa-1": { "fechadas": 6, "total": 6 } },
-        "semEtapa": 0,
-        "reconciliacao": { "existe": false, "estado": null, "numero": null }
+        "perStage": { "stage-1": { "closed_": 6, "total": 6 } },
+        "noStage": 0,
+        "reconciliation": { "exists": false, "state": null, "number": null }
       },
-      "artefatos": [
-        { "numero": 62, "titulo": "PRD vivo (RF/RNF)", "declarado": "docs/referencia/prd.md", "existe": true },
-        { "numero": 65, "titulo": "Escopo da rodada", "declarado": "docs/rodadas/R01-2026-07-marketplace/escopo.md", "existe": true }
+      "artifacts": [
+        { "number": 62, "title": "Living PRD (RF/RNF)", "declared": "docs/reference/prd.md", "exists": true },
+        { "number": 65, "title": "Round scope", "declared": "docs/rounds/R01-2026-07-marketplace/scope.md", "exists": true }
       ],
-      "hierarquia": { "tipo": "sub-issues", "taskCompletion": null, "dessincronia": [] },
-      "paginacao": { "filhosTruncados": false, "comentariosTruncados": false },
-      "erros": []
+      "hierarchy": { "type": "sub-issues", "taskCompletion": null, "desync": [] },
+      "pagination": { "childrenTruncated": false, "commentsTruncated": false },
+      "errors": []
     }
   },
   "execRoutes": [

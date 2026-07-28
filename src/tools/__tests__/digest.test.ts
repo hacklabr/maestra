@@ -15,12 +15,12 @@ const readFixture = (platform: string, name: string) =>
 async function makeRepo(platform: "github" | "gitlab"): Promise<string> {
   const dir = mkdtempSync(join(tmpdir(), `maestra-digest-${platform}-`))
   await mkdir(join(dir, ".maestra"), { recursive: true })
-  await mkdir(join(dir, "docs", "referencia"), { recursive: true })
+  await mkdir(join(dir, "docs", "reference"), { recursive: true })
   // Only prd.md exists — the declared mini-briefing.md is intentionally missing (G-05)
-  await writeFile(join(dir, "docs", "referencia", "prd.md"), "# PRD vivo\n")
+  await writeFile(join(dir, "docs", "reference", "prd.md"), "# Living PRD\n")
   await writeFile(
     join(dir, ".maestra", "config.md"),
-    `- plataforma: ${platform}\n- host: ${platform === "github" ? "github.com" : "gitlab.com"}\n- projeto: ${platform === "github" ? "acme/loja" : "grupo/loja"}\n`,
+    `- platform: ${platform}\n- host: ${platform === "github" ? "github.com" : "gitlab.com"}\n- project: ${platform === "github" ? "acme/loja" : "grupo/loja"}\n`,
   )
   return dir
 }
@@ -79,7 +79,7 @@ describe("maestra_issue_digest — degradation", () => {
     expect(String(result)).toContain(".maestra/config.md")
   })
 
-  it("degrades per-primitive: board failure becomes null column + entry in erros[]", async () => {
+  it("degrades per-primitive: board failure becomes null column + entry in errors[]", async () => {
     const dir = await makeRepo("github")
     const { exec } = makeExecStub([
       [/repos\/acme\/loja\/issues\/42\/sub_issues/, { stdout: readFileSync(join(FIXTURES, "github", "api-subissues.json"), "utf-8") }],
@@ -94,12 +94,12 @@ describe("maestra_issue_digest — degradation", () => {
 
     const result = await maestraIssueDigestTool.execute({ issue: 42 }, ctx(dir))
     const digest = JSON.parse((result as { output: string }).output)
-    expect(digest.board.coluna).toBeNull()
-    expect(digest.erros).toEqual([
-      expect.objectContaining({ primitiva: "getBoardColumn" }),
+    expect(digest.board.column).toBeNull()
+    expect(digest.errors).toEqual([
+      expect.objectContaining({ primitive: "getBoardColumn" }),
     ])
     // the rest of the digest is intact
-    expect(digest.filhos).toHaveLength(4)
-    expect(digest.gate.reconciliacao.numero).toBe(46)
+    expect(digest.children).toHaveLength(4)
+    expect(digest.gate.reconciliation.number).toBe(46)
   })
 })

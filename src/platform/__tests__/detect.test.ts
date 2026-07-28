@@ -50,15 +50,15 @@ describe(".maestra/config.md", () => {
   it("round-trips all keys", async () => {
     const dir = tmpDir()
     await writeFluxoConfig(dir, {
-      plataforma: "gitlab",
+      platform: "gitlab",
       host: "gitlab.acme.com",
-      projeto: "grupo/loja",
+      project: "grupo/loja",
       board: "12",
     })
     expect(await readFluxoConfig(dir)).toEqual({
-      plataforma: "gitlab",
+      platform: "gitlab",
       host: "gitlab.acme.com",
-      projeto: "grupo/loja",
+      project: "grupo/loja",
       board: "12",
     })
   })
@@ -74,7 +74,7 @@ describe("detectForge hierarchy", () => {
     await mkdir(join(dir, ".maestra"), { recursive: true })
     await writeFile(
       join(dir, ".maestra", "config.md"),
-      "# Config\n\n- plataforma: gitlab\n- host: gitlab.acme.com\n- projeto: grupo/loja\n",
+      "# Config\n\n- platform: gitlab\n- host: gitlab.acme.com\n- project: grupo/loja\n",
     )
     const { exec, calls } = makeExecStub([])
     const fetchFn = async () => {
@@ -94,8 +94,8 @@ describe("detectForge hierarchy", () => {
     expect(forge).toEqual({ kind: "github", host: "github.com", project: "acme/loja" })
 
     const persisted = readFileSync(join(dir, ".maestra", "config.md"), "utf-8")
-    expect(persisted).toContain("- plataforma: github")
-    expect(persisted).toContain("- projeto: acme/loja")
+    expect(persisted).toContain("- platform: github")
+    expect(persisted).toContain("- project: acme/loja")
   })
 
   it("detects gitlab.com from an https remote with nested groups", async () => {

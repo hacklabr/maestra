@@ -88,7 +88,7 @@ export const maestraStatusTool = tool({
     const forge = resolved?.forge ?? null
     if (!forge) {
       notes.push(
-        "Plataforma de issues não detectada: pergunte UMA vez (GitHub ou GitLab? qual host?) e persista em .maestra/config.md (ADR-010).",
+        "Issue platform not detected: ask ONCE (GitHub or GitLab? which host?) and persist in .maestra/config.md (ADR-010).",
       )
     }
 
@@ -97,12 +97,12 @@ export const maestraStatusTool = tool({
       probeCli(exec, "gh", forge?.kind === "github" && forge.host !== "github.com" ? forge.host : undefined),
       probeCli(exec, "glab", forge?.kind === "gitlab" && forge.host !== "gitlab.com" ? forge.host : undefined),
     ])
-    if (cliForge === "gh" && !gh.present) notes.push("`gh` ausente — fallback MCP ou comandos manuais para o humano.")
+    if (cliForge === "gh" && !gh.present) notes.push("`gh` missing — MCP fallback or manual commands for the human.")
     if (cliForge === "gh" && gh.present && gh.authenticated === false)
-      notes.push("`gh` presente mas NÃO autenticado (`gh auth login`).")
-    if (cliForge === "glab" && !glab.present) notes.push("`glab` ausente — fallback MCP ou comandos manuais para o humano.")
+      notes.push("`gh` present but NOT authenticated (`gh auth login`).")
+    if (cliForge === "glab" && !glab.present) notes.push("`glab` missing — MCP fallback or manual commands for the human.")
     if (cliForge === "glab" && glab.present && glab.authenticated === false)
-      notes.push("`glab` presente mas NÃO autenticado (`glab auth login`).")
+      notes.push("`glab` present but NOT authenticated (`glab auth login`).")
 
     const [mcp, board, reachability] = await Promise.all([
       getMcpScan()(context.directory),
@@ -110,10 +110,10 @@ export const maestraStatusTool = tool({
       forge ? probeReachability(fetchFn, forge.kind, forge.host) : Promise.resolve({ url: null, status: null }),
     ])
     if (forge?.kind === "github" && board === "read") {
-      notes.push("Board (Projects): leitura ok; escopo de ESCRITA só é verificável na primeira movimentação — degradação P6 se falhar.")
+      notes.push("Board (Projects): read OK; WRITE scope only verifiable on first card move — P6 degradation if it fails.")
     }
     if (reachability.status === null && reachability.url) {
-      notes.push(`API da plataforma inalcançável (${reachability.url}) — verifique rede/VPN antes de criar qualquer coisa.`)
+      notes.push(`Platform API unreachable (${reachability.url}) — check network/VPN before creating anything.`)
     }
 
     const cliOk = cliForge === "gh" ? gh.present && gh.authenticated === true : cliForge === "glab" ? glab.present && glab.authenticated === true : false
@@ -121,7 +121,7 @@ export const maestraStatusTool = tool({
     const report = {
       pluginVersion: PLUGIN_VERSION,
       host: { id: host.id, evidence: host.evidence },
-      plataforma: forge ? { kind: forge.kind, host: forge.host, projeto: forge.project } : null,
+      platform: forge ? { kind: forge.kind, host: forge.host, project: forge.project } : null,
       cli: { gh, glab },
       reachability,
       mcp,
@@ -134,8 +134,8 @@ export const maestraStatusTool = tool({
         hierarchy: forge ? (forge.kind === "github" ? "sub-issues" : "links+tasklist") : "none",
       },
       repo: {
-        referenciaDocs: existsSync(join(context.directory, "docs", "referencia")),
-        rodadas: existsSync(join(context.directory, "docs", "rodadas")),
+        referenceDocs: existsSync(join(context.directory, "docs", "reference")),
+        rounds: existsSync(join(context.directory, "docs", "rounds")),
         teamMd: existsSync(join(context.directory, ".maestra", "team.md")),
         maestraConfig: existsSync(join(context.directory, ".maestra", "config.md")),
       },

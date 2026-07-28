@@ -1,65 +1,65 @@
 {
-  "plataforma": { "kind": "gitlab", "host": "gitlab.com", "projeto": "grupo/loja" },
+  "platform": { "kind": "gitlab", "host": "gitlab.com", "project": "grupo/loja" },
   "issue": {
-    "numero": 42,
+    "number": 42,
     "id": 196035106,
-    "titulo": "Implementar exportação de relatórios",
-    "estado": "open",
+    "title": "Implement report export",
+    "state": "open",
     "url": "https://gitlab.com/grupo/loja/-/issues/42"
   },
-  "labels": { "variante": "variante-condensado", "etapas": [], "marcadores": [] },
-  "metadados": {
-    "variante": "condensado",
-    "etapaAtual": "etapa-2",
-    "epico": 42,
-    "rodada": "R02",
-    "subestado": null
+  "labels": { "variant": "variant-condensed", "stages": [], "markers": [] },
+  "metadata": {
+    "variant": "condensed",
+    "currentStage": "stage-2",
+    "epic": 42,
+    "round": "R02",
+    "substate": null
   },
-  "pai": 42,
-  "filhos": [
-    { "numero": 43, "titulo": "Mini-briefing", "estado": "closed", "variante": null, "etapas": ["etapa-1"], "assignees": ["rafael"] },
-    { "numero": 44, "titulo": "Implementação — fatia 1", "estado": "open", "variante": null, "etapas": ["etapa-3"], "assignees": ["joao"] },
-    { "numero": 45, "titulo": "Reconciliação da rodada", "estado": "open", "variante": null, "etapas": ["etapa-3"], "assignees": ["joao"] }
+  "parent": 42,
+  "children": [
+    { "number": 43, "title": "Mini-briefing", "state": "closed", "variant": null, "stages": ["stage-1"], "assignees": ["rafael"] },
+    { "number": 44, "title": "Implementation — slice 1", "state": "open", "variant": null, "stages": ["stage-3"], "assignees": ["joao"] },
+    { "number": 45, "title": "Round reconciliation", "state": "open", "variant": null, "stages": ["stage-3"], "assignees": ["joao"] }
   ],
-  "comentarios": [
+  "comments": [
     {
-      "tipo": "override",
-      "autor": "rafael",
-      "data": "2026-07-28T10:00:00Z",
-      "corpo": "**Registro de override** — facilitador\n- Tipo: gate\n- De: Etapa 1 completa → Para: aberta com 1 item pendente\n- Critério objetivo contestado: gate = todas as tarefas fechadas\n- Motivo declarado: \"cliente precisa da estimativa hoje\"\n- Decidido por: @rafael em 28/07/2026"
+      "type": "override",
+      "author": "rafael",
+      "date": "2026-07-28T10:00:00Z",
+      "body": "**Override register** — facilitator\n- Type: gate\n- From: Stage 1 complete → To: open with 1 item pending\n- Objective criterion disputed: gate = all tasks closed\n- Declared reason: \"client needs the estimate today\"\n- Decided by: @rafael on 2026-07-28"
     },
     {
-      "tipo": "evento",
-      "autor": "rafael",
-      "data": "2026-07-28T10:05:00Z",
-      "corpo": "**Evento D** — override épico #42: Condensada→Mínima, critério contestado: \"estimativa > 5 dias\" — facilitador"
+      "type": "event",
+      "author": "rafael",
+      "date": "2026-07-28T10:05:00Z",
+      "body": "**Event D** — override epic #42: Condensed→Minimal, disputed criterion: \"estimate > 5 days\" — facilitator"
     }
   ],
-  "board": { "coluna": null },
+  "board": { "column": null },
   "gate": {
-    "porEtapa": {
-      "etapa-1": { "fechadas": 1, "total": 1 },
-      "etapa-3": { "fechadas": 0, "total": 2 }
+    "perStage": {
+      "stage-1": { "closed_": 1, "total": 1 },
+      "stage-3": { "closed_": 0, "total": 2 }
     },
-    "semEtapa": 0,
-    "reconciliacao": { "existe": true, "estado": "open", "numero": 45 }
+    "noStage": 0,
+    "reconciliation": { "exists": true, "state": "open", "number": 45 }
   },
-  "artefatos": [
+  "artifacts": [
     {
-      "numero": 43,
-      "titulo": "Mini-briefing",
-      "declarado": "docs/rodadas/R02-2026-10-exportacao/mini-briefing.md",
-      "existe": false
+      "number": 43,
+      "title": "Mini-briefing",
+      "declared": "docs/rounds/R02-2026-10-export/mini-briefing.md",
+      "exists": false
     }
   ],
-  "hierarquia": {
-    "tipo": "links+tasklist",
+  "hierarchy": {
+    "type": "links+tasklist",
     "taskCompletion": { "total": 3, "completed": 1 },
-    "dessincronia": [
-      { "numero": 43, "checkbox": "desmarcado", "estadoIssue": "closed" },
-      { "numero": 44, "checkbox": "marcado", "estadoIssue": "open" }
+    "desync": [
+      { "number": 43, "checkbox": "unchecked", "issueState": "closed" },
+      { "number": 44, "checkbox": "checked", "issueState": "open" }
     ]
   },
-  "paginacao": { "filhosTruncados": false, "comentariosTruncados": false },
-  "erros": []
+  "pagination": { "childrenTruncated": false, "commentsTruncated": false },
+  "errors": []
 }

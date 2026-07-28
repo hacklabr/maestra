@@ -1,10 +1,10 @@
 {
   "id": "rodada-paralela-rf",
-  "descricao": "FM-21: o PRD vivo já tem RF-03 (introduzido por OUTRA rodada em paralelo) e o escopo da rodada corrente planejava introduzir 'RF-03' — colisão de numeração. O agente deve verificar max(RF)+1, renumerar para RF-04 e registrar no registro de desvios.",
+  "description": "FM-21: the living PRD already has RF-03 (introduced by ANOTHER round in parallel) and the current round's scope planned to introduce 'RF-03' — numbering collision. The agent must check max(RF)+1, renumber to RF-04 and record it in the deviation register.",
   "files": {
-    "docs/referencia/prd.md": "# PRD vivo\n\n## RF-01 — Listagem de pedidos\n\nO usuário vê seus pedidos ordenados por data.\n\n## RF-02 — Detalhe do pedido\n\nO usuário abre o detalhe de um pedido.\n\n## RF-03 — Cupom de desconto\n\nO usuário aplica cupom de desconto no checkout.\n",
-    "docs/rodadas/R06-2026-11-exportacao-agendada/escopo.md": "# Escopo da rodada R06 — exportação agendada\n\n## Variante\ncondensado\n\n## Requisitos introduzidos\n- RF-03 — Exportação agendada de relatórios\n\n## Fora de escopo desta rodada\n- Cancelamento de agendamento\n",
-    "docs/rodadas/R06-2026-11-exportacao-agendada/desvios.md": "# Desvios da rodada R06 — exportação agendada\n\nNenhum desvio nesta rodada.\n",
-    ".maestra/team.md": "# Mapa de equipe\n\n- @rafael — Produto (PO)\n- @maria — Engenharia (dev sênior back-end)\n- @joao — Entrega (dev pleno full-stack)\n"
+    "docs/reference/prd.md": "# Living PRD\n\n## RF-01 — Order listing\n\nThe user sees their orders sorted by date.\n\n## RF-02 — Order detail\n\nThe user opens the detail of an order.\n\n## RF-03 — Discount coupon\n\nThe user applies a discount coupon at checkout.\n",
+    "docs/rounds/R06-2026-11-scheduled-export/scope.md": "# Round R06 scope — scheduled export\n\n## Variant\ncondensed\n\n## Requirements introduced\n- RF-03 — Scheduled report export\n\n## Out of scope for this round\n- Cancellation of scheduling\n",
+    "docs/rounds/R06-2026-11-scheduled-export/deviations.md": "# Round R06 deviations — scheduled export\n\nNo deviations in this round.\n",
+    ".maestra/team.md": "# Team map\n\n- @rafael — Product (PO)\n- @maria — Engineering (senior back-end dev)\n- @joao — Delivery (mid-level full-stack dev)\n"
   }
 }

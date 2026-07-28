@@ -26,7 +26,7 @@ import { parsePersonaMarker } from "./persona-marker.js"
  *    tracker recognizes the failure signature and does not register).
  */
 
-const SHELL_AGENT = "maestra/especialista"
+const SHELL_AGENT = "maestra/specialist"
 
 export interface PersonaExpansionOptions {
   catalogRoot: string
@@ -34,25 +34,25 @@ export interface PersonaExpansionOptions {
 
 function buildPersonaBlock(personaId: string, systemPrompt: string): string {
   return [
-    `## Persona (injetada pelo plugin fluxo — adote integralmente)`,
+    `## Persona (injected by the fluxo plugin — adopt it fully)`,
     ``,
     systemPrompt,
     ``,
-    `## Requisito de primeira resposta`,
+    `## First-response requirement`,
     ``,
-    `Declare sua persona na primeira linha, antes de qualquer outro conteúdo, no formato exato: "[${personaId}]".`,
-    `Depois responda normalmente, em PT-BR, dentro da persona.`,
+    `Declare your persona on the first line, before any other content, in the exact format: "[${personaId}]".`,
+    `Then respond normally, in the session's language, within the persona.`,
   ].join("\n")
 }
 
-export const EXPANSION_FAILURE_SIGNATURE = "[FLUXO PLUGIN ERROR — persona não encontrada]"
+export const EXPANSION_FAILURE_SIGNATURE = "[FLUXO PLUGIN ERROR — persona not found]"
 
 function buildFailureBlock(personaId: string, catalogRoot: string): string {
   return [
     EXPANSION_FAILURE_SIGNATURE,
-    `A persona "${personaId}" não existe no catálogo instalado (${catalogRoot}).`,
-    `NÃO improvise nem represente um especialista genérico.`,
-    `Reporte esta falha ao facilitador literalmente e pare.`,
+    `Persona "${personaId}" does not exist in the installed catalog (${catalogRoot}).`,
+    `DO NOT improvise or represent a generic specialist.`,
+    `Report this failure to the facilitator literally and stop.`,
   ].join("\n")
 }
 

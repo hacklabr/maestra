@@ -234,7 +234,7 @@ describe("ask_peer — error paths", () => {
 
     expect(result).toMatch(/^Error: peer "ux-researcher" has no session/)
     expect(result).toContain("persona::ux-researcher@<mesaId>")
-    expect(result).toContain("maestra/especialista")
+    expect(result).toContain("maestra/specialist")
     expect(promptCalls).toHaveLength(0)
   })
 
@@ -293,7 +293,7 @@ describe("resolvePeerSession — scope rules", () => {
 })
 
 describe("peer-tracker hook (marker-based identity, dual-host metadata)", () => {
-  const SHELL = "maestra/especialista"
+  const SHELL = "maestra/specialist"
 
   it("records OpenCode task spawns: persona from marker, session from metadata.sessionId", async () => {
     const tracker = createPeerTrackerHook()
@@ -335,8 +335,8 @@ describe("peer-tracker hook (marker-based identity, dual-host metadata)", () => 
 
     expect(findCallerPersona("sess-X")).toBeUndefined()
     expect(output.output).toContain("original output")
-    expect(output.output).toContain("SEM marker persona::")
-    expect(output.output).toContain("NÃO poderá usar ask_peer")
+    expect(output.output).toContain("WITHOUT persona:: marker")
+    expect(output.output).toContain("CANNOT use ask_peer")
   })
 
   it("ignores non-shell subagents and other tools", async () => {
@@ -364,7 +364,7 @@ describe("peer-tracker hook (marker-based identity, dual-host metadata)", () => 
         tool: "task",
         sessionID: "s",
         callID: "c6",
-        args: { subagent_type: SHELL, prompt: "[FLUXO PLUGIN ERROR — persona não encontrada]\nA persona..." },
+        args: { subagent_type: SHELL, prompt: "[FLUXO PLUGIN ERROR — persona not found]\nThe persona..." },
       },
       output,
     )

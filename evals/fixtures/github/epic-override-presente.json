@@ -1,73 +1,73 @@
 {
   "id": "epic-override-presente",
-  "descricao": "Épico #18 com label override-registrado, registro P3 e evento D presentes — derivação deve mostrar o override como fato, sem julgar.",
+  "description": "Epic #18 with override-registered label, P3 register and event D present — derivation must show the override as a fact, without judging.",
   "digests": {
     "18": {
-      "plataforma": {
+      "platform": {
         "kind": "github",
         "host": "github.com",
-        "projeto": "acme/loja"
+        "project": "acme/loja"
       },
       "issue": {
-        "numero": 18,
+        "number": 18,
         "id": 9018,
-        "titulo": "Ajuste na regra de frete",
-        "estado": "open",
+        "title": "Shipping rule adjustment",
+        "state": "open",
         "url": "https://github.com/acme/loja/issues/18"
       },
       "labels": {
-        "variante": "variante-minimo",
-        "etapas": [],
-        "marcadores": [
-          "override-registrado"
+        "variant": "variant-minimal",
+        "stages": [],
+        "markers": [
+          "override-registered"
         ]
       },
-      "metadados": {
-        "variante": "minimo",
-        "etapaAtual": "etapa-1",
-        "epico": null,
-        "rodada": "R04",
-        "subestado": "em-artefatos"
+      "metadata": {
+        "variant": "minimal",
+        "currentStage": "stage-1",
+        "epic": null,
+        "round": "R04",
+        "substate": "in-artifacts"
       },
-      "pai": null,
-      "filhos": [],
-      "comentarios": [
+      "parent": null,
+      "children": [],
+      "comments": [
         {
-          "tipo": "override",
-          "autor": "rafael",
-          "data": "2026-07-26T14:00:00Z",
-          "corpo": "**Registro de override** — facilitador\n- Tipo: variante\n- De: Condensada → Para: Mínima\n- Critério objetivo contestado: estimativa > 5 dias\n- Motivo declarado: \"escopo já está fechado com o cliente\"\n- Decidido por: @rafael em 2026-07-26"
+          "type": "override",
+          "author": "rafael",
+          "date": "2026-07-26T14:00:00Z",
+          "body": "**Override register** — facilitator\n- Type: variant\n- From: Condensed → To: Minimal\n- Objective criterion disputed: estimate > 5 days\n- Declared reason: \"scope is already closed with the client\"\n- Decided by: @rafael on 2026-07-26"
         },
         {
-          "tipo": "evento",
-          "autor": "rafael",
-          "data": "2026-07-26T14:00:00Z",
-          "corpo": "**Evento D** — override: Condensada → Mínima; critério contestado: \"estimativa > 5 dias\" — facilitador"
+          "type": "event",
+          "author": "rafael",
+          "date": "2026-07-26T14:00:00Z",
+          "body": "**Event D** — override: Condensed → Minimal; disputed criterion: \"estimate > 5 days\" — facilitator"
         }
       ],
       "board": {
-        "coluna": "Em andamento"
+        "column": "In progress"
       },
       "gate": {
-        "porEtapa": {},
-        "semEtapa": 0,
-        "reconciliacao": {
-          "existe": false,
-          "estado": null,
-          "numero": null
+        "perStage": {},
+        "noStage": 0,
+        "reconciliation": {
+          "exists": false,
+          "state": null,
+          "number": null
         }
       },
-      "artefatos": [],
-      "hierarquia": {
-        "tipo": "sub-issues",
+      "artifacts": [],
+      "hierarchy": {
+        "type": "sub-issues",
         "taskCompletion": null,
-        "dessincronia": []
+        "desync": []
       },
-      "paginacao": {
-        "filhosTruncados": false,
-        "comentariosTruncados": false
+      "pagination": {
+        "childrenTruncated": false,
+        "commentsTruncated": false
       },
-      "erros": []
+      "errors": []
     }
   },
   "execRoutes": []

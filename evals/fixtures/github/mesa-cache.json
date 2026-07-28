@@ -1,28 +1,28 @@
 {
   "id": "mesa-cache",
-  "descricao": "Palco da J9 shell-specialist: épico em etapa-2 com decisão de cache na mesa. 'specialists' configura as respostas do shell por persona — o security-engineer responde SEM auto-declaração (palco do cenário de mismatch, SH-02).",
+  "description": "Stage for J9 shell-specialist: epic in stage-2 with a cache decision on the panel. 'specialists' configures the shell's responses per persona — the security-engineer responds WITHOUT self-declaration (stage for the mismatch scenario, SH-02).",
   "digests": {
     "12": {
-      "plataforma": { "kind": "github", "host": "github.com", "projeto": "acme/loja" },
-      "issue": { "numero": 12, "id": 9002, "titulo": "Implementar exportação de relatórios", "estado": "open", "url": "https://github.com/acme/loja/issues/12" },
-      "labels": { "variante": "variante-condensado", "etapas": [], "marcadores": [] },
-      "metadados": { "variante": "condensado", "etapaAtual": "etapa-2", "epico": null, "rodada": "R02", "subestado": "em-artefatos" },
-      "pai": null,
-      "filhos": [
-        { "numero": 16, "titulo": "Registro da decisão de cache", "estado": "open", "variante": null, "etapas": ["etapa-2"], "assignees": ["maria"] }
+      "platform": { "kind": "github", "host": "github.com", "project": "acme/loja" },
+      "issue": { "number": 12, "id": 9002, "title": "Implement report export", "state": "open", "url": "https://github.com/acme/loja/issues/12" },
+      "labels": { "variant": "variant-condensed", "stages": [], "markers": [] },
+      "metadata": { "variant": "condensed", "currentStage": "stage-2", "epic": null, "round": "R02", "substate": "in-artifacts" },
+      "parent": null,
+      "children": [
+        { "number": 16, "title": "Cache decision record", "state": "open", "variant": null, "stages": ["stage-2"], "assignees": ["maria"] }
       ],
-      "comentarios": [],
-      "board": { "coluna": "Em andamento" },
-      "gate": { "porEtapa": { "etapa-2": { "fechadas": 0, "total": 1 } }, "semEtapa": 0, "reconciliacao": { "existe": false, "estado": null, "numero": null } },
-      "artefatos": [],
-      "hierarquia": { "tipo": "sub-issues", "taskCompletion": null, "dessincronia": [] },
-      "paginacao": { "filhosTruncados": false, "comentariosTruncados": false },
-      "erros": []
+      "comments": [],
+      "board": { "column": "In progress" },
+      "gate": { "perStage": { "stage-2": { "closed_": 0, "total": 1 } }, "noStage": 0, "reconciliation": { "exists": false, "state": null, "number": null } },
+      "artifacts": [],
+      "hierarchy": { "type": "sub-issues", "taskCompletion": null, "desync": [] },
+      "pagination": { "childrenTruncated": false, "commentsTruncated": false },
+      "errors": []
     }
   },
   "specialists": {
     "software-development-security-engineer": {
-      "response": "Cache com invalidação por evento, TTL máximo de 15 minutos por causa das permissões. Diverjo do TTL infinito."
+      "response": "Cache with event-based invalidation, max TTL of 15 minutes because of permissions. I diverge from infinite TTL."
     }
   },
   "execRoutes": [

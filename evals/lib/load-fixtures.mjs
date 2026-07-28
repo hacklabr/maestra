@@ -12,12 +12,12 @@ export async function loadJson(relativePath) {
   return JSON.parse(await readFile(full, "utf8"))
 }
 
-/** GitHub-state fixture: { id, descricao, status?, digests|digest, execRoutes? }. */
+/** GitHub-state fixture: { id, description, status?, digests|digest, execRoutes? }. */
 export async function loadGitHubFixture(relativePath) {
   const fixture = await loadJson(relativePath)
-  if (!fixture.id) throw new Error(`fixture ${relativePath} sem campo "id"`)
+  if (!fixture.id) throw new Error(`fixture ${relativePath} missing "id" field`)
   if (!fixture.digests && !fixture.digest && !fixture.status) {
-    throw new Error(`fixture ${relativePath}: precisa de "digests", "digest" ou "status"`)
+    throw new Error(`fixture ${relativePath}: needs "digests", "digest" or "status"`)
   }
   return fixture
 }
@@ -26,7 +26,7 @@ export async function loadGitHubFixture(relativePath) {
 export async function loadRepoFixture(relativePath) {
   const fixture = await loadJson(relativePath)
   if (!fixture.files || typeof fixture.files !== "object") {
-    throw new Error(`repo fixture ${relativePath}: precisa de "files" (objeto)`)
+    throw new Error(`repo fixture ${relativePath}: needs "files" (object)`)
   }
   return fixture
 }

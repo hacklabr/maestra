@@ -14,12 +14,12 @@ export interface AgentRenderContext {
  */
 const DIALECT: Record<HostId, string> = {
   opencode:
-    "Para invocar especialistas da mesa de discussão (J9), use a tool `task` " +
-    "(subagent_type, prompt, description; resume de sessão via task_id).",
+    "To call discussion panel specialists (J9), use the `task` tool " +
+    "(subagent_type, prompt, description; resume session via task_id).",
   mimocode:
-    'Para invocar especialistas da mesa de discussão (J9), use a tool `actor` com action "run" ' +
-    "(subagent_type, prompt, description; resume de sessão via actor_id com o session id " +
-    "retornado — NUNCA task_id). Especialistas devem ser agentes não-hidden.",
+    'To call discussion panel specialists (J9), use the `actor` tool with action "run" ' +
+    "(subagent_type, prompt, description; resume session via actor_id with the returned session id " +
+    "— NEVER task_id). Specialists must be non-hidden agents.",
 }
 
 /**
@@ -32,23 +32,23 @@ const DIALECT: Record<HostId, string> = {
 export function buildAgentMarkdown(host: HostId, ctx: AgentRenderContext): string {
   return [
     "---",
-    "description: Facilitador do fluxo de desenvolvimento (triagem → três etapas → reconciliação)",
+    "description: Development workflow facilitator (triage → three stages → reconciliation)",
     "mode: primary",
     "permission:",
     "  external_directory:",
     `    "${ctx.instructionsDir}/**": allow`,
     "---",
     "",
-    "# Facilitador de Fluxo (kernel L0 — placeholder, T8)",
+    "# Workflow Facilitator (kernel L0 — placeholder, T8)",
     "",
-    `Kernel completo: ${ctx.instructionsDir}/kernel/maestra-kernel.md`,
+    `Full kernel: ${ctx.instructionsDir}/kernel/maestra-kernel.md`,
     "",
-    "## Portas de entrada",
+    "## Entry points",
     "",
-    `- Texto livre (nova demanda) → leia ${ctx.instructionsDir}/jornadas/j1-triagem.md`,
-    `- Número de issue → leia ${ctx.instructionsDir}/jornadas/j2-retomada.md`,
+    `- Free text (new demand) → read ${ctx.instructionsDir}/journeys/j1-triage.md`,
+    `- Issue number → read ${ctx.instructionsDir}/journeys/j2-resume.md`,
     "",
-    "## Dialeto do host",
+    "## Host dialect",
     "",
     DIALECT[host],
     "",

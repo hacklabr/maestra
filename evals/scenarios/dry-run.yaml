@@ -1,22 +1,22 @@
-# Dry-run — prova de plumbing com o modelo mock (MAESTRA_EVAL_MOCK=1).
-# Valida provider + stub tools + fixtures + asserts SEM modelo vivo.
+# Dry-run — plumbing proof with the mock model (MAESTRA_EVAL_MOCK=1).
+# Validates provider + stub tools + fixtures + asserts WITHOUT a live model.
 
-- description: "DRY J2: mock chama status→digest e produz resumo falseável (pipeline íntegro)"
+- description: "DRY J2: mock calls status→digest and produces a falseable summary (intact pipeline)"
   vars:
     fixture: fixtures/github/epic-labels-contraditorias.json
     repo: fixtures/repo/rodada-aberta.json
-    modules: ["jornadas/j2-retomada.md"]
+    modules: ["journeys/j2-resume.md"]
     mock: true
     entry: "12"
     mockSteps:
       - toolCall: { name: "maestra_status", args: {} }
       - toolCall: { name: "maestra_issue_digest", args: { issue: 12 } }
-      - text: "Li o estado a partir da plataforma: épico #12, variante Condensada, rodada R02 (exportação de relatórios). Os sinais estão conflitantes: os metadados dizem Etapa 1, mas as tarefas das Etapas 1 e 2 estão todas fechadas — pela estrutura, está na Etapa 3. Falta a conferência final (#27). Próximo passo: @joao executa a reconciliação. Correto?"
+      - text: "I read the state from the platform: epic #12, Condensed variant, round R02 (report export). The signals are conflicting: the metadata says Stage 1, but the Stage 1 and Stage 2 tasks are all closed — by structure, it's in Stage 3. The final review is pending (#27). Next step: @joao runs the reconciliation. Correct?"
     expectedCallOrder:
       - "tool:maestra_status"
       - "tool:maestra_issue_digest"
     requiredPatterns:
-      - "Etapa 3"
+      - "Stage 3"
   assert:
     - type: javascript
       value: file://asserts/tool-order.mjs
@@ -25,17 +25,17 @@
     - type: javascript
       value: file://asserts/falseable-summary.mjs
 
-- description: "DRY J8: mock emite evento E com a recusa estrutural (pipeline + formato)"
+- description: "DRY J8: mock emits event E with the structural refusal (pipeline + format)"
   vars:
     fixture: fixtures/github/epic-etapa3-execucao.json
     repo: fixtures/repo/rodada-aberta.json
-    modules: ["jornadas/j5-etapa3.md", "jornadas/j8-guarda.md"]
+    modules: ["journeys/j5-stage3.md", "journeys/j8-guard.md"]
     mock: true
-    entry: "Coloca exportação em Excel na #24, rapidinho."
+    entry: "Add Excel export to #24, real quick."
     mockSteps:
       - toolCall: { name: "maestra_status", args: {} }
-      - toolCall: { name: "maestra_emit_event", args: { epic: 12, type: "E", payload: { demanda_criada: "pendente" } } }
-      - text: "Boa ideia — e é exatamente por isso que ela não pode entrar por aqui: se eu implementar agora, ela some da rastreabilidade. Registrada, ela não se perde. Abro a demanda nova agora (leva 2 minutos, você só confirma a descrição) e essa tarefa segue com o escopo original. Abro a demanda?"
+      - toolCall: { name: "maestra_emit_event", args: { epic: 12, type: "E", payload: { demand_created: "pending" } } }
+      - text: "Good idea — and that's exactly why it can't enter through here: if I implement it now, it disappears from traceability. Registered, it doesn't get lost. I'll open the new demand now (takes 2 minutes, you just confirm the description) and this task continues with its original scope. Shall I open the demand?"
     expectEvent: "E"
   assert:
     - type: javascript

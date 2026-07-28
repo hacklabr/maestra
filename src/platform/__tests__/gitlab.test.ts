@@ -10,10 +10,10 @@ const REF = { forge: FORGE, number: 42 }
 const GL_ISSUE = {
   iid: 42,
   id: 196035106,
-  title: "Implementar exportação de relatórios",
-  description: "**Variante:** condensado · **Épico:** #7",
+  title: "Implement report export",
+  description: "**Variant:** condensed · **Epic:** #7",
   state: "opened",
-  labels: ["variante-condensado", "status::em-andamento"],
+  labels: ["variant-condensed", "status::in-progress"],
   assignees: [{ username: "maria" }],
   web_url: "https://gitlab.com/grupo/loja/-/issues/42",
   task_completion_status: { count: 5, completed_count: 2 },
@@ -27,9 +27,9 @@ describe("GitLab adapter", () => {
     expect(issue).toMatchObject({
       number: 42,
       id: 196035106,
-      body: "**Variante:** condensado · **Épico:** #7",
+      body: "**Variant:** condensed · **Epic:** #7",
       state: "open",
-      labels: ["variante-condensado", "status::em-andamento"],
+      labels: ["variant-condensed", "status::in-progress"],
       assignees: ["maria"],
       taskCompletion: { total: 5, completed: 2 },
     })
@@ -58,39 +58,39 @@ describe("GitLab adapter", () => {
   })
 
   it("listChildren reads relates_to links (no databaseId gotcha)", async () => {
-    const child = { ...GL_ISSUE, iid: 43, state: "opened", labels: ["etapa-1"], assignees: [] }
+    const child = { ...GL_ISSUE, iid: 43, state: "opened", labels: ["stage-1"], assignees: [] }
     const { exec, calls } = makeExecStub([[/links/, json([child])]])
     const children = await createGitLabAdapter(FORGE, exec).listChildren(REF)
 
     expect(calls[0].args.join(" ")).toContain("issues/42/links?per_page=100")
     expect(children).toEqual([
-      { number: 43, title: child.title, state: "open", labels: ["etapa-1"], assignees: [] },
+      { number: 43, title: child.title, state: "open", labels: ["stage-1"], assignees: [] },
     ])
   })
 
   it("listComments filters system notes", async () => {
     const notes = [
-      { system: true, author: { username: "gitlab" }, body: "added ~etapa-1 label", created_at: "2026-07-28T09:00:00Z" },
-      { system: false, author: { username: "rafael" }, body: "**Evento A** — triagem", created_at: "2026-07-28T10:00:00Z" },
+      { system: true, author: { username: "gitlab" }, body: "added ~stage-1 label", created_at: "2026-07-28T09:00:00Z" },
+      { system: false, author: { username: "rafael" }, body: "**Event A** — triage", created_at: "2026-07-28T10:00:00Z" },
     ]
     const { exec } = makeExecStub([[/notes/, json(notes)]])
     const comments = await createGitLabAdapter(FORGE, exec).listComments(REF)
 
     expect(comments).toEqual([
-      { author: "rafael", body: "**Evento A** — triagem", createdAt: "2026-07-28T10:00:00Z" },
+      { author: "rafael", body: "**Event A** — triage", createdAt: "2026-07-28T10:00:00Z" },
     ])
   })
 
   it("postComment POSTs a note with -f body", async () => {
     const { exec, calls } = makeExecStub([[/notes/, json({ id: 1 })]])
-    await createGitLabAdapter(FORGE, exec).postComment(REF, "comentário de gate — facilitador")
+    await createGitLabAdapter(FORGE, exec).postComment(REF, "gate comment — facilitator")
     expect(calls[0].args).toEqual([
       "api",
       "projects/grupo%2Floja/issues/42/notes",
       "-X",
       "POST",
       "-f",
-      "body=comentário de gate — facilitador",
+      "body=gate comment — facilitator",
     ])
   })
 
@@ -100,18 +100,18 @@ describe("GitLab adapter", () => {
   })
 
   it("getParent returns null without a P1 epic reference", async () => {
-    const orphan = { ...GL_ISSUE, description: "issue avulsa, sem metadados" }
+    const orphan = { ...GL_ISSUE, description: "standalone issue, no metadata" }
     const { exec } = makeExecStub([[/issues\/42/, json(orphan)]])
     expect(await createGitLabAdapter(FORGE, exec).getParent(REF)).toBeNull()
   })
 
   it("getBoardColumn reads the status::* label", async () => {
     const { exec } = makeExecStub([[/issues\/42/, json(GL_ISSUE)]])
-    expect(await createGitLabAdapter(FORGE, exec).getBoardColumn(REF)).toBe("em-andamento")
+    expect(await createGitLabAdapter(FORGE, exec).getBoardColumn(REF)).toBe("in-progress")
   })
 
   it("getBoardColumn returns null without a status:: label", async () => {
-    const noStatus = { ...GL_ISSUE, labels: ["variante-condensado"] }
+    const noStatus = { ...GL_ISSUE, labels: ["variant-condensed"] }
     const { exec } = makeExecStub([[/issues\/42/, json(noStatus)]])
     expect(await createGitLabAdapter(FORGE, exec).getBoardColumn(REF)).toBeNull()
   })
@@ -121,17 +121,17 @@ describe("GitLab adapter", () => {
     await expect(createGitLabAdapter(FORGE, exec).getIssue(REF)).rejects.toThrow(ForgeError)
   })
 
-  it("listEpics queries every variante label and dedupes by iid", async () => {
+  it("listEpics queries every variant label and dedupes by iid", async () => {
     const { exec } = makeExecStub([
-      [/labels=variante-completo/, json([])],
-      [/labels=variante-condensado/, json([GL_ISSUE])],
-      [/labels=variante-minimo/, json([GL_ISSUE])], // same iid in two label queries
-      [/labels=variante-tecnica/, json([])],
+      [/labels=variant-full/, json([])],
+      [/labels=variant-condensed/, json([GL_ISSUE])],
+      [/labels=variant-minimal/, json([GL_ISSUE])], // same iid in two label queries
+      [/labels=variant-technical/, json([])],
     ])
     const epics = await createGitLabAdapter(FORGE, exec).listEpics()
 
     expect(epics).toHaveLength(1)
     expect(epics[0].number).toBe(42)
-    expect(epics[0].labels).toContain("variante-condensado")
+    expect(epics[0].labels).toContain("variant-condensed")
   })
 })

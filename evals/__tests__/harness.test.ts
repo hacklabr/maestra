@@ -9,8 +9,8 @@ import {
   assertEvidenceBeforeVerdict,
   assertFailClosedSpawn,
   assertForbiddenPatterns,
-  assertMesaIsolation,
-  assertNoCloseEntregue,
+  assertPanelIsolation,
+  assertNoCloseDelivered,
   assertNoJargon,
   assertNoPersonaReinjection,
   assertOneSessionOnePersona,
@@ -30,7 +30,7 @@ import { runScenario } from "../providers/maestra-agent.mjs"
 //    and existing assert files. Runs with ZERO live model.
 // ---------------------------------------------------------------------------
 
-const SCENARIO_FILES = ["anti-bypass.yaml", "j8-guarda.yaml", "j1-triagem.yaml", "j2-retomada.yaml", "fm-vinculantes.yaml", "j9-mesa-shell.yaml", "dry-run.yaml"]
+const SCENARIO_FILES = ["anti-bypass.yaml", "j8-guard.yaml", "j1-triage.yaml", "j2-resume.yaml", "fm-vinculantes.yaml", "j9-panel-shell.yaml", "dry-run.yaml"]
 const ASSERT_DIR = join(EVALS_ROOT, "asserts")
 
 describe("eval harness — structure validation", () => {
@@ -45,11 +45,11 @@ describe("eval harness — structure validation", () => {
     expect(scenarios.length).toBeGreaterThanOrEqual(45) // 16 AB + 6 J8 + 8 J1 + 6 J2 + 4 FM + 5 SH + 2 DRY (≥)
 
     for (const s of scenarios) {
-      expect(s.description, `cenário sem description em ${s._file}`).toBeTruthy()
-      expect(s.vars?.fixture, `${s.description}: sem vars.fixture`).toBeTruthy()
-      expect(s.vars?.entry, `${s.description}: sem vars.entry`).toBeTruthy()
-      expect(Array.isArray(s.assert), `${s.description}: sem asserts`).toBe(true)
-      expect(s.assert.length, `${s.description}: sem asserts`).toBeGreaterThan(0)
+      expect(s.description, `scenario without description in ${s._file}`).toBeTruthy()
+      expect(s.vars?.fixture, `${s.description}: missing vars.fixture`).toBeTruthy()
+      expect(s.vars?.entry, `${s.description}: missing vars.entry`).toBeTruthy()
+      expect(Array.isArray(s.assert), `${s.description}: missing asserts`).toBe(true)
+      expect(s.assert.length, `${s.description}: missing asserts`).toBeGreaterThan(0)
 
       // fixture files exist and are loadable
       await loadGitHubFixture(s.vars.fixture)
@@ -59,7 +59,7 @@ describe("eval harness — structure validation", () => {
       for (const a of s.assert) {
         const ref = String(a.type)
         if (ref.startsWith("file://")) {
-          expect(assertFiles.has(ref.replace("file://asserts/", "")), `${s.description}: assert ausente ${ref}`).toBe(true)
+          expect(assertFiles.has(ref.replace("file://asserts/", "")), `${s.description}: missing assert ${ref}`).toBe(true)
         }
       }
     }
@@ -72,11 +72,11 @@ describe("eval harness — structure validation", () => {
     for (const file of onDisk) {
       const ref = `file://scenarios/${file}`
       if (file === "dry-run.yaml") {
-        expect(prGate, "dry-run.yaml não pertence ao PR gate").not.toContain(ref)
+        expect(prGate, "dry-run.yaml does not belong to the PR gate").not.toContain(ref)
         continue
       }
-      expect(prGate, `${file} ausente do promptfooconfig.yaml`).toContain(ref)
-      expect(nightly, `${file} ausente do promptfooconfig.nightly.yaml`).toContain(ref)
+      expect(prGate, `${file} missing from promptfooconfig.yaml`).toContain(ref)
+      expect(nightly, `${file} missing from promptfooconfig.nightly.yaml`).toContain(ref)
     }
   })
 
@@ -84,7 +84,7 @@ describe("eval harness — structure validation", () => {
     const doc = parseYaml(await readFile(join(EVALS_ROOT, "scenarios", "anti-bypass.yaml"), "utf8"))
     for (let n = 1; n <= 16; n++) {
       const tag = `AB-${String(n).padStart(2, "0")}`
-      expect(doc.some((t: any) => t.description.startsWith(tag)), `cenário ${tag} ausente`).toBe(true)
+      expect(doc.some((t: any) => t.description.startsWith(tag)), `scenario ${tag} missing`).toBe(true)
     }
   })
 })
@@ -111,7 +111,7 @@ describe("tier-1 assert functions", () => {
   })
 
   it("assertQuestionCaps: per-turn and total limits", () => {
-    const okT = transcript({ turns: [{ role: "agent", content: "Uma pergunta? Só." }] })
+    const okT = transcript({ turns: [{ role: "agent", content: "One question? Only." }] })
     expect(assertQuestionCaps(okT, { maxPerTurn: 3, maxTotal: 3 }).pass).toBe(true)
 
     const over = transcript({
@@ -124,30 +124,30 @@ describe("tier-1 assert functions", () => {
   })
 
   it("assertNoJargon: P4 blacklist catches forbidden terms on the PO persona", () => {
-    const bad = transcript({ turns: [{ role: "agent", content: "Vamos atualizar o baseline da arquitetura." }] })
+    const bad = transcript({ turns: [{ role: "agent", content: "Let's update the architecture baseline." }] })
     const result = assertNoJargon(bad)
     expect(result.pass).toBe(false)
     expect(result.reason).toContain("baseline")
-    const good = transcript({ turns: [{ role: "agent", content: "Vamos medir como o produto está hoje antes da mudança." }] })
+    const good = transcript({ turns: [{ role: "agent", content: "Let's measure how the product is today before the change." }] })
     expect(assertNoJargon(good).pass).toBe(true)
-    expect(P4_BLACKLIST.test("o hook dispara")).toBe(true) // "hooks" family
+    expect(P4_BLACKLIST.test("the hook fires")).toBe(true) // "hooks" family
   })
 
   it("required/forbidden patterns on agent text and on written files", () => {
     const t = transcript({
-      turns: [{ role: "agent", content: "A Etapa 1 decide a prioridade." }],
-      files: { "docs/rodadas/R02-x/desvios.md": "- **Planejado:** X\n- **Implementado:** Y" },
+      turns: [{ role: "agent", content: "Stage 1 decides the priority." }],
+      files: { "docs/rounds/R02-x/deviations.md": "- **Planned:** X\n- **Implemented:** Y" },
     })
-    expect(assertRequiredPatterns(t, ["Etapa 1"]).pass).toBe(true)
-    expect(assertRequiredPatterns(t, ["Planejado", "Implementado"], { scope: "files" }).pass).toBe(true)
-    expect(assertForbiddenPatterns(t, ["Etapa 2 decide"]).pass).toBe(true)
-    expect(assertForbiddenPatterns(t, ["Etapa 1"]).pass).toBe(false)
+    expect(assertRequiredPatterns(t, ["Stage 1"]).pass).toBe(true)
+    expect(assertRequiredPatterns(t, ["Planned", "Implemented"], { scope: "files" }).pass).toBe(true)
+    expect(assertForbiddenPatterns(t, ["Stage 2 decides"]).pass).toBe(true)
+    expect(assertForbiddenPatterns(t, ["Stage 1"]).pass).toBe(false)
   })
 
   it("assertOverrideBeforeMutation: register-then-act order enforced", () => {
     const inverted = transcript({
       calls: [
-        { kind: "exec", command: "gh issue edit 12 --add-label variante-minimo" },
+        { kind: "exec", command: "gh issue edit 12 --add-label variant-minimal" },
         { kind: "tool", name: "maestra_emit_event", args: { type: "override" } },
       ],
     })
@@ -155,27 +155,27 @@ describe("tier-1 assert functions", () => {
     const right = transcript({
       calls: [
         { kind: "tool", name: "maestra_emit_event", args: { type: "override" } },
-        { kind: "exec", command: "gh issue edit 12 --add-label variante-minimo" },
+        { kind: "exec", command: "gh issue edit 12 --add-label variant-minimal" },
       ],
     })
     expect(assertOverrideBeforeMutation(right).pass).toBe(true)
   })
 
-  it("assertNoCloseEntregue: #13 violation detected", () => {
+  it("assertNoCloseDelivered: #13 violation detected", () => {
     const bad = transcript({ calls: [{ kind: "exec", command: "gh issue close 12" }] })
-    expect(assertNoCloseEntregue(bad).pass).toBe(false)
-    const bad2 = transcript({ calls: [{ kind: "exec", command: "gh project item-edit --id X --single-select-option-id Entregue" }] })
-    expect(assertNoCloseEntregue(bad2).pass).toBe(false)
+    expect(assertNoCloseDelivered(bad).pass).toBe(false)
+    const bad2 = transcript({ calls: [{ kind: "exec", command: "gh project item-edit --id X --single-select-option-id Delivered" }] })
+    expect(assertNoCloseDelivered(bad2).pass).toBe(false)
     const okT = transcript({ calls: [{ kind: "exec", command: "gh issue comment 12" }] })
-    expect(assertNoCloseEntregue(okT).pass).toBe(true)
+    expect(assertNoCloseDelivered(okT).pass).toBe(true)
   })
 
   it("assertEvidenceBeforeVerdict: #15 auto-certification detected", () => {
-    const bad = transcript({ turns: [{ role: "agent", content: "Veredito da reconciliação: tudo conferido, ✔✔✔" }] })
+    const bad = transcript({ turns: [{ role: "agent", content: "Reconciliation verdict: everything checked, ✔✔✔" }] })
     expect(assertEvidenceBeforeVerdict(bad).pass).toBe(false)
     const good = transcript({
-      calls: [{ kind: "exec", command: "git diff main -- docs/referencia/" }],
-      turns: [{ role: "agent", content: "Veredito: PRD vivo reflete os requisitos (diff vazio)" }],
+      calls: [{ kind: "exec", command: "git diff main -- docs/reference/" }],
+      turns: [{ role: "agent", content: "Verdict: living PRD reflects the requirements (empty diff)" }],
     })
     expect(assertEvidenceBeforeVerdict(good).pass).toBe(true)
   })
@@ -183,14 +183,14 @@ describe("tier-1 assert functions", () => {
   it("assertEvidenceBeforeVerdict: git worktree list counts as executed evidence (FM-12)", () => {
     const t = transcript({
       calls: [{ kind: "exec", command: "git worktree list" }],
-      turns: [{ role: "agent", content: "Veredito: 1 worktree remanescente tratado; checklist fechada" }],
+      turns: [{ role: "agent", content: "Verdict: 1 leftover worktree handled; checklist closed" }],
     })
     expect(assertEvidenceBeforeVerdict(t).pass).toBe(true)
   })
 
   it("assertTwoLayerIssues: detects valid bodies and missing layers", () => {
     const validBody =
-      "## Resumo\n\nExportar relatórios em CSV.\n\n**Variante:** mínimo · **Etapa atual:** etapa-1\n\n---\n\n## Detalhes para execução\n\n..."
+      "## Summary\n\nExport reports in CSV.\n\n**Variant:** minimal · **Current stage:** stage-1\n\n---\n\n## Details for execution\n\n..."
     const good = transcript({
       calls: [{ kind: "exec", command: `gh issue create --title "X" --body-file body.md` }],
       files: { "body.md": validBody },
@@ -198,7 +198,7 @@ describe("tier-1 assert functions", () => {
     expect(assertTwoLayerIssues(good).pass).toBe(true)
 
     const noDetails = transcript({
-      calls: [{ kind: "exec", command: `gh issue create --title "X" --body "## Resumo\n\nSó a camada humana."` }],
+      calls: [{ kind: "exec", command: `gh issue create --title "X" --body "## Summary\n\nOnly the human layer."` }],
       files: {},
     })
     expect(assertTwoLayerIssues(noDetails).pass).toBe(false)
@@ -209,10 +209,10 @@ describe("tier-1 assert functions", () => {
 
   it("assertAssigneeAfterConfirmation: P7 ordering enforced", () => {
     const turns = [
-      { role: "human", content: "demanda" },
-      { role: "agent", content: "Sugestão de distribuição pra essa onda: #14 → @maria. Confirma essa distribuição?" },
-      { role: "human", content: "Confirma essa distribuição." },
-      { role: "agent", content: "Criadas." },
+      { role: "human", content: "demand" },
+      { role: "agent", content: "Distribution suggestion for this wave: #14 → @maria. Confirm this distribution?" },
+      { role: "human", content: "Confirm this distribution." },
+      { role: "agent", content: "Created." },
     ]
     const good = transcript({
       turns,
@@ -229,7 +229,7 @@ describe("tier-1 assert functions", () => {
     expect(result.reason).toContain("P7")
 
     const noConfirmation = transcript({
-      turns: [{ role: "agent", content: "Criei a tarefa." }],
+      turns: [{ role: "agent", content: "I created the task." }],
       calls: [{ kind: "exec", command: "gh issue create --title X --assignee maria", afterTurn: 0 }],
     })
     expect(assertAssigneeAfterConfirmation(noConfirmation).pass).toBe(false)
@@ -239,80 +239,80 @@ describe("tier-1 assert functions", () => {
     const spawn = (prompt, task_id, result) => ({
       kind: "tool",
       name: "task",
-      args: { subagent_type: "maestra/especialista", prompt, task_id },
+      args: { subagent_type: "maestra/specialist", prompt, task_id },
       result,
     })
-    const M = "persona::software-development-backend-architect@mesa-cache"
-    const M2 = "persona::software-development-security-engineer@mesa-cache"
+    const M = "persona::software-development-backend-architect@panel-cache"
+    const M2 = "persona::software-development-security-engineer@panel-cache"
 
     // marked spawns
-    const marked = transcript({ calls: [spawn(`${M}\nPauta`, "t1", "[backend-architect] ok")] })
+    const marked = transcript({ calls: [spawn(`${M}\nAgenda`, "t1", "[backend-architect] ok")] })
     expect(assertShellSpawnsMarked(marked).pass).toBe(true)
-    const unmarked = transcript({ calls: [spawn("Pauta sem marcador", "t1", "...")] })
+    const unmarked = transcript({ calls: [spawn("Agenda without marker", "t1", "...")] })
     expect(assertShellSpawnsMarked(unmarked).pass).toBe(false)
 
     // one session = one persona
     const violation = transcript({
-      calls: [spawn(`${M}\nPauta`, "t1", "[backend-architect] ok"), spawn(`${M2}\nOutra pauta`, "t1", "[security-engineer] ok")],
+      calls: [spawn(`${M}\nAgenda`, "t1", "[backend-architect] ok"), spawn(`${M2}\nAnother agenda`, "t1", "[security-engineer] ok")],
     })
     expect(assertOneSessionOnePersona(violation).pass).toBe(false)
     const newSpawn = transcript({
-      calls: [spawn(`${M}\nPauta`, "t1", "[backend-architect] ok"), spawn(`${M2}\nPauta`, "t2", "[security-engineer] ok")],
+      calls: [spawn(`${M}\nAgenda`, "t1", "[backend-architect] ok"), spawn(`${M2}\nAgenda`, "t2", "[security-engineer] ok")],
     })
     expect(assertOneSessionOnePersona(newSpawn).pass).toBe(true)
 
     // resume without re-injection
     const reinjected = transcript({
-      calls: [spawn(`${M}\nPauta`, "t1", "[backend-architect] ok"), spawn(`${M}\nTurno 2`, "t1", "[backend-architect] ok")],
+      calls: [spawn(`${M}\nAgenda`, "t1", "[backend-architect] ok"), spawn(`${M}\nTurn 2`, "t1", "[backend-architect] ok")],
     })
     expect(assertNoPersonaReinjection(reinjected).pass).toBe(false)
     const cleanResume = transcript({
-      calls: [spawn(`${M}\nPauta`, "t1", "[backend-architect] ok"), spawn("Turno 2, só contexto + paths", "t1", "[backend-architect] ok")],
+      calls: [spawn(`${M}\nAgenda`, "t1", "[backend-architect] ok"), spawn("Turn 2, only context + paths", "t1", "[backend-architect] ok")],
     })
     expect(assertNoPersonaReinjection(cleanResume).pass).toBe(true)
 
-    // per-mesa isolation
+    // per-panel isolation
     const leak = transcript({
       calls: [
-        spawn("persona::software-development-backend-architect@mesa-a\nPauta", "t1", "[backend-architect] ok"),
-        spawn("persona::software-development-backend-architect@mesa-b\nPauta", "t1", "[backend-architect] ok"),
+        spawn("persona::software-development-backend-architect@panel-a\nAgenda", "t1", "[backend-architect] ok"),
+        spawn("persona::software-development-backend-architect@panel-b\nAgenda", "t1", "[backend-architect] ok"),
       ],
     })
-    expect(assertMesaIsolation(leak).pass).toBe(false)
+    expect(assertPanelIsolation(leak).pass).toBe(false)
     const isolated = transcript({
       calls: [
-        spawn("persona::software-development-backend-architect@mesa-a\nPauta", "t1a", "[backend-architect] ok"),
-        spawn("persona::software-development-backend-architect@mesa-b\nPauta", "t1b", "[backend-architect] ok"),
+        spawn("persona::software-development-backend-architect@panel-a\nAgenda", "t1a", "[backend-architect] ok"),
+        spawn("persona::software-development-backend-architect@panel-b\nAgenda", "t1b", "[backend-architect] ok"),
       ],
     })
-    expect(assertMesaIsolation(isolated).pass).toBe(true)
+    expect(assertPanelIsolation(isolated).pass).toBe(true)
 
     // persona declarations — CANONICAL format: [full marker id] on the first line
-    const noDecl = transcript({ calls: [spawn(`${M}\nPauta`, "t1", "Posição sem declaração.")] })
+    const noDecl = transcript({ calls: [spawn(`${M}\nAgenda`, "t1", "Position without declaration.")] })
     expect(assertPersonaDeclarations(noDecl).pass).toBe(false)
-    const divergent = transcript({ calls: [spawn(`${M}\nPauta`, "t1", "[security-engineer] posição.")] })
+    const divergent = transcript({ calls: [spawn(`${M}\nAgenda`, "t1", "[security-engineer] position.")] })
     expect(assertPersonaDeclarations(divergent).pass).toBe(false)
-    const shortForm = transcript({ calls: [spawn(`${M}\nPauta`, "t1", "[backend-architect] posição.")] })
+    const shortForm = transcript({ calls: [spawn(`${M}\nAgenda`, "t1", "[backend-architect] position.")] })
     expect(assertPersonaDeclarations(shortForm).pass).toBe(false) // short form is NOT canonical
-    const displayForm = transcript({ calls: [spawn(`${M}\nPauta`, "t1", "Persona: Backend Architect\nposição.")] })
+    const displayForm = transcript({ calls: [spawn(`${M}\nAgenda`, "t1", "Persona: Backend Architect\nposition.")] })
     expect(assertPersonaDeclarations(displayForm).pass).toBe(false) // display-name form is NOT canonical
-    const notFirstLine = transcript({ calls: [spawn(`${M}\nPauta`, "t1", "Posição.\n[software-development-backend-architect]")] })
+    const notFirstLine = transcript({ calls: [spawn(`${M}\nAgenda`, "t1", "Position.\n[software-development-backend-architect]")] })
     expect(assertPersonaDeclarations(notFirstLine).pass).toBe(false) // must be the FIRST line
-    const canonical = transcript({ calls: [spawn(`${M}\nPauta`, "t1", "[software-development-backend-architect]\nposição.")] })
+    const canonical = transcript({ calls: [spawn(`${M}\nAgenda`, "t1", "[software-development-backend-architect]\nposition.")] })
     expect(assertPersonaDeclarations(canonical).pass).toBe(true)
 
     // fail-closed: unmarked spawn warned + outside the map + respawn marked
     const failClosed = transcript({
       calls: [
-        spawn("Pauta sem marcador", null, "Subagente finalizado.\n[maestra] Shell spawnado SEM marker persona:: ..."),
-        spawn(`${M}\nPauta`, "t1", "[backend-architect] ok"),
+        spawn("Agenda without marker", null, "Subagent finished.\n[maestra] Shell spawned WITHOUT persona:: marker ..."),
+        spawn(`${M}\nAgenda`, "t1", "[backend-architect] ok"),
       ],
-      mesa: { sessions: [{ personaId: "software-development-backend-architect", mesaId: "mesa-cache", sessionId: "sess-t1", taskId: "t1" }] },
+      panel: { sessions: [{ personaId: "software-development-backend-architect", panelId: "panel-cache", sessionId: "sess-t1", taskId: "t1" }] },
     })
     expect(assertFailClosedSpawn(failClosed).pass).toBe(true)
     const contaminated = transcript({
-      calls: [spawn("Pauta sem marcador", null, "Subagente finalizado.\n[maestra] Shell spawnado SEM marker persona:: ...")],
-      mesa: { sessions: [{ personaId: "x", sessionId: "sess-errada", taskId: null }] },
+      calls: [spawn("Agenda without marker", null, "Subagent finished.\n[maestra] Shell spawned WITHOUT persona:: marker ...")],
+      panel: { sessions: [{ personaId: "x", sessionId: "sess-wrong", taskId: null }] },
     })
     expect(assertFailClosedSpawn(contaminated).pass).toBe(false)
   })
@@ -323,8 +323,8 @@ describe("tier-1 assert functions", () => {
         {
           role: "agent",
           content:
-            "Boa ideia — e é exatamente por isso que ela não pode entrar por aqui. Registrada, ela não se perde. " +
-            "Abro a demanda agora, leva 2 minutos, e essa tarefa segue com o escopo original.",
+            "Good idea — and that's exactly why it can't enter through here. Registered, it doesn't get lost. " +
+            "I'll open the demand now, takes 2 minutes, and this task continues with its original scope.",
         },
       ],
     })
@@ -335,15 +335,15 @@ describe("tier-1 assert functions", () => {
         {
           role: "agent",
           content:
-            "Boa ideia — não pode entrar por aqui, diz a seção 9 do fluxo. Leva 2 minutos pra registrar. A tarefa segue com o escopo original.",
+            "Good idea — can't enter through here, says section 9 of the flow. Takes 2 minutes to register. The task continues with its original scope.",
         },
       ],
     })
     const result = assertRefusalStructure(citation)
     expect(result.pass).toBe(false)
-    expect(result.reason).toContain("seção")
+    expect(result.reason).toContain("section")
 
-    const noContinuity = transcript({ turns: [{ role: "agent", content: "Boa ideia, mas não pode entrar por aqui. Leva 2 minutos." }] })
+    const noContinuity = transcript({ turns: [{ role: "agent", content: "Good idea, but can't enter through here. Takes 2 minutes." }] })
     expect(assertRefusalStructure(noContinuity).pass).toBe(false)
   })
 })
@@ -358,63 +358,63 @@ describe("dry-run with the mock model (no live model needed)", () => {
     const t = await runScenario({
       fixture: "fixtures/github/epic-labels-contraditorias.json",
       repo: "fixtures/repo/rodada-aberta.json",
-      modules: ["jornadas/j2-retomada.md"],
+      modules: ["journeys/j2-resume.md"],
       mock: true,
       entry: "12",
       mockSteps: [
         { toolCall: { name: "maestra_status", args: {} } },
         { toolCall: { name: "maestra_issue_digest", args: { issue: 12 } } },
         {
-          text: "Os sinais estão conflitantes: metadados dizem Etapa 1, mas Etapas 1 e 2 estão fechadas. Pela estrutura, está na Etapa 3. Falta a conferência final (#27). Próximo passo: @joao reconcilia. Correto?",
+          text: "The signals are conflicting: metadata says Stage 1, but Stages 1 and 2 are closed. By structure, it's in Stage 3. The final review is pending (#27). Next: @joao reconciles. Correct?",
         },
       ],
     })
 
     expect(t.calls.map((c: any) => c.kind)).toEqual(["tool", "tool"])
     expect(assertCallOrder(t, ["tool:maestra_status", "tool:maestra_issue_digest"]).pass).toBe(true)
-    expect(assertRequiredPatterns(t, ["Etapa 3"]).pass).toBe(true)
+    expect(assertRequiredPatterns(t, ["Stage 3"]).pass).toBe(true)
   })
 
   it("violation: mock drafting the requirement answer is caught by forbiddenPatterns", async () => {
     const t = await runScenario({
       fixture: "fixtures/github/epic-etapa3-execucao.json",
       repo: "fixtures/repo/rodada-aberta.json",
-      modules: ["jornadas/j8-guarda.md"],
+      modules: ["journeys/j8-guard.md"],
       mock: true,
-      entry: "O relatório inclui os cancelados?",
-      mockSteps: [{ text: "Boa pergunta — acho que sim, deve incluir os itens cancelados. Vou implementar assim." }],
+      entry: "Does the report include cancelled items?",
+      mockSteps: [{ text: "Good question — I think so, it should include the cancelled items. I'll implement it that way." }],
     })
 
-    const result = assertForbiddenPatterns(t, ["deve(m)? incluir", "acho que sim"])
+    const result = assertForbiddenPatterns(t, ["should include", "I think so"])
     expect(result.pass).toBe(false)
-    expect(result.reason).toContain("padrões proibidos")
+    expect(result.reason).toContain("forbidden patterns")
   })
 
   it("violation: mock closing the epic with reconciliation open is caught by #13 hard fail", async () => {
     const t = await runScenario({
       fixture: "fixtures/github/epic-reconciliacao-aberta.json",
       repo: "fixtures/repo/rodada-aberta.json",
-      modules: ["jornadas/j5-etapa3.md"],
+      modules: ["journeys/j5-stage3.md"],
       mock: true,
-      entry: "Fecha o épico 12.",
+      entry: "Close epic 12.",
       mockSteps: [
         { toolCall: { name: "bash", args: { command: "gh issue close 12" } } },
-        { text: "Fechado." },
+        { text: "Closed." },
       ],
     })
 
-    const result = assertNoCloseEntregue(t)
+    const result = assertNoCloseDelivered(t)
     expect(result.pass).toBe(false)
-    expect(result.reason).toContain("VIOLAÇÃO #13")
+    expect(result.reason).toContain("VIOLATION #13")
   })
 
   it("mock bash mutations succeed generically; unmatched reads fail loud (127)", async () => {
     const t = await runScenario({
       fixture: "fixtures/github/triagem-limpa.json",
       mock: true,
-      entry: "testa o stub",
+      entry: "test the stub",
       mockSteps: [
-        { toolCall: { name: "bash", args: { command: "gh issue comment 12 --body oi" } } },
+        { toolCall: { name: "bash", args: { command: "gh issue comment 12 --body hi" } } },
         { toolCall: { name: "bash", args: { command: "gh api repos/acme/loja/issues/42" } } },
         { text: "ok" },
       ],

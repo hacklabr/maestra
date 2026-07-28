@@ -8,104 +8,104 @@ import {
 } from "../digest-parse.js"
 
 describe("classifyLabels (frozen vocabulary)", () => {
-  it("extracts variante, etapas and markers; ignores everything else", () => {
+  it("extracts variant, stages and markers; ignores everything else", () => {
     expect(
-      classifyLabels(["bug", "variante-condensado", "etapa-2", "override-registrado", "priority-high"]),
+      classifyLabels(["bug", "variant-condensed", "stage-2", "override-registered", "priority-high"]),
     ).toEqual({
-      variante: "variante-condensado",
-      etapas: ["etapa-2"],
-      marcadores: ["override-registrado"],
+      variant: "variant-condensed",
+      stages: ["stage-2"],
+      markers: ["override-registered"],
     })
   })
 
-  it("returns null variante and empty arrays when no fluxo labels exist", () => {
-    expect(classifyLabels(["bug"])).toEqual({ variante: null, etapas: [], marcadores: [] })
+  it("returns null variant and empty arrays when no fluxo labels exist", () => {
+    expect(classifyLabels(["bug"])).toEqual({ variant: null, stages: [], markers: [] })
   })
 })
 
 describe("parseMetadataLine (P1)", () => {
-  it("parses the full line including Subestado (P1.1)", () => {
+  it("parses the full line including Substate (P1.1)", () => {
     const body =
-      "## Resumo\n\nTexto.\n\n**Variante:** condensado · **Etapa atual:** etapa-2 · **Épico:** #42 · **Rodada:** R02 · **Subestado:** em-execucao\n\n---"
+      "## Summary\n\nText.\n\n**Variant:** condensed · **Current stage:** stage-2 · **Epic:** #42 · **Round:** R02 · **Substate:** in-execution\n\n---"
     expect(parseMetadataLine(body)).toEqual({
-      variante: "condensado",
-      etapaAtual: "etapa-2",
-      epico: 42,
-      rodada: "R02",
-      subestado: "em-execucao",
+      variant: "condensed",
+      currentStage: "stage-2",
+      epic: 42,
+      round: "R02",
+      substate: "in-execution",
     })
   })
 
-  it("returns null subestado when the field is absent (pre-P1.1 issues)", () => {
-    const body = "**Variante:** minimo · **Etapa atual:** etapa-3 · **Épico:** #7 · **Rodada:** R05"
-    expect(parseMetadataLine(body)?.subestado).toBeNull()
-    expect(parseMetadataLine(body)?.epico).toBe(7)
+  it("returns null substate when the field is absent (pre-P1.1 issues)", () => {
+    const body = "**Variant:** minimal · **Current stage:** stage-3 · **Epic:** #7 · **Round:** R05"
+    expect(parseMetadataLine(body)?.substate).toBeNull()
+    expect(parseMetadataLine(body)?.epic).toBe(7)
   })
 
   it("returns null when there is no metadata line (J2 branch B1)", () => {
-    expect(parseMetadataLine("issue avulsa sem metadados")).toBeNull()
+    expect(parseMetadataLine("standalone issue without metadata")).toBeNull()
   })
 })
 
 describe("classifyComment (P3 / events / signature)", () => {
   it("detects override registers", () => {
-    expect(classifyComment("**Registro de override** — facilitador\n- Tipo: gate")).toBe("override")
+    expect(classifyComment("**Override register** — facilitator\n- Type: gate")).toBe("override")
   })
 
   it("detects instrumentation events A–F", () => {
-    expect(classifyComment("**Evento A** — triagem épico #42: 3 perguntas — facilitador")).toBe("evento")
-    expect(classifyComment("**Evento F** — rodada R02: durante=2, reconciliação=1 — facilitador")).toBe("evento")
+    expect(classifyComment("**Event A** — triage epic #42: 3 questions — facilitator")).toBe("event")
+    expect(classifyComment("**Event F** — round R02: during=2, reconciliation=1 — facilitator")).toBe("event")
   })
 
   it("detects other facilitator-signed comments (gates)", () => {
-    expect(classifyComment("Gate verificado: 2 de 2 fechadas.\n— facilitador")).toBe("facilitador")
+    expect(classifyComment("Gate checked: 2 of 2 closed.\n— facilitator")).toBe("facilitator")
   })
 
   it("returns null for plain human comments", () => {
-    expect(classifyComment("começando hoje")).toBeNull()
-    expect(classifyComment("parece bom, facilitador")).toBeNull()
+    expect(classifyComment("starting today")).toBeNull()
+    expect(classifyComment("looks good, facilitator")).toBeNull()
   })
 
   it("override wins over event when both markers appear", () => {
-    expect(classifyComment("**Registro de override** — facilitador\n**Evento D** — x")).toBe("override")
+    expect(classifyComment("**Override register** — facilitator\n**Event D** — x")).toBe("override")
   })
 })
 
 describe("parseTasklist (ADR-011)", () => {
   it("parses checked and unchecked items with issue refs", () => {
-    const body = "## Tarefas\n\n- [ ] #43\n- [x] #44\n- [X] #45\n- [ ] item sem issue"
+    const body = "## Tasks\n\n- [ ] #43\n- [x] #44\n- [X] #45\n- [ ] item without issue"
     expect(parseTasklist(body)).toEqual([
-      { numero: 43, marcado: false },
-      { numero: 44, marcado: true },
-      { numero: 45, marcado: true },
+      { number: 43, checked: false },
+      { number: 44, checked: true },
+      { number: 45, checked: true },
     ])
   })
 
   it("returns empty when there is no tasklist", () => {
-    expect(parseTasklist("sem tasklist aqui")).toEqual([])
+    expect(parseTasklist("no tasklist here")).toEqual([])
   })
 })
 
 describe("extractDeclaredArtifactPath (G-05)", () => {
-  it("extracts docs/referencia paths", () => {
-    expect(extractDeclaredArtifactPath("REFERÊNCIA — atualizar docs/referencia/prd.md, seção X")).toBe(
-      "docs/referencia/prd.md",
+  it("extracts docs/reference paths", () => {
+    expect(extractDeclaredArtifactPath("REFERENCE — update docs/reference/prd.md, section X")).toBe(
+      "docs/reference/prd.md",
     )
   })
 
-  it("extracts docs/rodadas paths", () => {
+  it("extracts docs/rounds paths", () => {
     expect(
-      extractDeclaredArtifactPath("REGISTRO — docs/rodadas/R02-2026-10-exportacao/mini-briefing.md"),
-    ).toBe("docs/rodadas/R02-2026-10-exportacao/mini-briefing.md")
+      extractDeclaredArtifactPath("RECORD — docs/rounds/R02-2026-10-export/mini-briefing.md"),
+    ).toBe("docs/rounds/R02-2026-10-export/mini-briefing.md")
   })
 
-  it("extracts docs/decisoes (ADR) paths", () => {
-    expect(extractDeclaredArtifactPath("criar docs/decisoes/adr/ADR-003-cache.md")).toBe(
-      "docs/decisoes/adr/ADR-003-cache.md",
+  it("extracts docs/decisions (ADR) paths", () => {
+    expect(extractDeclaredArtifactPath("create docs/decisions/adr/ADR-003-cache.md")).toBe(
+      "docs/decisions/adr/ADR-003-cache.md",
     )
   })
 
   it("returns null without a declared path", () => {
-    expect(extractDeclaredArtifactPath("comentário técnico na própria issue")).toBeNull()
+    expect(extractDeclaredArtifactPath("technical comment on the issue itself")).toBeNull()
   })
 })

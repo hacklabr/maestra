@@ -11,7 +11,7 @@ import { VARIANTE_LABELS, type ChildIssue, type CommentFacts, type ForgeAdapter,
  *    work-items experimental (forbidden). Children = issue links
  *    (`relates_to`, Free/stable); roll-up = tasklist in the epic body
  *    (`task_completion_status`, Free). Parent = the P1 metadata line
- *    (`**Épico:** #N`) — the canonical cross-reference.
+ *    (`**Epic:** #N`) — the canonical cross-reference.
  *  - Board (ADR-013): column = scoped label `status::*` (Free); reading the
  *    column is a label scan — cheaper than GitHub Projects v2.
  *  - Self-hosted: `--hostname` passed when host ≠ gitlab.com

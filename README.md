@@ -1,90 +1,90 @@
 # maestra
 
-Plugin para **OpenCode** e **Mimo Code** que facilita o fluxo de desenvolvimento da equipe (triagem → três etapas → reconciliação, com gates e quatro variantes de profundidade), substituindo o Mesa: um **agente facilitador único** conduz demandas do texto livre à rodada reconciliada, com **estado derivado da plataforma de issues** — nunca local à sessão — e comportamento definido em *instructions* enxutas. A plataforma de issues é a memória; o plugin é a disciplina.
+Plugin for **OpenCode** and **Mimo Code** that facilitates the team's development workflow (triage → three stages → reconciliation, with gates and four depth variants), replacing Mesa: a **single facilitator agent** drives demands from free text to the reconciled round, with **state derived from the issue platform** — never local to the session — and behavior defined in lean *instructions*. The issue platform is the memory; the plugin is the discipline.
 
-## Instalação
+## Installation
 
-**Linha única (curl):**
+**Single line (curl):**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/hacklabr/maestra/main/install.sh | bash
 ```
 
-**A partir do clone (instala/atualiza e gera tudo):**
+**From clone (installs/updates and generates everything):**
 
 ```bash
 git clone https://github.com/hacklabr/maestra
 cd Fluxo/maestra
-bash install.sh                    # auto-detecta os hosts presentes
-bash install.sh --host both        # ou: opencode | mimocode
-bash install.sh --tag v0.1.0       # fixa uma versão (modo clone/update)
+bash install.sh                    # auto-detects present hosts
+bash install.sh --host both        # or: opencode | mimocode
+bash install.sh --tag v0.1.0       # pins a version (clone/update mode)
 ```
 
-**Via npx (pacote já publicado):**
+**Via npx (already published package):**
 
 ```bash
-npx maestra              # detecta o host automaticamente
+npx maestra              # detects the host automatically
 npx maestra --host opencode
 npx maestra --host mimocode
 npx maestra --host both
 ```
 
-O que o instalador faz (nas três vias): instala dependências e compila (`tsc`), copia as instructions para `<config-do-host>/maestra/instructions/` (incluindo o **catálogo completo grepável** de personas em `instructions/catalog/`), gera `agents/maestra.md` com o **dialeto correto do host** (um host por máquina — resolvido em tempo de instalação), gera **UM shell subagent** `agents/maestra/especialista.md` (não-hidden, descrição de 1 linha) e registra o plugin em `opencode.json` / `mimocode.json`.
+What the installer does (in all three ways): installs dependencies and compiles (`tsc`), copies instructions to `<host-config>/maestra/instructions/` (including the **complete greppable persona catalog** in `instructions/catalog/`), generates `agents/maestra.md` with the **correct host dialect** (one host per machine — resolved at install time), generates **ONE shell subagent** `agents/maestra/specialist.md` (non-hidden, 1-line description) and registers the plugin in `opencode.json` / `mimocode.json`.
 
-## Mesa de discussão: shell specialist (design A)
+## Discussion panel: shell specialist (design A)
 
-Em vez de registrar personas como subagentes (o Mesa registra ~369 — cada um vira uma linha na description da tool de subagente, ~22k tokens permanentes por sessão), o plugin instala **um único subagente quase vazio** (`maestra/especialista`). Na convocação da mesa, o facilitador:
+Instead of registering personas as subagents (Mesa registers ~369 — each becomes a line in the subagent tool description, ~22k permanent tokens per session), the plugin installs **a single nearly empty subagent** (`maestra/specialist`). When convening the panel, the facilitator:
 
-1. escolhe a persona no catálogo grepável (`instructions/catalog/<divisão>/<persona>.md`) — receita: `grep -ril "<domínio>" instructions/catalog/ | head -5`, depois `read` do arquivo escolhido;
-2. invoca o shell via tool de subagente do host (`task` no OpenCode / `actor` no Mimo) **com o conteúdo da persona inline no prompt de delegação** — a persona viaja como primeira mensagem da sessão fresca do shell;
-3. o shell declara o nome da persona e analisa a pauta a partir dela.
+1. picks the persona from the greppable catalog (`instructions/catalog/<division>/<persona>.md`) — recipe: `grep -ril "<domain>" instructions/catalog/ | head -5`, then `read` the chosen file;
+2. invokes the shell via the host's subagent tool (`task` in OpenCode / `actor` in Mimo) **with the persona content inline in the delegation prompt** — the persona travels as the first message of the shell's fresh session;
+3. the shell declares the persona name and analyzes the agenda from it.
 
-Custo: 1 linha no enum de subagentes (~60 tokens/msg) em vez de 12+. Funciona identicamente nos dois hosts (verificado nos fontes: `describeTask` do OpenCode não filtra hidden; o enum do `actor` do Mimo filtra `!hidden`). **Sem tool de busca** — grep nativo basta; gatilho de promoção para uma `maestra_catalog_search` está no [ROADMAP.md](ROADMAP.md), junto com o upgrade persona-via-`system.transform` (fase 2).
+Cost: 1 line in the subagent enum (~60 tokens/msg) instead of 12+. Works identically on both hosts (verified in the sources: OpenCode's `describeTask` doesn't filter hidden; Mimo's `actor` enum filters `!hidden`). **No search tool** — native grep suffices; a promotion trigger for a `maestra_catalog_search` is in [ROADMAP.md](ROADMAP.md), alongside the persona-via-`system.transform` upgrade (phase 2).
 
-## Plataformas de issues suportadas
+## Supported issue platforms
 
-- **GitHub** (github.com e Enterprise) — plataforma primária de dogfooding
-- **GitLab** (gitlab.com e self-hosted) — suporte dual completo desde o MVP, via mapeamento canônico épico-como-issue + links `relates_to` + tasklist (ADR-011)
+- **GitHub** (github.com and Enterprise) — primary dogfooding platform
+- **GitLab** (gitlab.com and self-hosted) — full dual support since the MVP, via canonical epic-as-issue mapping + `relates_to` links + tasklist (ADR-011)
 
-A plataforma **não** é assada na instalação: é detectada **por repositório** (`.maestra/config.md` → remote → probe → pergunta única persistida — ADR-010). O mesmo plugin serve repos em plataformas diferentes na mesma máquina.
+The platform is **not** baked in at install time: it is detected **per repository** (`.maestra/config.md` → remote → probe → single persisted question — ADR-010). The same plugin serves repos on different platforms on the same machine.
 
-## O que o plugin expõe
+## What the plugin exposes
 
-| Item | Tipo | Função |
+| Item | Type | Purpose |
 |---|---|---|
-| `maestra_status` | tool | Probe de ambiente: host, plataforma de issues, CLI autenticado (`gh`×`glab`), capability matrix, acesso ao board |
-| `maestra_issue_digest` | tool | Parser factual das convenções do fluxo (labels, hierarquia épico→tarefas, comentários de gate/override, campos de gate, reconciliação). **Enumera fatos; nunca deriva estado** |
-| `ask_peer` | tool | Consulta especialista↔especialista dentro da mesa de discussão sequencial (anti-ciclo por busy-check; facilitador excluído por caller-identity) |
-| `maestra_emit_event` | tool | Emissão dos eventos de instrumentação A–F + `type=override`, com assinatura "— facilitador" por construção |
-| Hook `desvios.md` | hook | Validação pós-escrita da trinca planejado→implementado→motivo em `docs/rodadas/*/desvios.md`. **Flag, nunca block** |
-| `maestra-report` | script CLI | Auditoria de presence-gap: épico sem evento A, rodada fechada sem F, override sem D, paridade E, FM-13 |
+| `maestra_status` | tool | Environment probe: host, issue platform, authenticated CLI (`gh`×`glab`), capability matrix, board access |
+| `maestra_issue_digest` | tool | Factual parser of the workflow conventions (labels, epic→tasks hierarchy, gate/override comments, gate fields, reconciliation). **Enumerates facts; never derives state** |
+| `ask_peer` | tool | Specialist↔specialist consultation within the sequential discussion panel (anti-cycle via busy-check; facilitator excluded by caller-identity) |
+| `maestra_emit_event` | tool | Emits instrumentation events A–F + `type=override`, with "— facilitator" signature by construction |
+| `desvios.md` hook | hook | Post-write validation of the planned→implemented→reason triplet in `docs/rounds/*/desvios.md`. **Flag, never block** |
+| `maestra-report` | CLI script | Presence-gap audit: epic without event A, closed round without F, override without D, E parity, FM-13 |
 
-## Arquitetura de instructions (L0–L4)
+## Instructions architecture (L0–L4)
 
-- **L0 kernel** (~2,5k tokens, sempre residente): papel, roteador das duas portas de entrada, os 16 anti-bypass em gatilhos de uma linha, contrato de tools — vocabulário neutro de plataforma.
-- **L1/L2 módulos de jornada** (J1–J10), carregados sob demanda; **L3/L4 biblioteca de referência**: microcopy editável, protocolos, templates e cookbooks por plataforma (`cookbook-github.md`, `cookbook-gitlab.md` — o dialeto de CLI mora só neles).
-- Sessão típica ≈ 6–8k tokens de instructions (vs ~27k monolítico; toolset ≈ 1k tokens/msg vs ~8–12k do Mesa).
+- **L0 kernel** (~2.5k tokens, always resident): role, router of the two entry doors, the 16 anti-bypass as one-line triggers, tools contract — platform-neutral vocabulary.
+- **L1/L2 journey modules** (J1–J10), loaded on demand; **L3/L4 reference library**: editable microcopy, protocols, templates and cookbooks per platform (`cookbook-github.md`, `cookbook-gitlab.md` — the CLI dialect lives only in them).
+- Typical session ≈ 6–8k tokens of instructions (vs ~27k monolithic; toolset ≈ 1k tokens/msg vs Mesa's ~8–12k).
 
-## Evals — "harness ou sem-dogfood"
+## Evals — "harness or no-dogfood"
 
-A casca probabilística (instructions, anti-bypass conversacionais) é verificada por **evals** (promptfoo, modelo pinado, temp 0, 3 passes): tier determinístico + LLM-as-judge + transcripts dourados. PR gate roda os rápidos + a bateria dos 16 anti-bypass; nightly roda a matriz completa. **Condição vinculante (spec D7): se o harness de evals escorregar, não há dogfooding.**
+The probabilistic shell (instructions, conversational anti-bypass) is verified by **evals** (promptfoo, pinned model, temp 0, 3 passes): deterministic tier + LLM-as-judge + golden transcripts. PR gate runs the fast ones + the 16 anti-bypass battery; nightly runs the full matrix. **Binding condition (spec D7): if the eval harness slips, there is no dogfooding.**
 
-## Desenvolvimento
+## Development
 
 ```bash
 npm install
-npm run build         # tsc + cópia das instructions para dist/
-npm test              # vitest (unit + integração contra stubs gh/glab)
-npm run smoke         # smoke 4 células: 2 hosts × 2 plataformas
-npm run eval:dry      # evals com modelo mockado (CI)
-npm run eval          # evals com modelo real
-npm run eval:nightly  # matriz completa, sem cache
-npm run eval:golden   # transcripts dourados
+npm run build         # tsc + copy instructions to dist/
+npm test              # vitest (unit + integration against gh/glab stubs)
+npm run smoke         # 4-cell smoke: 2 hosts × 2 platforms
+npm run eval:dry      # evals with mocked model (CI)
+npm run eval          # evals with real model
+npm run eval:nightly  # full matrix, no cache
+npm run eval:golden   # golden transcripts
 npm run ci            # build + typecheck + test + check:vocab + check:dist + smoke + eval:dry
 ```
 
-## Documentação
+## Documentation
 
-- **[ROADMAP.md](ROADMAP.md)** — tudo que ficou fora do MVP, com gatilho objetivo por item (fase 2, roadmap maior, débitos técnicos, caminho de validação)
-- **[fluxo-de-desenvolvimento.md](../fluxo-de-desenvolvimento.md)** — o processo que o plugin facilita (fonte de verdade normativa)
-- **[docs/referencia/jornadas.md](../docs/referencia/jornadas.md)** — jornadas J1–J10, protocolos, microcopy e os 16 anti-bypass (spec de auditoria)
+- **[ROADMAP.md](ROADMAP.md)** — everything left out of the MVP, with objective trigger per item (phase 2, larger roadmap, technical debt, validation path)
+- **[fluxo-de-desenvolvimento.md](../fluxo-de-desenvolvimento.md)** — the process the plugin facilitates (normative source of truth)
+- **[docs/reference/journeys.md](../docs/reference/journeys.md)** — journeys J1–J10, protocols, microcopy and the 16 anti-bypass (audit spec)

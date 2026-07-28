@@ -1,22 +1,22 @@
-# Fluxo evals — NIGHTLY. Matriz completa + LLM-as-judge (tier-2, rubrica
-# versionada em lib/rubric.md), cache OFF (--no-cache via npm run eval:nightly).
-# Detecta drift de modelo: chamadas frescas toda noite.
-description: "Fluxo evals — nightly (matriz completa + judge tier-2)"
+# Fluxo evals — NIGHTLY. Full matrix + LLM-as-judge (tier-2, versioned rubric
+# in lib/rubric.md), cache OFF (--no-cache via npm run eval:nightly).
+# Detects model drift: fresh calls every night.
+description: "Fluxo evals — nightly (full matrix + tier-2 judge)"
 
 providers:
   - id: file://providers/maestra-agent.mjs
 
 tests:
   - file://scenarios/anti-bypass.yaml
-  - file://scenarios/j8-guarda.yaml
-  - file://scenarios/j1-triagem.yaml
-  - file://scenarios/j2-retomada.yaml
+  - file://scenarios/j8-guard.yaml
+  - file://scenarios/j1-triage.yaml
+  - file://scenarios/j2-resume.yaml
   - file://scenarios/fm-vinculantes.yaml
-  - file://scenarios/j9-mesa-shell.yaml
+  - file://scenarios/j9-panel-shell.yaml
 
-# Tier-2: rubrica versionada aplicada a TODOS os cenários (binário por item).
-# O judge é o provedor padrão do promptfoo — configure via env
-# (OPENAI_API_KEY ou PROMPTFOO_*/provedor local equivalente).
+# Tier-2: versioned rubric applied to ALL scenarios (binary per item).
+# The judge is promptfoo's default provider — configure via env
+# (OPENAI_API_KEY or PROMPTFOO_*/equivalent local provider).
 defaultTest:
   assert:
     - type: llm-rubric

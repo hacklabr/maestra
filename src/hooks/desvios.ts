@@ -18,10 +18,10 @@ type ToolExecuteAfterOutput = {
 /** Native tools that can write file content (union of both hosts' tool names). */
 const WRITE_TOOLS = new Set(["write", "edit", "patch", "apply_patch", "multiedit", "notebookedit"])
 
-const DESVIOS_PATH = /(?:^|\/)docs\/rodadas\/[^/]+\/desvios\.md$/
+const DESVIOS_PATH = /(?:^|\/)docs\/rounds\/[^/]+\/deviations\.md$/
 
 const DEFAULT_MICROCOPY_PATH = fileURLToPath(
-  new URL("../instructions/referencia/microcopy.md", import.meta.url),
+  new URL("../instructions/reference/microcopy.md", import.meta.url),
 )
 
 export function isDesviosPath(path: string): boolean {
@@ -35,9 +35,9 @@ function extractFilePath(args: Record<string, unknown> | undefined): string | nu
 }
 
 /**
- * Loads the calibrated warning text from the editable PT-BR microcopy file
- * (spec D1: "warning na microcopy editável PT-BR" — never hardcoded).
- * Extracts the fenced block under "### Warning do hook desvios.md".
+ * Loads the calibrated warning text from the editable EN microcopy file
+ * (spec D1: "warning in the editable EN microcopy" — never hardcoded).
+ * Extracts the fenced block under "### deviations.md hook warning".
  *
  * Returns null when the file/section is unreadable: flag-never-block —
  * a missing microcopy must never break a write.
@@ -48,7 +48,7 @@ export async function loadDesviosWarning(
 ): Promise<string | null> {
   try {
     const content = await read(microcopyPath)
-    const heading = /^###\s+Warning do hook desvios\.md[^\n]*$/m.exec(content)
+    const heading = /^###\s+deviations\.md hook warning[^\n]*$/m.exec(content)
     if (!heading) return null
     const rest = content.slice(heading.index + heading[0].length)
     const fence = /```[^\n]*\n([\s\S]*?)```/.exec(rest)
@@ -61,8 +61,8 @@ export async function loadDesviosWarning(
 function formatFindings(findings: DesvioFinding[]): string {
   return findings
     .map((f) => {
-      if (f.entryId === FILE_LEVEL) return `- ${f.note ?? "arquivo incompleto"}`
-      return `- ${f.entryId}: faltam ${f.missing.join(", ")}.`
+      if (f.entryId === FILE_LEVEL) return `- ${f.note ?? "incomplete file"}`
+      return `- ${f.entryId}: missing ${f.missing.join(", ")}.`
     })
     .join("\n")
 }
@@ -133,7 +133,7 @@ export function createDesviosHook(deps: DesviosHookDeps = {}) {
         : `${template}\n\n${findingsText}`
       : // Bare functional fallback — only when the microcopy file is unreadable.
         // The calibrated wording lives exclusively in microcopy.md.
-        `desvios.md: entrada de desvio incompleta (anti-bypass #14).\n${findingsText}`
+        `deviations.md: incomplete deviation entry (anti-bypass #14).\n${findingsText}`
 
     output.output += `\n\n${warning}`
   }

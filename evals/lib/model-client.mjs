@@ -58,7 +58,7 @@ function safeParse(json) {
 /**
  * Scripted mock model. Consumes vars.mockSteps sequentially:
  *   { "toolCall": { "name": "maestra_status", "args": {} } }
- *   { "text": "resposta simulada" }
+ *   { "text": "simulated response" }
  * When steps run out, emits a closing text. Deterministic, zero cost —
  * this is what makes `npm run eval:dry` green without a live model.
  */
@@ -68,7 +68,7 @@ export function createMockModel(mockSteps = []) {
     const step = mockSteps[cursor] ?? null
     cursor++
     if (!step) {
-      return { text: "Fim da simulação (mock).", toolCalls: [], rawMessage: { role: "assistant", content: "Fim (mock)." }, usage: null }
+      return { text: "End of simulation (mock).", toolCalls: [], rawMessage: { role: "assistant", content: "End (mock)." }, usage: null }
     }
     if (step.toolCall) {
       const raw = {

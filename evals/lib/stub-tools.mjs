@@ -71,7 +71,7 @@ export const TOOL_SURFACE = [
     type: "function",
     function: {
       name: "task",
-      description: "Spawn a subagent (OpenCode dialect). Shell-specialist architecture: subagent_type 'maestra/especialista' + marker persona::<id>@<mesaId> on the prompt's first line.",
+      description: "Spawn a subagent (OpenCode dialect). Shell-specialist architecture: subagent_type 'maestra/specialist' + marker persona::<id>@<panelId> on the prompt's first line.",
       parameters: {
         type: "object",
         properties: {
@@ -100,14 +100,14 @@ export const TOOL_SURFACE = [
 
 const MUTATION = /(issue\s+(create|edit|close|comment)|issue\s+comment|label|item-edit|item-add|project\s|milestone|api\s+[^\n]*-X\s*(POST|PATCH|PUT|DELETE)|api\s+[^\n]*-f\s|git\s+(worktree\s+add|commit|checkout|switch|add))/i
 
-const SHELL_AGENT = "maestra/especialista"
+const SHELL_AGENT = "maestra/specialist"
 const MARKER_PATTERN = /persona::([a-z0-9][a-z0-9-]*)(?:@([\w.-]+))?/
 
 const NO_MARKER_WARNING = [
   "",
-  "[maestra] Shell spawnado SEM marker persona:: — esta sessão NÃO poderá usar ask_peer",
-  "(caller-identity falha fechada) e não será encontrada por peers.",
-  "Respawne com `persona::<id>@<mesaId>` na primeira linha do prompt.",
+  "[maestra] Shell spawned WITHOUT persona:: marker — this session will NOT be able to use ask_peer",
+  "(caller-identity fails closed) and won't be found by peers.",
+  "Respawn with `persona::<id>@<panelId>` on the first line of the prompt.",
 ].join("\n")
 
 export function createStubExecutor({ fixture, repoFiles = {} }) {
@@ -115,7 +115,7 @@ export function createStubExecutor({ fixture, repoFiles = {} }) {
   const calls = []
   const digests = fixture.digests ?? (fixture.digest ? { "*": fixture.digest } : {})
   /** Shell-specialist emulation: registered persona sessions (the peer-tracker's map). */
-  const mesa = { sessions: [] }
+  const panel = { sessions: [] }
 
   function record(call) {
     calls.push({ ...call, afterTurn: record.turnCount ?? 0 })
@@ -134,23 +134,23 @@ export function createStubExecutor({ fixture, repoFiles = {} }) {
     const marker = MARKER_PATTERN.exec(firstLine)
 
     if (!marker) {
-      return `Subagente finalizado.\n${NO_MARKER_WARNING}`
+      return `Subagent finished.\n${NO_MARKER_WARNING}`
     }
 
     const personaId = marker[1]
-    const mesaId = marker[2]
+    const panelId = marker[2]
     const taskId = args.task_id ?? args.actor_id
-    const existing = taskId ? mesa.sessions.find((s) => s.taskId === taskId) : null
-    const sessionId = existing?.sessionId ?? `sess-${taskId ?? `${personaId}@${mesaId ?? "avulsa"}-${mesa.sessions.length + 1}`}`
+    const existing = taskId ? panel.sessions.find((s) => s.taskId === taskId) : null
+    const sessionId = existing?.sessionId ?? `sess-${taskId ?? `${personaId}@${panelId ?? "standalone"}-${panel.sessions.length + 1}`}`
     if (!existing) {
-      mesa.sessions.push({ personaId, mesaId, sessionId, taskId: taskId ?? null })
+      panel.sessions.push({ personaId, panelId, sessionId, taskId: taskId ?? null })
     }
 
     const perPersona = fixture.specialists?.[personaId] ?? {}
     if (perPersona.response) return perPersona.response
     // Full id is always a coherent declaration (division-agnostic; the
     // persona-declarations assert accepts id or hyphen-boundary tail).
-    return `[${personaId}] Posição simulada do especialista (turno).`
+    return `[${personaId}] Simulated specialist position (turn).`
   }
 
   function execute(name, args = {}) {
@@ -159,7 +159,7 @@ export function createStubExecutor({ fixture, repoFiles = {} }) {
       return JSON.stringify(
         fixture.status ?? {
           host: "opencode",
-          plataforma: { kind: "github", cli: "ok", mcp: "absent", board: "ok", hierarchy: "sub-issues" },
+          platform: { kind: "github", cli: "ok", mcp: "absent", board: "ok", hierarchy: "sub-issues" },
           plugin: "0.1.0",
         },
       )
@@ -174,7 +174,7 @@ export function createStubExecutor({ fixture, repoFiles = {} }) {
 
     if (name === "maestra_emit_event") {
       record({ kind: "tool", name, args })
-      return `Evento ${args.type} registrado em #${args.epic} (github):\n**Evento ${args.type}** — facilitador`
+      return `Event ${args.type} registered on #${args.epic} (github):\n**Event ${args.type}** — facilitator`
     }
 
     if (name === "task" || name === "actor") {
@@ -182,7 +182,7 @@ export function createStubExecutor({ fixture, repoFiles = {} }) {
       const result =
         args.subagent_type === SHELL_AGENT
           ? executeShellSpawn(args)
-          : `Subagente ${args.subagent_type} finalizado (stub genérico).`
+          : `Subagent ${args.subagent_type} finished (generic stub).`
       call.result = result.slice(0, 400)
       return result
     }
@@ -225,7 +225,7 @@ export function createStubExecutor({ fixture, repoFiles = {} }) {
     execute,
     calls,
     files,
-    mesa,
+    panel,
     /** Marks the global position of a call within a turn (used by hard-fail rules). */
     markTurn(turnIdx) {
       record.turnCount = turnIdx

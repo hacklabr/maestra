@@ -13,7 +13,7 @@ while [[ $# -gt 0 ]]; do
     --host)
       case "${2:-}" in
         opencode|mimocode|both) HOST_FLAG="$2"; shift 2 ;;
-        *) echo "[maestra] --host inválido: ${2:-<vazio>} (use opencode|mimocode|both)" >&2; exit 1 ;;
+        *) echo "[maestra] invalid --host: ${2:-<empty>} (use opencode|mimocode|both)" >&2; exit 1 ;;
       esac
       ;;
     --tag) TAG_FLAG="$2"; shift 2 ;;
@@ -44,17 +44,17 @@ LOCAL_REPO="$(detect_local_repo)" || true
 
 if [ -n "$LOCAL_REPO" ]; then
   INSTALL_DIR="$LOCAL_REPO"
-  info "Repositório local detectado em $INSTALL_DIR (clone ignorado)"
-  info "Atualizando submodules (catálogo de personas)"
+  info "Local repository detected at $INSTALL_DIR (clone ignored)"
+  info "Updating submodules (persona catalog)"
   git -C "$INSTALL_DIR" submodule update --init --recursive
 else
   REPO_URL="${1:-https://github.com/hacklabr/maestra}"
   INSTALL_DIR="${2:-$HOME/.local/share/maestra}"
 
-  command -v git >/dev/null 2>&1 || error "git é obrigatório"
+  command -v git >/dev/null 2>&1 || error "git is required"
 
   if [ -d "$INSTALL_DIR" ]; then
-    info "Atualizando instalação existente em $INSTALL_DIR"
+    info "Updating existing installation at $INSTALL_DIR"
     git -C "$INSTALL_DIR" fetch --unshallow 2>/dev/null || true
     git -C "$INSTALL_DIR" fetch origin --tags
     if [ -n "$TAG_FLAG" ]; then
@@ -64,31 +64,31 @@ else
     fi
     git -C "$INSTALL_DIR" submodule update --init --recursive
   else
-    info "Clonando maestra em $INSTALL_DIR"
+    info "Cloning maestra to $INSTALL_DIR"
     git clone --depth 1 "$REPO_URL" "$INSTALL_DIR"
     git -C "$INSTALL_DIR" submodule update --init --recursive
   fi
 fi
 
-command -v node >/dev/null 2>&1 || error "node é obrigatório"
-command -v npm >/dev/null 2>&1  || error "npm é obrigatório"
+command -v node >/dev/null 2>&1 || error "node is required"
+command -v npm >/dev/null 2>&1  || error "npm is required"
 
-# Node >= 20 (fetch nativo, AbortSignal.timeout). Sem exigência de node:sqlite —
-# o plugin não usa banco local (estado = plataforma de issues + repositório).
+# Node >= 20 (native fetch, AbortSignal.timeout). No node:sqlite requirement —
+# the plugin uses no local database (state = issue platform + repository).
 NODE_VERSION="$(node -e "process.stdout.write(process.versions.node)" 2>/dev/null || echo 0)"
 NODE_MAJOR="$(echo "$NODE_VERSION" | cut -d. -f1)"
 if [ "$NODE_MAJOR" -lt 20 ]; then
-  error "Node >= 20.0.0 é obrigatório (encontrado: $NODE_VERSION)."
+  error "Node >= 20.0.0 is required (found: $NODE_VERSION)."
 fi
 
-info "Instalando dependências"
+info "Installing dependencies"
 rm -rf "$INSTALL_DIR/node_modules"
 npm ci --prefix "$INSTALL_DIR" 2>/dev/null || npm install --prefix "$INSTALL_DIR"
 
-info "Compilando o plugin (tsc)"
+info "Compiling the plugin (tsc)"
 npm run build --prefix "$INSTALL_DIR"
 
-info "Gerando agente e registrando o plugin nos hosts"
+info "Generating agent and registering the plugin on hosts"
 INSTALLER_ARGS=()
 if [ -n "$HOST_FLAG" ]; then
   INSTALLER_ARGS+=(--host "$HOST_FLAG")
@@ -96,18 +96,18 @@ fi
 node "$INSTALL_DIR/dist/installer/install.js" "${INSTALLER_ARGS[@]}"
 
 info ""
-info "Pronto. Reinicie o OpenCode/Mimo Code para carregar o plugin e o agente."
+info "Done. Restart OpenCode/Mimo Code to load the plugin and agent."
 info ""
-info "Diretório de instalação: $INSTALL_DIR"
+info "Installation directory: $INSTALL_DIR"
 if [ -n "$HOST_FLAG" ]; then
-  info "Hosts configurados: $HOST_FLAG"
+  info "Configured hosts: $HOST_FLAG"
 else
-  info "Hosts configurados: auto-detecção (todos os dirs de config existentes)"
+  info "Configured hosts: auto-detection (all existing config dirs)"
 fi
 info ""
-info "Como usar:"
-info "  /agent maestra  — facilitador do fluxo (triagem → etapas → reconciliação)"
-info "  maestra-report  — auditoria de instrumentação (eventos A–F)"
+info "How to use:"
+info "  /agent maestra  — workflow facilitator (triage → stages → reconciliation)"
+info "  maestra-report  — instrumentation audit (events A–F)"
 info ""
-info "Para instalar também em outro host depois:"
+info "To also install on another host later:"
 info "  node $INSTALL_DIR/dist/installer/install.js --host opencode|mimocode"

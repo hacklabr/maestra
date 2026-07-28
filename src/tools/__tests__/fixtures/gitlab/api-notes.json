@@ -2,25 +2,25 @@
   {
     "system": true,
     "author": { "username": "gitlab" },
-    "body": "added ~etapa-1 label",
+    "body": "added ~stage-1 label",
     "created_at": "2026-07-28T09:00:00Z"
   },
   {
     "system": false,
     "author": { "username": "rafael" },
-    "body": "**Registro de override** — facilitador\n- Tipo: gate\n- De: Etapa 1 completa → Para: aberta com 1 item pendente\n- Critério objetivo contestado: gate = todas as tarefas fechadas\n- Motivo declarado: \"cliente precisa da estimativa hoje\"\n- Decidido por: @rafael em 28/07/2026",
+    "body": "**Override register** — facilitator\n- Type: gate\n- From: Stage 1 complete → To: open with 1 item pending\n- Objective criterion disputed: gate = all tasks closed\n- Declared reason: \"client needs the estimate today\"\n- Decided by: @rafael on 2026-07-28",
     "created_at": "2026-07-28T10:00:00Z"
   },
   {
     "system": false,
     "author": { "username": "rafael" },
-    "body": "**Evento D** — override épico #42: Condensada→Mínima, critério contestado: \"estimativa > 5 dias\" — facilitador",
+    "body": "**Event D** — override epic #42: Condensed→Minimal, disputed criterion: \"estimate > 5 days\" — facilitator",
     "created_at": "2026-07-28T10:05:00Z"
   },
   {
     "system": false,
     "author": { "username": "joao" },
-    "body": "revisando o mini-briefing",
+    "body": "reviewing the mini-briefing",
     "created_at": "2026-07-28T12:00:00Z"
   }
 ]

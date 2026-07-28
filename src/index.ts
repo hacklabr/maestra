@@ -45,7 +45,7 @@ export const maestra: Plugin = async (input): Promise<Hooks> => {
           "<maestra-plugin>",
           `Maestra plugin v${PLUGIN_VERSION} is installed.`,
           "The `maestra` primary agent facilitates the development workflow",
-          "(triage → three etapas → reconciliation). Switch with /agent maestra.",
+          "(triage → three stages → reconciliation). Switch with /agent maestra.",
           "</maestra-plugin>",
         ].join("\n"),
       )

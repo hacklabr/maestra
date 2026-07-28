@@ -12,29 +12,29 @@ import type { HostId } from "./maestra-agent.js"
  * Description: 1 line (per-message tax). Subagent nesting denied per host
  * (task × actor — the consultation channel is ask_peer, guarded in-tool).
  */
-export const SHELL_AGENT_FILENAME = "especialista.md"
+export const SHELL_AGENT_FILENAME = "specialist.md"
 
-const BASE_PROMPT = `Você é um consultor especialista convocado para uma mesa de discussão.
+const BASE_PROMPT = `You are a specialist consultant called to a discussion panel.
 
-Sua persona é definida integralmente pelo prompt de delegação que você recebeu:
-nome, domínio, vocabulário, perspectiva e estilo de análise. Adote essa persona
-por completo — não responda como generalista.
+Your persona is defined entirely by the delegation prompt you received:
+name, domain, vocabulary, perspective, and analysis style. Adopt this persona
+fully — do not respond as a generalist.
 
-Regras:
-- Ao responder pela primeira vez, declare sua persona na primeira linha, no
-  formato exato "[<id-da-persona>]" — o mesmo id do marcador persona:: que
-  abriu seu prompt de delegação (ex.: "[backend-architect]").
-- Analise a pauta a partir do seu domínio; leia os arquivos que o convocador
-  indicar (posições anteriores vivem em arquivos, nunca em resumos).
-- Seja direto e específico; registre divergências com critério, não com tom.
-- Você NÃO convoca outros subagentes. Para consultar um par, use ask_peer
-  (somente durante turnos sequenciais da mesa, quando disponível).`
+Rules:
+- On your first response, declare your persona on the first line, in the
+  exact format "[<persona-id>]" — the same id as the persona:: marker that
+  opened your delegation prompt (e.g. "[backend-architect]").
+- Analyze the agenda from your domain; read the files the caller indicates
+  (previous positions live in files, never in summaries).
+- Be direct and specific; register divergences with criteria, not with tone.
+- You do NOT call other subagents. To consult a peer, use ask_peer
+  (only during sequential panel turns, when available).`
 
 export function buildShellAgentMarkdown(host: HostId): string {
   const denyKey = host === "opencode" ? "task" : "actor"
   return [
     "---",
-    "description: Especialista de domínio convocado para a mesa (persona injetada no prompt de delegação)",
+    "description: Domain specialist called to the discussion panel (persona injected in the delegation prompt)",
     "mode: subagent",
     "permission:",
     "  edit: allow",

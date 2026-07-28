@@ -1,177 +1,177 @@
 {
   "id": "sub-issue",
-  "descricao": "Issue #47 é filha de #12 — branch B4: digest da filha mostra pai; o agente deve derivar do PAI (digest #12) e ancorar na filha.",
+  "description": "Issue #47 is a child of #12 — branch B4: the child's digest shows the parent; the agent must derive from the PARENT (digest #12) and anchor on the child.",
   "digests": {
     "12": {
-      "plataforma": {
+      "platform": {
         "kind": "github",
         "host": "github.com",
-        "projeto": "acme/loja"
+        "project": "acme/loja"
       },
       "issue": {
-        "numero": 12,
+        "number": 12,
         "id": 9002,
-        "titulo": "Implementar exportação de relatórios",
-        "estado": "open",
+        "title": "Implement report export",
+        "state": "open",
         "url": "https://github.com/acme/loja/issues/12"
       },
       "labels": {
-        "variante": "variante-condensado",
-        "etapas": [],
-        "marcadores": []
+        "variant": "variant-condensed",
+        "stages": [],
+        "markers": []
       },
-      "metadados": {
-        "variante": "condensado",
-        "etapaAtual": "etapa-2",
-        "epico": null,
-        "rodada": "R02",
-        "subestado": "em-artefatos"
+      "metadata": {
+        "variant": "condensed",
+        "currentStage": "stage-2",
+        "epic": null,
+        "round": "R02",
+        "substate": "in-artifacts"
       },
-      "pai": null,
-      "filhos": [
+      "parent": null,
+      "children": [
         {
-          "numero": 14,
-          "titulo": "Mini-briefing",
-          "estado": "closed",
-          "variante": null,
-          "etapas": [
-            "etapa-1"
+          "number": 14,
+          "title": "Mini-briefing",
+          "state": "closed",
+          "variant": null,
+          "stages": [
+            "stage-1"
           ],
           "assignees": [
             "rafael"
           ]
         },
         {
-          "numero": 15,
-          "titulo": "Atualização do PRD vivo",
-          "estado": "closed",
-          "variante": null,
-          "etapas": [
-            "etapa-1"
+          "number": 15,
+          "title": "Living PRD update",
+          "state": "closed",
+          "variant": null,
+          "stages": [
+            "stage-1"
           ],
           "assignees": [
             "rafael"
           ]
         },
         {
-          "numero": 46,
-          "titulo": "Análise de viabilidade",
-          "estado": "closed",
-          "variante": null,
-          "etapas": [
-            "etapa-2"
+          "number": 46,
+          "title": "Feasibility analysis",
+          "state": "closed",
+          "variant": null,
+          "stages": [
+            "stage-2"
           ],
           "assignees": [
             "maria"
           ]
         },
         {
-          "numero": 47,
-          "titulo": "Registro da decisão de cache",
-          "estado": "open",
-          "variante": null,
-          "etapas": [
-            "etapa-2"
+          "number": 47,
+          "title": "Cache decision record",
+          "state": "open",
+          "variant": null,
+          "stages": [
+            "stage-2"
           ],
           "assignees": [
             "joao"
           ]
         }
       ],
-      "comentarios": [
+      "comments": [
         {
-          "tipo": "facilitador",
-          "autor": "rafael",
-          "data": "2026-07-20T10:00:00Z",
-          "corpo": "Etapa 1 concluída. Criei as tarefas da Etapa 2 (#46, #47), já atribuídas. — facilitador"
+          "type": "facilitator",
+          "author": "rafael",
+          "date": "2026-07-20T10:00:00Z",
+          "body": "Stage 1 complete. I created the Stage 2 tasks (#46, #47), already assigned. — facilitator"
         }
       ],
       "board": {
-        "coluna": "Em andamento"
+        "column": "In progress"
       },
       "gate": {
-        "porEtapa": {
-          "etapa-1": {
-            "fechadas": 2,
+        "perStage": {
+          "stage-1": {
+            "closed_": 2,
             "total": 2
           },
-          "etapa-2": {
-            "fechadas": 1,
+          "stage-2": {
+            "closed_": 1,
             "total": 2
           }
         },
-        "semEtapa": 0,
-        "reconciliacao": {
-          "existe": false,
-          "estado": null,
-          "numero": null
+        "noStage": 0,
+        "reconciliation": {
+          "exists": false,
+          "state": null,
+          "number": null
         }
       },
-      "artefatos": [],
-      "hierarquia": {
-        "tipo": "sub-issues",
+      "artifacts": [],
+      "hierarchy": {
+        "type": "sub-issues",
         "taskCompletion": null,
-        "dessincronia": []
+        "desync": []
       },
-      "paginacao": {
-        "filhosTruncados": false,
-        "comentariosTruncados": false
+      "pagination": {
+        "childrenTruncated": false,
+        "commentsTruncated": false
       },
-      "erros": []
+      "errors": []
     },
     "47": {
-      "plataforma": {
+      "platform": {
         "kind": "github",
         "host": "github.com",
-        "projeto": "acme/loja"
+        "project": "acme/loja"
       },
       "issue": {
-        "numero": 47,
+        "number": 47,
         "id": 9047,
-        "titulo": "Registro da decisão de cache",
-        "estado": "open",
+        "title": "Cache decision record",
+        "state": "open",
         "url": "https://github.com/acme/loja/issues/47"
       },
       "labels": {
-        "variante": null,
-        "etapas": [
-          "etapa-2"
+        "variant": null,
+        "stages": [
+          "stage-2"
         ],
-        "marcadores": []
+        "markers": []
       },
-      "metadados": {
-        "variante": "condensado",
-        "etapaAtual": "etapa-2",
-        "epico": 12,
-        "rodada": "R02",
-        "subestado": "em-artefatos"
+      "metadata": {
+        "variant": "condensed",
+        "currentStage": "stage-2",
+        "epic": 12,
+        "round": "R02",
+        "substate": "in-artifacts"
       },
-      "pai": 12,
-      "filhos": [],
-      "comentarios": [],
+      "parent": 12,
+      "children": [],
+      "comments": [],
       "board": {
-        "coluna": "Não iniciada"
+        "column": "Not started"
       },
       "gate": {
-        "porEtapa": {},
-        "semEtapa": 0,
-        "reconciliacao": {
-          "existe": false,
-          "estado": null,
-          "numero": null
+        "perStage": {},
+        "noStage": 0,
+        "reconciliation": {
+          "exists": false,
+          "state": null,
+          "number": null
         }
       },
-      "artefatos": [],
-      "hierarquia": {
-        "tipo": "sub-issues",
+      "artifacts": [],
+      "hierarchy": {
+        "type": "sub-issues",
         "taskCompletion": null,
-        "dessincronia": []
+        "desync": []
       },
-      "paginacao": {
-        "filhosTruncados": false,
-        "comentariosTruncados": false
+      "pagination": {
+        "childrenTruncated": false,
+        "commentsTruncated": false
       },
-      "erros": []
+      "errors": []
     }
   },
   "execRoutes": []

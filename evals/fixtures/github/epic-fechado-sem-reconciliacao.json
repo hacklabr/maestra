@@ -1,88 +1,88 @@
 {
   "id": "epic-fechado-sem-reconciliacao",
-  "descricao": "Épico #55 FECHADO com reconciliação ausente (fechado pela UI, dois cliques) — branch B6/FM-13: subestado anômalo fechada-sem-reconciliacao + reconciliação retroativa oferecida.",
+  "description": "Epic #55 CLOSED with reconciliation missing (closed via the UI, two clicks) — branch B6/FM-13: anomalous substate closed-without-reconciliation + retroactive reconciliation offered.",
   "digests": {
     "55": {
-      "plataforma": {
+      "platform": {
         "kind": "github",
         "host": "github.com",
-        "projeto": "acme/loja"
+        "project": "acme/loja"
       },
       "issue": {
-        "numero": 55,
+        "number": 55,
         "id": 9055,
-        "titulo": "Cupom de desconto no checkout",
-        "estado": "closed",
+        "title": "Discount coupon at checkout",
+        "state": "closed",
         "url": "https://github.com/acme/loja/issues/55"
       },
       "labels": {
-        "variante": "variante-condensado",
-        "etapas": [],
-        "marcadores": []
+        "variant": "variant-condensed",
+        "stages": [],
+        "markers": []
       },
-      "metadados": {
-        "variante": "condensado",
-        "etapaAtual": "etapa-3",
-        "epico": null,
-        "rodada": "R05",
-        "subestado": "em-execucao"
+      "metadata": {
+        "variant": "condensed",
+        "currentStage": "stage-3",
+        "epic": null,
+        "round": "R05",
+        "substate": "in-execution"
       },
-      "pai": null,
-      "filhos": [
+      "parent": null,
+      "children": [
         {
-          "numero": 56,
-          "titulo": "Implementação — cupom",
-          "estado": "closed",
-          "variante": null,
-          "etapas": [
-            "etapa-3"
+          "number": 56,
+          "title": "Implementation — coupon",
+          "state": "closed",
+          "variant": null,
+          "stages": [
+            "stage-3"
           ],
           "assignees": [
             "joao"
           ]
         },
         {
-          "numero": 57,
-          "titulo": "Reconciliação da rodada",
-          "estado": "open",
-          "variante": null,
-          "etapas": [
-            "etapa-3"
+          "number": 57,
+          "title": "Round reconciliation",
+          "state": "open",
+          "variant": null,
+          "stages": [
+            "stage-3"
           ],
           "assignees": [
             "joao"
           ]
         }
       ],
-      "comentarios": [],
+      "comments": [],
       "board": {
-        "coluna": "Entregue"
+        "column": "Delivered"
       },
       "gate": {
-        "porEtapa": {
-          "etapa-3": {
-            "fechadas": 1,
+        "perStage": {
+          "stage-3": {
+            "closed_": 1,
             "total": 2
           }
         },
-        "semEtapa": 0,
-        "reconciliacao": {
-          "existe": true,
-          "estado": "open",
-          "numero": 57
+        "noStage": 0,
+        "reconciliation": {
+          "exists": true,
+          "state": "open",
+          "number": 57
         }
       },
-      "artefatos": [],
-      "hierarquia": {
-        "tipo": "sub-issues",
+      "artifacts": [],
+      "hierarchy": {
+        "type": "sub-issues",
         "taskCompletion": null,
-        "dessincronia": []
+        "desync": []
       },
-      "paginacao": {
-        "filhosTruncados": false,
-        "comentariosTruncados": false
+      "pagination": {
+        "childrenTruncated": false,
+        "commentsTruncated": false
       },
-      "erros": []
+      "errors": []
     }
   },
   "execRoutes": []

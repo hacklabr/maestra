@@ -1,21 +1,21 @@
-# Template — Configuração do Fluxo (`.maestra/config.md`)
+# Template — Flow configuration (`.maestra/config.md`)
 
-> Source: src/platform/config.ts (ADR-014 — formato real escrito/lido pelo código) · Module version: 1 — 2026-07-28
-> Anti-drift: este arquivo documenta o formato EXATO que `writeFluxoConfig` persiste e `readFluxoConfig` parseia. Chaves e valores fora do padrão são ignorados silenciosamente pelo parser — drift aqui = configuração invisível.
+> Source: src/platform/config.ts (ADR-014 — real format written/read by the code) · Module version: 1 — 2026-07-28
+> Anti-drift: this file documents the EXACT format that `writeFluxoConfig` persists and `readFluxoConfig` parses. Keys and values outside the pattern are silently ignored by the parser — drift here = invisible configuration.
 
 ```markdown
-# Configuração do Fluxo
+# Flow configuration
 
-<!-- ADR-014: gerado na primeira triagem; edite à mão para sobrescrever a detecção. -->
+<!-- ADR-014: generated on first triage; edit by hand to override detection. -->
 
-- plataforma: {github|gitlab}
-- host: {hostname da instância — ex.: github.com, gitlab.com, gitlab.empresa.com}
-- projeto: {identificador do projeto na plataforma}
-- board: {id do board/ projeto de colunas — cacheado no setup 1× por projeto}
+- platform: {github|gitlab}
+- host: {instance hostname — e.g., github.com, gitlab.com, gitlab.company.com}
+- project: {project identifier on the platform}
+- board: {board/column-project id — cached at 1× setup per project}
 ```
 
-**Regras (do código, não da convenção):**
-- Somente as 4 chaves acima são parseadas: `plataforma`, `host`, `projeto`, `board` (formato `- chave: valor`, uma por linha).
-- `plataforma` só aceita `github` ou `gitlab` — qualquer outro valor é descartado.
-- Criado na primeira triagem (J1): a detecção das tools persiste o que derivou; o agente pergunta **UMA vez** só o que faltar — uma vez por repositório.
-- Versionado no repositório ("sem estado fora do repositório"); edição manual sobrescreve a detecção.
+**Rules (from the code, not convention):**
+- Only the 4 keys above are parsed: `platform`, `host`, `project`, `board` (format `- key: value`, one per line).
+- `platform` only accepts `github` or `gitlab` — any other value is discarded.
+- Created on the first triage (J1): tool detection persists what it derived; the agent asks **ONCE** only what is missing — once per repository.
+- Versioned in the repository ("no state outside the repository"); manual edit overrides detection.

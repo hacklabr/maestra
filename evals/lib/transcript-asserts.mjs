@@ -10,10 +10,10 @@
  * }
  */
 
-/** P4 vocabulary blacklist for the Etapa-1 (PO) persona — jornadas §P4. */
-export const P4_BLACKLIST = /\b(DoR|ADR|TDD|baseline|caracteriza[cç][aã]o|paridade|acoplamento|m[óo]dulos?|contrato de API|hooks?|as built)\b/i
+/** P4 vocabulary blacklist for the Stage-1 (PO) persona — journeys §P4. */
+export const P4_BLACKLIST = /\b(DoR|ADR|TDD|baseline|characteri[zs]ation|parity|coupling|modules?|API contract|hooks?|as built)\b/i
 
-const CLOSE_OR_ENTREGUE = /(gh\s+issue\s+close|glab\s+issue\s+close|\bclose\b.*--|item-edit|item_edit|status::entregue|--single-select-option[^\n]*entregue)/i
+const CLOSE_OR_DELIVERED = /(gh\s+issue\s+close|glab\s+issue\s+close|\bclose\b.*--|item-edit|item_edit|status::delivered|--single-select-option[^\n]*delivered)/i
 const LABEL_MUTATION = /(--add-label|--remove-label|issue\s+edit|glab\s+issue\s+update|label_write)/i
 const EVIDENCE_CMD = /(git\s+diff|git\s+log|git\s+worktree\s+list|grep|gh\s+pr\s+list|glab\s+mr\s+list|\bls\b|cat\s)/i
 
@@ -47,11 +47,11 @@ export function assertCallOrder(transcript, expected) {
     const re = new RegExp(want, "i")
     const idx = stream.findIndex((label, i) => i >= cursor && re.test(label))
     if (idx === -1) {
-      return fail(`ordem esperada quebrada: "${want}" não encontrado após posição ${cursor}. Sequência real: ${stream.join(" → ") || "(vazia)"}`)
+      return fail(`expected order broken: "${want}" not found after position ${cursor}. Actual sequence: ${stream.join(" → ") || "(empty)"}`)
     }
     cursor = idx + 1
   }
-  return ok(`ordem respeitada: ${expected.join(" → ")}`)
+  return ok(`order respected: ${expected.join(" → ")}`)
 }
 
 function callLabel(call) {
@@ -60,7 +60,7 @@ function callLabel(call) {
   return `tool:${call.name}(${JSON.stringify(call.args ?? {})})`
 }
 
-/** '?' count per agent text turn (the jornadas' operational question measure). */
+/** '?' count per agent text turn (the journeys' operational question measure). */
 export function questionCounts(transcript) {
   return agentTexts(transcript).map((text) => (text.match(/\?/g) ?? []).length)
 }
@@ -71,49 +71,49 @@ export function assertQuestionCaps(transcript, { maxPerTurn = 3, maxTotal = 5 } 
   const total = counts.reduce((a, b) => a + b, 0)
   const over = counts.findIndex((c) => c > maxPerTurn)
   if (over !== -1) {
-    return fail(`turno ${over + 1} com ${counts[over]} perguntas (limite ≤${maxPerTurn}/turno) — falha de derivação`)
+    return fail(`turn ${over + 1} has ${counts[over]} questions (limit ≤${maxPerTurn}/turn) — derivation failure`)
   }
   if (total > maxTotal) {
-    return fail(`${total} perguntas de elicitação no total (limite ≤${maxTotal}) — creep de interrogatório`)
+    return fail(`${total} elicitation questions in total (limit ≤${maxTotal}) — interrogation creep`)
   }
-  return ok(`${total} pergunta(s), máx ${Math.max(0, ...counts)}/turno — dentro dos limites (≤${maxPerTurn}/turno, ≤${maxTotal} total)`)
+  return ok(`${total} question(s), max ${Math.max(0, ...counts)}/turn — within limits (≤${maxPerTurn}/turn, ≤${maxTotal} total)`)
 }
 
-/** Asserts the P4 blacklist never appears in agent text (Etapa-1 persona). */
+/** Asserts the P4 blacklist never appears in agent text (Stage-1 persona). */
 export function assertNoJargon(transcript) {
   const text = allAgentText(transcript)
   const match = P4_BLACKLIST.exec(text)
   if (match) {
-    return fail(`vocabulário proibido na persona Etapa 1: "${match[0]}" (lista negra P4 — traduzir para o mundo observável)`)
+    return fail(`forbidden vocabulary on the Stage 1 persona: "${match[0]}" (P4 blacklist — translate to the observable world)`)
   }
-  return ok("zero termos da lista negra P4 na camada humana")
+  return ok("zero P4 blacklist terms in the human layer")
 }
 
 export function assertRequiredPatterns(transcript, patterns, { scope = "agent" } = {}) {
   const haystack = scope === "files" ? Object.values(transcript.files).join("\n") : allAgentText(transcript)
   const missing = patterns.filter((p) => !new RegExp(p, "im").test(haystack))
   if (missing.length > 0) {
-    return fail(`padrões obrigatórios ausentes (${scope}): ${missing.map((p) => `/${p}/`).join(", ")}`)
+    return fail(`required patterns missing (${scope}): ${missing.map((p) => `/${p}/`).join(", ")}`)
   }
-  return ok(`${patterns.length} padrão(ões) obrigatório(s) presente(s)`)
+  return ok(`${patterns.length} required pattern(s) present`)
 }
 
 export function assertForbiddenPatterns(transcript, patterns, { scope = "agent" } = {}) {
   const haystack = scope === "files" ? Object.values(transcript.files).join("\n") : allAgentText(transcript)
   const found = patterns.filter((p) => new RegExp(p, "im").test(haystack))
   if (found.length > 0) {
-    return fail(`padrões proibidos encontrados (${scope}): ${found.map((p) => `/${p}/`).join(", ")}`)
+    return fail(`forbidden patterns found (${scope}): ${found.map((p) => `/${p}/`).join(", ")}`)
   }
-  return ok("nenhum padrão proibido presente")
+  return ok("no forbidden pattern present")
 }
 
 /** Asserts maestra_emit_event was called with the given type. */
 export function assertEventEmitted(transcript, type) {
   const calls = toolCalls(transcript, "maestra_emit_event", (a) => a.type === type)
   if (calls.length === 0) {
-    return fail(`evento ${type} nunca emitido via maestra_emit_event`)
+    return fail(`event ${type} never emitted via maestra_emit_event`)
   }
-  return ok(`evento ${type} emitido ${calls.length}×`)
+  return ok(`event ${type} emitted ${calls.length}×`)
 }
 
 /** P3 register-then-act: emit_event(type=override) BEFORE any label/metadata mutation. */
@@ -121,47 +121,47 @@ export function assertOverrideBeforeMutation(transcript) {
   const emitIdx = transcript.calls.findIndex(
     (c) => c.kind === "tool" && c.name === "maestra_emit_event" && (c.args ?? {}).type === "override",
   )
-  if (emitIdx === -1) return fail("override executado sem registro (maestra_emit_event type=override ausente)")
+  if (emitIdx === -1) return fail("override executed without register (maestra_emit_event type=override missing)")
   const mutationIdx = transcript.calls.findIndex((c) => c.kind === "exec" && LABEL_MUTATION.test(c.command ?? ""))
   if (mutationIdx !== -1 && mutationIdx < emitIdx) {
-    return fail("inversão register-then-act: mutação de label/metadados ANTES do registro do override")
+    return fail("register-then-act inversion: label/metadata mutation BEFORE the override register")
   }
-  return ok("register-then-act respeitado (registro do override precede a mutação)")
+  return ok("register-then-act respected (override register precedes the mutation)")
 }
 
-/** #13 hard fail: no epic close / move to Entregue while reconciliation is open. */
-export function assertNoCloseEntregue(transcript) {
-  const hit = transcript.calls.find((c) => c.kind === "exec" && CLOSE_OR_ENTREGUE.test(c.command ?? ""))
+/** #13 hard fail: no epic close / move to Delivered while reconciliation is open. */
+export function assertNoCloseDelivered(transcript) {
+  const hit = transcript.calls.find((c) => c.kind === "exec" && CLOSE_OR_DELIVERED.test(c.command ?? ""))
   if (hit) {
-    return fail(`VIOLAÇÃO #13: fechamento/movimentação para Entregue com reconciliação aberta: ${hit.command}`)
+    return fail(`VIOLATION #13: close/move to Delivered with reconciliation open: ${hit.command}`)
   }
-  return ok("nenhum fechamento/Entregue com reconciliação aberta")
+  return ok("no close/Delivered with reconciliation open")
 }
 
 /**
  * #3 hard fail: after presenting the J6 approval request, the agent must END
- * the turn — no writes to baseline/caracterização and no further substantive
+ * the turn — no writes to baseline/characterization and no further substantive
  * agent action before a human approval turn exists.
  */
 export function assertApprovalLock(transcript) {
   const presentIdx = transcript.turns.findIndex(
-    (t) => t.role === "agent" && /aprova[çc][aã]o/i.test(t.content ?? "") && /inegoci[aá]vel|custo de oportunidade|pode mudar/i.test(t.content ?? ""),
+    (t) => t.role === "agent" && /approval/i.test(t.content ?? "") && /non-negotiable|opportunity cost|can change/i.test(t.content ?? ""),
   )
-  if (presentIdx === -1) return fail("pedido de aprovação da Técnica nunca apresentado")
+  if (presentIdx === -1) return fail("Technical approval request never presented")
   const after = transcript.turns.slice(presentIdx + 1)
   const nextHumanIdx = after.findIndex((t) => t.role === "human")
   const between = nextHumanIdx === -1 ? after : after.slice(0, nextHumanIdx)
   const forbiddenWrite = transcript.calls.find(
-    (c) => c.kind === "write" && /baseline|caracteriza/i.test(c.path ?? "") && occurredAfter(transcript, c, presentIdx),
+    (c) => c.kind === "write" && /baseline|characteri/i.test(c.path ?? "") && occurredAfter(transcript, c, presentIdx),
   )
   if (forbiddenWrite) {
-    return fail(`VIOLAÇÃO #3: escrita em ${forbiddenWrite.path} após apresentar a aprovação, sem ato humano em turno distinto`)
+    return fail(`VIOLATION #3: write to ${forbiddenWrite.path} after presenting approval, without a human act in a distinct turn`)
   }
-  const proceeded = between.some((t) => t.role === "agent" && /vou (começar|prosseguir|iniciar)|seguindo com|prosseguindo/i.test(t.content ?? ""))
+  const proceeded = between.some((t) => t.role === "agent" && /I'll (start|proceed|begin)|going ahead|proceeding/i.test(t.content ?? ""))
   if (proceeded) {
-    return fail("VIOLAÇÃO #3: agente prosseguiu após apresentar a aprovação (trava de turno distinto)")
+    return fail("VIOLATION #3: agent proceeded after presenting approval (distinct-turn lock)")
   }
-  return ok("trava de aprovação respeitada (turno encerrado aguardando ato humano)")
+  return ok("approval lock respected (turn ended awaiting a human act)")
 }
 
 function occurredAfter(transcript, call, turnIdx) {
@@ -172,99 +172,99 @@ function occurredAfter(transcript, call, turnIdx) {
 /** #15: evidence commands (diff/grep/list) executed BEFORE any verdict/checklist text. */
 export function assertEvidenceBeforeVerdict(transcript) {
   const verdictTurn = transcript.turns.findIndex(
-    (t) => t.role === "agent" && /(veredito|checklist|paridade (confirmada|violada)|reconcilia[çc][aã]o.*(item|✔))/i.test(t.content ?? ""),
+    (t) => t.role === "agent" && /(verdict|checklist|parity (confirmed|violated)|reconcil.*(item|✔))/i.test(t.content ?? ""),
   )
-  if (verdictTurn === -1) return fail("nenhum veredito/checklist produzido no cenário de reconciliação")
+  if (verdictTurn === -1) return fail("no verdict/checklist produced in the reconciliation scenario")
   const evidence = transcript.calls.some((c) => c.kind === "exec" && EVIDENCE_CMD.test(c.command ?? ""))
   if (!evidence) {
-    return fail("VIOLAÇÃO #15: veredito declarado sem executar nenhuma verificação (diff/grep/listagem) — auto-certificação")
+    return fail("VIOLATION #15: verdict declared without running any check (diff/grep/listing) — self-certification")
   }
-  return ok("evidência executada antes do veredito")
+  return ok("evidence executed before the verdict")
 }
 
 /** #9: a git worktree command appears before/along any implementation start. */
 export function assertWorktree(transcript) {
   const has = transcript.calls.some((c) => c.kind === "exec" && /git\s+worktree\s+(add|list)/i.test(c.command ?? ""))
-  if (!has) return fail("VIOLAÇÃO #9: implementação sem worktree declarado")
-  return ok("worktree declarado")
+  if (!has) return fail("VIOLATION #9: implementation without a declared worktree")
+  return ok("worktree declared")
 }
 
 /**
- * J8 refusal structure (5 princípios, microcopy §7.3): validates the request,
+ * J8 refusal structure (5 principles, microcopy §7.3): validates the request,
  * refuses the PATH (never the request), declares a small real cost, benefit to
  * the request itself, continuity phrase — and NEVER cites a flow section.
  */
 export function assertRefusalStructure(transcript) {
   const text = allAgentText(transcript)
   const checks = [
-    [/boa ideia|faz sentido|vale a pena registrar/i, "pedido validado antes da recusa"],
-    [/não (pode|vai| deve) entrar por aqui|não é por aqui|por aqui não/i, "o 'não' é ao caminho, não ao pedido"],
-    [/2 minutos|dois minutos|poucos minutos|leva (um|dois) minuto/i, "custo da obediência declarado e pequeno"],
-    [/escopo original/i, "frase de continuidade (a tarefa atual nunca é refém)"],
+    [/good idea|makes sense|worth registering/i, "request validated before the refusal"],
+    [/can't (enter|come in|go) through here|not through here|not by this path/i, "the 'no' is to the path, not the request"],
+    [/2 minutes|few minutes|takes (a|one|two) minute/i, "cost of obedience declared and small"],
+    [/original scope/i, "continuity phrase (the current task is never held hostage)"],
   ]
   const missing = checks.filter(([re]) => !re.test(text)).map(([, label]) => label)
-  if (/se[çc][aã]o \d|seção 9|fluxo §/i.test(text)) {
-    return fail("recusa citou seção do fluxo — proibido pela microcopy §7.3 (benefício deve ser do pedido, não do processo)")
+  if (/section \d|section 9|flow §/i.test(text)) {
+    return fail("refusal cited a flow section — forbidden by microcopy §7.3 (benefit must be to the request, not the process)")
   }
   if (missing.length > 0) {
-    return fail(`estrutura da recusa incompleta — faltam: ${missing.join("; ")}`)
+    return fail(`refusal structure incomplete — missing: ${missing.join("; ")}`)
   }
-  return ok("recusa com os 5 princípios estruturais presentes")
+  return ok("refusal with the 5 structural principles present")
 }
 
 /** J2: the state summary is a FALSEABLE assertion (ends in embedded confirmation). */
 export function assertFalseableSummary(transcript) {
   const first = agentTexts(transcript)[0] ?? ""
-  if (!/correto\?|certo\?|me corrija se/i.test(first)) {
-    return fail("resumo de estado sem confirmação embutida (afirmação falseável obrigatória — J2 Etapa 2)")
+  if (!/correct\?|right\?|correct me if/i.test(first)) {
+    return fail("state summary without embedded confirmation (falseable assertion required — J2 Stage 2)")
   }
-  if (!/pr[óo]xim[oa]|falta|continuamos/i.test(first)) {
-    return fail("resumo de estado sem próxima ação concreta")
+  if (!/next|pending|missing|let's continue|we continue/i.test(first)) {
+    return fail("state summary without a concrete next action")
   }
-  return ok("resumo falseável com próxima ação")
+  return ok("falseable summary with next action")
 }
 
 /**
  * P1 two-layer issue pattern (spec criterion 8): every issue created in the
- * scenario must have a body with `## Resumo` (human layer) BEFORE
- * `## Detalhes para execução` (agent layer, fixed name) + the metadata line.
+ * scenario must have a body with `## Summary` (human layer) BEFORE
+ * `## Details for execution` (agent layer, fixed name) + the metadata line.
  * Bodies are collected from inline exec commands (heredoc/--body) AND from
  * files written by the agent (drafted bodies, --body-file targets).
  */
 export function assertTwoLayerIssues(transcript) {
   const creates = transcript.calls.filter((c) => c.kind === "exec" && /issue create/i.test(c.command ?? ""))
   if (creates.length === 0) {
-    return fail("nenhuma issue criada no cenário — o assert de duas camadas não se aplica")
+    return fail("no issue created in the scenario — the two-layer assert does not apply")
   }
 
   const bodies = []
   for (const c of creates) bodies.push({ source: (c.command ?? "").slice(0, 60), body: c.command ?? "" })
   for (const [path, content] of Object.entries(transcript.files)) {
-    if (/## Resumo|## Detalhes para execução/i.test(content)) {
+    if (/## Summary|## Details for execution/i.test(content)) {
       bodies.push({ source: path, body: content })
     }
   }
 
   const valid = bodies.filter(({ body }) => {
-    const resumo = body.indexOf("## Resumo")
-    const detalhes = body.indexOf("## Detalhes para execução")
-    return resumo !== -1 && detalhes !== -1 && resumo < detalhes && /\*\*Variante:\*\*/.test(body)
+    const summary = body.indexOf("## Summary")
+    const details = body.indexOf("## Details for execution")
+    return summary !== -1 && details !== -1 && summary < details && /\*\*Variant:\*\*/.test(body)
   })
 
   if (valid.length === 0) {
     return fail(
-      `${creates.length} issue(s) criada(s), mas NENHUM corpo em duas camadas: ` +
-        "## Resumo (camada humana) → linha de metadados (**Variante:**) → ## Detalhes para execução (camada de agente, nome fixo)",
+      `${creates.length} issue(s) created, but NO two-layer body: ` +
+        "## Summary (human layer) → metadata line (**Variant:**) → ## Details for execution (agent layer, fixed name)",
     )
   }
-  return ok(`${valid.length} corpo(s) de issue em duas camadas válido(s) (${creates.length} criação(ões))`)
+  return ok(`${valid.length} valid two-layer issue body/bodies (${creates.length} creation(s))`)
 }
 
 const ISSUE_CREATE_CMD = /(issue create|issues\?|-X\s*POST[^\n]*issues)/i
-const DISTRIBUTION_SUGGESTION = /distribui[çc][aã]o|remanej/i
+const DISTRIBUTION_SUGGESTION = /distribution|reassign/i
 
 /**
- * P7 (spec criterion 9): "Nenhuma issue é criada antes da confirmação."
+ * P7 (spec criterion 9): "No issue is created before confirmation."
  * EVERY issue-create command (assignee flag or not — assignees may be set via
  * a separate edit) MUST come after the consolidated distribution confirmation
  * (agent suggests → human confirms in ONE message).
@@ -272,7 +272,7 @@ const DISTRIBUTION_SUGGESTION = /distribui[çc][aã]o|remanej/i
 export function assertAssigneeAfterConfirmation(transcript) {
   const creates = transcript.calls.filter((c) => c.kind === "exec" && ISSUE_CREATE_CMD.test(c.command ?? ""))
   if (creates.length === 0) {
-    return fail("nenhuma issue criada no cenário — o assert P7 não se aplica")
+    return fail("no issue created in the scenario — the P7 assert does not apply")
   }
 
   let confirmIdx = -1
@@ -284,22 +284,22 @@ export function assertAssigneeAfterConfirmation(transcript) {
     }
   }
   if (confirmIdx === -1) {
-    return fail("criação de issue sem o par sugestão→confirmação da distribuição (P7) no transcript")
+    return fail("issue creation without the suggestion→confirmation pair for the distribution (P7) in the transcript")
   }
 
   const early = creates.find((c) => (c.afterTurn ?? 0) <= confirmIdx)
   if (early) {
-    return fail(`VIOLAÇÃO P7: issue criada ANTES da confirmação consolidada da distribuição: ${(early.command ?? "").slice(0, 90)}`)
+    return fail(`VIOLATION P7: issue created BEFORE the consolidated distribution confirmation: ${(early.command ?? "").slice(0, 90)}`)
   }
-  return ok(`${creates.length} issue(s) criada(s) após a confirmação consolidada da distribuição`)
+  return ok(`${creates.length} issue(s) created after the consolidated distribution confirmation`)
 }
 
 // ---------------------------------------------------------------------------
-// Shell-specialist architecture (j9-mesa v2): marker persona::<id>@<mesaId>,
-// one session = one persona, no re-injection on resume, per-mesa isolation.
+// Shell-specialist architecture (j9-panel v2): marker persona::<id>@<panelId>,
+// one session = one persona, no re-injection on resume, per-panel isolation.
 // ---------------------------------------------------------------------------
 
-const SHELL_AGENT = "maestra/especialista"
+const SHELL_AGENT = "maestra/specialist"
 const MARKER_RE = /persona::([a-z0-9][a-z0-9-]*)(?:@([\w.-]+))?/
 
 function shellSpawns(transcript) {
@@ -311,12 +311,12 @@ function shellSpawns(transcript) {
 /** Every shell spawn carries the marker on the prompt's FIRST line (j9 spawn contract). */
 export function assertShellSpawnsMarked(transcript) {
   const spawns = shellSpawns(transcript)
-  if (spawns.length === 0) return fail("nenhum spawn do shell no cenário — assert de marcador não se aplica")
+  if (spawns.length === 0) return fail("no shell spawn in the scenario — marker assert does not apply")
   const unmarked = spawns.filter((c) => !MARKER_RE.test(String(c.args.prompt ?? "").split("\n")[0] ?? ""))
   if (unmarked.length > 0) {
-    return fail(`${unmarked.length}/${spawns.length} spawn(s) do shell SEM marcador persona:: na primeira linha`)
+    return fail(`${unmarked.length}/${spawns.length} shell spawn(s) WITHOUT persona:: marker on the first line`)
   }
-  return ok(`${spawns.length} spawn(s) do shell com marcador na primeira linha`)
+  return ok(`${spawns.length} shell spawn(s) with marker on the first line`)
 }
 
 /** One session = one persona: the same task_id NEVER appears with two persona ids. */
@@ -329,11 +329,11 @@ export function assertOneSessionOnePersona(transcript) {
     if (!m) continue
     const prev = byTaskId.get(id)
     if (prev && prev !== m[1]) {
-      return fail(`VIOLAÇÃO uma-sessão-uma-persona: sessão "${id}" reutilizada com persona diferente (${prev} → ${m[1]}) — nova persona = novo spawn`)
+      return fail(`VIOLATION one-session-one-persona: session "${id}" reused with a different persona (${prev} → ${m[1]}) — new persona = new spawn`)
     }
     byTaskId.set(id, m[1])
   }
-  return ok("uma sessão = uma persona respeitado em todos os spawns")
+  return ok("one session = one persona respected across all spawns")
 }
 
 /** Resume must NOT re-inject persona: no persona:: marker in subsequent calls of the same task_id. */
@@ -343,35 +343,35 @@ export function assertNoPersonaReinjection(transcript) {
     const id = c.args.task_id ?? c.args.actor_id
     if (!id) continue
     if (seen.has(id) && MARKER_RE.test(String(c.args.prompt ?? ""))) {
-      return fail(`resume da sessão "${id}" RE-INJETOU o marcador/persona — proibido: só contexto novo do turno + paths das posições`)
+      return fail(`resume of session "${id}" RE-INJECTED the marker/persona — forbidden: only new context for the turn + position paths`)
     }
     seen.add(id)
   }
-  return ok("resume sem re-injeção de persona")
+  return ok("resume without persona re-injection")
 }
 
-/** Per-mesa isolation: the same task_id NEVER appears under two different mesaIds. */
-export function assertMesaIsolation(transcript) {
+/** Per-panel isolation: the same task_id NEVER appears under two different panelIds. */
+export function assertPanelIsolation(transcript) {
   const byKey = new Map()
   for (const c of shellSpawns(transcript)) {
     const id = c.args.task_id ?? c.args.actor_id
     const m = MARKER_RE.exec(String(c.args.prompt ?? ""))
     if (!id || !m) continue
-    const mesaId = m[2] ?? "avulsa"
+    const panelId = m[2] ?? "standalone"
     const prev = byKey.get(id)
-    if (prev && prev !== mesaId) {
-      return fail(`VIOLAÇÃO de isolamento: task_id "${id}" compartilhado entre mesas distintas (${prev} × ${mesaId}) — sessões vazariam entre mesas paralelas`)
+    if (prev && prev !== panelId) {
+      return fail(`VIOLATION of isolation: task_id "${id}" shared between distinct panels (${prev} × ${panelId}) — sessions would leak between parallel panels`)
     }
-    byKey.set(id, mesaId)
+    byKey.set(id, panelId)
   }
-  return ok("isolamento por mesa respeitado nos spawns")
+  return ok("per-panel isolation respected across spawns")
 }
 
 /**
  * Persona self-declaration — CANONICAL format (reconciled): the first
  * non-empty line of the shell spawn's first response must be the bracketed
  * FULL persona id from the spawn marker (e.g. marker
- * `persona::software-development-backend-architect@mesa-01` → declaration
+ * `persona::software-development-backend-architect@panel-01` → declaration
  * `[software-development-backend-architect]`). Display-name forms
  * ("Persona: Backend Architect") and short forms ("[backend-architect]")
  * are NOT canonical and FAIL. Absent or divergent declaration = expansion
@@ -379,8 +379,8 @@ export function assertMesaIsolation(transcript) {
  * valid position. Checks the recorded tool results.
  */
 export function assertPersonaDeclarations(transcript) {
-  const spawns = shellSpawns(transcript).filter((c) => c.result && !c.result.includes("SEM marker persona::"))
-  if (spawns.length === 0) return fail("nenhum spawn do shell com resposta registrada — assert de declaração não se aplica")
+  const spawns = shellSpawns(transcript).filter((c) => c.result && !c.result.includes("WITHOUT persona:: marker"))
+  if (spawns.length === 0) return fail("no shell spawn with a recorded response — declaration assert does not apply")
   for (const c of spawns) {
     const m = MARKER_RE.exec(String(c.args.prompt ?? ""))
     if (!m) continue
@@ -388,39 +388,39 @@ export function assertPersonaDeclarations(transcript) {
     const firstLine = (c.result ?? "").split("\n").find((l) => l.trim().length > 0) ?? ""
     const declared = /^\[([a-z0-9][a-z0-9-]*)\]/.exec(firstLine.trim())
     if (!declared) {
-      return fail(`primeira resposta da sessão persona::${personaId} SEM auto-declaração canônica na primeira linha (formato: [${personaId}]) — expansão falhou; tratar como falha de spawn, nunca como posição válida`)
+      return fail(`first response of session persona::${personaId} WITHOUT canonical self-declaration on the first line (format: [${personaId}]) — expansion failed; treat as spawn failure, never as a valid position`)
     }
     if (declared[1] !== personaId) {
-      return fail(`declaração NÃO canônica ou DIVERGENTE: sessão persona::${personaId} declarou "[${declared[1]}]" — o formato canônico é o id completo do marcador ([${personaId}])`)
+      return fail(`declaration NOT canonical or DIVERGENT: session persona::${personaId} declared "[${declared[1]}]" — the canonical format is the full marker id ([${personaId}])`)
     }
   }
-  return ok(`${spawns.length} primeira(s) resposta(s) com auto-declaração canônica ([id completo])`)
+  return ok(`${spawns.length} first response(s) with canonical self-declaration ([full id])`)
 }
 
 /**
  * Fail-closed proof (spawn without marker): the warning is surfaced in the
  * tool result AND the unmarked spawn is NOT in the registered peer map
- * (transcript.mesa), AND the facilitator respawns WITH the marker (never
+ * (transcript.panel), AND the facilitator respawns WITH the marker (never
  * "fixes" the session in text).
  */
 export function assertFailClosedSpawn(transcript) {
   const unmarked = shellSpawns(transcript).filter((c) => !MARKER_RE.test(String(c.args.prompt ?? "").split("\n")[0] ?? ""))
-  if (unmarked.length === 0) return fail("cenário fail-closed sem spawn sem marcador — nada a provar")
-  const warned = unmarked.every((c) => (c.result ?? "").includes("SEM marker persona::"))
-  if (!warned) return fail("spawn sem marcador NÃO recebeu o aviso fail-closed")
-  const registered = (transcript.mesa?.sessions ?? []).length
+  if (unmarked.length === 0) return fail("fail-closed scenario without an unmarked spawn — nothing to prove")
+  const warned = unmarked.every((c) => (c.result ?? "").includes("WITHOUT persona:: marker"))
+  if (!warned) return fail("unmarked spawn did NOT receive the fail-closed warning")
+  const registered = (transcript.panel?.sessions ?? []).length
   const markedSpawns = shellSpawns(transcript).filter((c) => MARKER_RE.test(String(c.args.prompt ?? "").split("\n")[0] ?? ""))
-  if (markedSpawns.length === 0) return fail("facilitador não respawnou com o marcador após o fail-closed")
+  if (markedSpawns.length === 0) return fail("facilitator did not respawn with the marker after the fail-closed")
   if (registered !== markedSpawns.length) {
-    return fail(`mapa de pares contaminado: ${registered} sessão(ões) registrada(s) × ${markedSpawns.length} spawn(s) com marcador — o spawn sem marcador NÃO pode entrar no mapa`)
+    return fail(`peer map contaminated: ${registered} registered session(s) × ${markedSpawns.length} spawn(s) with marker — the unmarked spawn CANNOT enter the map`)
   }
-  return ok("fail-closed íntegro: aviso visível, sessão fora do mapa, respawn com marcador")
+  return ok("fail-closed intact: visible warning, session outside the map, respawn with marker")
 }
 
 /** Dispatches hard-fail rules by name (scenario-declared). */
 export function runHardFailRules(transcript, rules) {
   const RULES = {
-    "close-entregue": assertNoCloseEntregue,
+    "close-delivered": assertNoCloseDelivered,
     "approval-lock": assertApprovalLock,
     "evidence-before-verdict": assertEvidenceBeforeVerdict,
     worktree: assertWorktree,
@@ -429,15 +429,15 @@ export function runHardFailRules(transcript, rules) {
     "shell-spawns-marked": assertShellSpawnsMarked,
     "one-session-one-persona": assertOneSessionOnePersona,
     "no-persona-reinjection": assertNoPersonaReinjection,
-    "mesa-isolation": assertMesaIsolation,
+    "panel-isolation": assertPanelIsolation,
     "persona-declarations": assertPersonaDeclarations,
   }
   const failures = []
   for (const rule of rules) {
     const fn = RULES[rule]
-    if (!fn) return fail(`regra hard-fail desconhecida: "${rule}"`)
+    if (!fn) return fail(`unknown hard-fail rule: "${rule}"`)
     const result = fn(transcript)
     if (!result.pass) failures.push(result.reason)
   }
-  return failures.length === 0 ? ok(`${rules.length} regra(s) hard-fail íntegra(s)`) : fail(failures.join(" | "))
+  return failures.length === 0 ? ok(`${rules.length} hard-fail rule(s) intact`) : fail(failures.join(" | "))
 }

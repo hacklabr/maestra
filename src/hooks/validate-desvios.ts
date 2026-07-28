@@ -16,11 +16,11 @@
  */
 
 export type DesvioFinding = {
-  /** Entry identifier: the "## Desvio N — título" heading text, or "__file__" for file-level findings. */
+  /** Entry identifier: the "## Deviation N — title" heading text, or "__file__" for file-level findings. */
   entryId: string
   /** Stable content hash of the entry block (dedup key aid, not crypto). */
   hash: string
-  /** Template fields missing/empty (PT-BR names, template 11.4). Empty when `note` is set. */
+  /** Template fields missing/empty (EN names, template 11.4). Empty when `note` is set. */
   missing: string[]
   /** Human-readable finding for file-level issues (replaces `missing`). */
   note?: string
@@ -35,21 +35,21 @@ export type DesviosValidation = {
 export const FILE_LEVEL = "__file__"
 
 const ENTRY_HEADING = /^##\s+(.+?)\s*$/gm
-const NO_DEVIATIONS_DECLARATION = /nenhum desvio nesta rodada/i
+const NO_DEVIATIONS_DECLARATION = /no deviations in this round/i
 
-/** Required fields per entry (template 11.4 + jornadas P3). */
+/** Required fields per entry (template 11.4 + journeys P3). */
 const REQUIRED_FIELDS = [
-  "Planejado",
-  "Implementado",
-  "Motivo",
-  "Decisão registrada em",
-  "Documento de referência atualizado",
+  "Planned",
+  "Implemented",
+  "Reason",
+  "Decision registered at",
+  "Reference document updated",
 ] as const
 
-/** Fields that must contain a link (jornadas P3: "entrada sem o link é rejeitada"). */
+/** Fields that must contain a link (journeys P3: "entry without the link is rejected"). */
 const LINK_FIELDS: ReadonlySet<string> = new Set([
-  "Decisão registrada em",
-  "Documento de referência atualizado",
+  "Decision registered at",
+  "Reference document updated",
 ])
 
 /** Values that count as "not filled" even when syntactically present. */
@@ -111,7 +111,7 @@ export function validateDesvios(content: string): DesviosValidation {
           entryId: FILE_LEVEL,
           hash: hashEntry(content),
           missing: [],
-          note: `O arquivo não tem entradas de desvio nem a declaração "nenhum desvio nesta rodada".`,
+      note: `The file has no deviation entries and no "No deviations in this round." declaration.`,
         },
       ],
     }
@@ -135,7 +135,7 @@ export function validateDesvios(content: string): DesviosValidation {
       if (isPlaceholder(value)) {
         missing.push(field)
       } else if (LINK_FIELDS.has(field) && !hasLink(value)) {
-        missing.push(`${field} (link ausente)`)
+        missing.push(`${field} (link missing)`)
       }
     }
 

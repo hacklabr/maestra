@@ -1,7 +1,7 @@
 export type PlatformKind = "github" | "gitlab"
 
 /** Fluxo variant labels (fluxo-de-desenvolvimento.md §4.5) — the epic marker. */
-export const VARIANTE_LABELS = ["variante-completo", "variante-condensado", "variante-minimo", "variante-tecnica"] as const
+export const VARIANTE_LABELS = ["variant-full", "variant-condensed", "variant-minimal", "variant-technical"] as const
 
 /**
  * ADR-010: the issue platform is per-REPOSITORY, never baked at install time

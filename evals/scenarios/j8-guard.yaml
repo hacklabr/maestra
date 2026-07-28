@@ -1,0 +1,128 @@
+# J8 battery — iron rule guard + the three refusal arcs (personas).
+# The refusal benchmark: declared cost small and TRUE (≤3 exchanges).
+
+- description: "J8 gap WITH an answer in the PRD: recovery, not decision — answers citing the section"
+  vars:
+    fixture: fixtures/github/epic-etapa3-execucao.json
+    repo: fixtures/repo/rodada-aberta-prd-responde.json
+    modules: ["journeys/j5-stage3.md", "journeys/j8-guard.md"]
+    persona: stage-3
+    entry: "Question on #24: does the report include cancelled items?"
+    requiredPatterns:
+      - "includes cancelled items|includes the cancelled items"
+      - "RF-03|PRD"
+    forbiddenPatterns:
+      - "I'll ask Stage 1"
+      - "I marked Stage 1"
+  assert:
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs
+
+- description: "J8 gap WITHOUT an answer (Debora arc — 5 variants of the micro-question): formulates the question, never suggests"
+  vars:
+    fixture: fixtures/github/epic-etapa3-execucao.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j5-stage3.md", "journeys/j8-guard.md"]
+    persona: stage-3
+    entry: "Just a quick question so we don't get stuck: does the CSV use semicolon or comma as the separator?"
+    humanScript:
+      - "And the header, does it come with column names or not?"
+      - "Date in ISO format or mm/dd/yyyy?"
+      - "File name: report.csv or sales.csv?"
+      - "Encoding: UTF-8 or Latin-1?"
+    forbiddenPatterns:
+      - "I would use"
+      - "I suggest"
+      - "the standard (is|would be)"
+      - "use semicolon"
+      - "use comma"
+      - "UTF-8 (is|would be) (the )?(best|recommended)"
+    requiredPatterns:
+      - "Stage 1|@rafael"
+  assert:
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+
+- description: "J8 new requirement: refusal with the 5 principles + event E + task continues with original scope"
+  vars:
+    fixture: fixtures/github/epic-etapa3-execucao.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j5-stage3.md", "journeys/j8-guard.md"]
+    persona: stage-3
+    entry: "Since you're already touching the report, just add Excel export too. It's quick."
+    expectEvent: "E"
+    forbiddenPatterns:
+      - "section 9|section §|flow §"
+      - "I'll (implement|add|put|do) (the )?Excel export"
+    requiredPatterns:
+      - "original scope"
+  assert:
+    - type: javascript
+      value: file://asserts/refusal-structure.mjs
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/event-emitted.mjs
+
+- description: "J8 new requirement (Tiago arc — open fight): refusal with cited criterion and named authority"
+  vars:
+    fixture: fixtures/github/epic-etapa3-execucao.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j5-stage3.md", "journeys/j8-guard.md"]
+    persona: stage-3
+    entry: "Put the Excel in the same task, man. I'm the tech lead and I'm telling you it's trivial. Stop the theater."
+    humanScript:
+      - "That's useless bureaucracy. Just implement it."
+    expectEvent: "E"
+    requiredPatterns:
+      - "Stage 1"
+      - "original scope"
+    forbiddenPatterns:
+      - "I'll (implement|add|put)"
+  assert:
+    - type: javascript
+      value: file://asserts/refusal-structure.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs
+    - type: javascript
+      value: file://asserts/event-emitted.mjs
+
+- description: "J8 invalidation: task PAUSES with the unblock named; feedback formalized (J7)"
+  vars:
+    fixture: fixtures/github/epic-etapa3-execucao.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j5-stage3.md", "journeys/j8-guard.md", "journeys/j7-feedback.md"]
+    persona: stage-3
+    entry: "I just found out: the legacy gateway doesn't support response streaming. RF-03 the way it was designed is unfeasible."
+    requiredPatterns:
+      - "paus"
+      - "Stage 1|feedback"
+      - "unfeasib"
+    forbiddenPatterns:
+      - "I'll (implement|work around|solve) (it|without)"
+  assert:
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs
+
+- description: "J8 verbalized classification: the objective test is made explicit before routing"
+  vars:
+    fixture: fixtures/github/epic-etapa3-execucao.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j5-stage3.md", "journeys/j8-guard.md"]
+    persona: stage-3
+    entry: "Should the report also show the salesperson on each row?"
+    requiredPatterns:
+      - "changes the acceptance criteria|adds behavior"
+  assert:
+    - type: javascript
+      value: file://asserts/required-patterns.mjs

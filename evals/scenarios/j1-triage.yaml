@@ -1,0 +1,205 @@
+# J1 — triage calibration (journeys §2/§3): question limits,
+# hierarchy derive>confirm>ask, destination of "don't know", PO vocabulary.
+
+- description: "J1 fast path to Minimal: ≤3 questions total, variant with 'none of the criteria apply'"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j1-triage.md"]
+    persona: stage-1
+    entry: "The report breaks when the filter has an accent. It's a small fix to CSV generation — one person solves it in 1 day, only touches that part, nobody outside depends on it."
+    humanScript:
+      - "That's right, I confirm."
+      - "Confirm the classification."
+    questionCaps: { maxPerTurn: 3, maxTotal: 3 }
+    requiredPatterns:
+      - "Minimal"
+      - "no criteria|none of the criteria"
+    expectEvent: "A"
+    hardFail: ["assignee-after-confirmation"]
+  assert:
+    - type: javascript
+      value: file://asserts/question-count.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/no-jargon.mjs
+    - type: javascript
+      value: file://asserts/event-emitted.mjs
+    - type: javascript
+      value: file://asserts/two-layer-issues.mjs
+    - type: javascript
+      value: file://asserts/hard-fail.mjs
+
+- description: "J1 Condensed: objective criteria cited in the proposal; questions only the irreducible"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j1-triage.md"]
+    persona: stage-1
+    entry: "We need to add report export for the sales module. One person takes about 2 weeks, it touches sales, reports and permissions, and a lot of people use reports today."
+    humanScript:
+      - "I confirm."
+    questionCaps: { maxPerTurn: 3, maxTotal: 5 }
+    requiredPatterns:
+      - "Condensed"
+      - "5 days|estimate"
+    expectEvent: "A"
+    hardFail: ["assignee-after-confirmation"]
+  assert:
+    - type: javascript
+      value: file://asserts/question-count.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/no-jargon.mjs
+    - type: javascript
+      value: file://asserts/event-emitted.mjs
+    - type: javascript
+      value: file://asserts/two-layer-issues.mjs
+    - type: javascript
+      value: file://asserts/hard-fail.mjs
+
+- description: "J1 PO is never asked about engineering criteria (golden rule)"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j1-triage.md"]
+    persona: stage-1
+    entry: "I want a new report of sales by period, with export. About 2 weeks of work."
+    humanScript:
+      - "I confirm."
+    questionCaps: { maxPerTurn: 3, maxTotal: 5 }
+    forbiddenPatterns:
+      - "data model"
+      - "API contract"
+      - "hooks?"
+      - "lasting technical decision"
+      - "schema"
+      - "\\bADR\\b"
+      - "\\bDoR\\b"
+      - "\\bTDD\\b"
+  assert:
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs
+    - type: javascript
+      value: file://asserts/question-count.mjs
+    - type: javascript
+      value: file://asserts/no-jargon.mjs
+
+- description: "J1 vague demand: 1 focal question; after 2 rounds, Minimal as hypothesis + ambiguity in the human's own words"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j1-triage.md"]
+    persona: stage-1
+    entry: "I need to improve the reports."
+    humanScript:
+      - "I don't know, just make it better, you know?"
+      - "I can't tell you what's bad."
+    questionCaps: { maxPerTurn: 3, maxTotal: 3 }
+    requiredPatterns:
+      - "Minimal"
+      - "original description|in your (own )?words|recorded"
+  assert:
+    - type: javascript
+      value: file://asserts/question-count.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/no-jargon.mjs
+
+- description: "J1 'don't know' on a product criterion: safest hypothesis + recorded assumption + event C"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j1-triage.md"]
+    persona: stage-1
+    entry: "I want a new filter by salesperson on the sales report."
+    humanScript:
+      - "I don't know if anyone uses that report today."
+      - "I really don't know."
+    requiredPatterns:
+      - "assum|assuming"
+      - "reclassif"
+    expectEvent: "C"
+  assert:
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/event-emitted.mjs
+    - type: javascript
+      value: file://asserts/no-jargon.mjs
+
+- description: "J1 dedup (G-10): searches similar open epics BEFORE creating"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j1-triage.md"]
+    persona: stage-1
+    entry: "Add CSV report export."
+    humanScript:
+      - "I confirm."
+    expectedCallOrder:
+      - "exec:.*(issue list|search issues)"
+      - "exec:.*issue create"
+  assert:
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+
+- description: "J1 Full (Q2 large initiative): own life, dedicated budget → Full classification citing the criterion"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/repo-sem-team.json
+    modules: ["journeys/j1-triage.md"]
+    persona: stage-1
+    entry: "Let's build a services marketplace from scratch — a new platform, with its own success metrics, dedicated budget and a launch deadline in 6 months."
+    humanScript:
+      - "It does have its own life, it's a new initiative."
+      - "Confirm the classification."
+    questionCaps: { maxPerTurn: 3, maxTotal: 5 }
+    requiredPatterns:
+      - "Full"
+      - "own life|initiative|own identity"
+    expectEvent: "A"
+    hardFail: ["assignee-after-confirmation"]
+  assert:
+    - type: javascript
+      value: file://asserts/question-count.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/no-jargon.mjs
+    - type: javascript
+      value: file://asserts/event-emitted.mjs
+    - type: javascript
+      value: file://asserts/two-layer-issues.mjs
+    - type: javascript
+      value: file://asserts/hard-fail.mjs
+
+- description: "Full — funnel slice: Stage 1 gate (6/6 artifacts) verified → Stage 2 wave created after P7 confirmation"
+  vars:
+    fixture: fixtures/github/epic-completa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j2-resume.md", "journeys/j3-stage1.md"]
+    persona: stage-1
+    entry: "60"
+    humanScript:
+      - "Correct."
+      - "Confirm this distribution."
+    expectedCallOrder:
+      - "tool:maestra_issue_digest"
+      - "exec:.*issue create"
+    requiredPatterns:
+      - "Stage 2"
+      - "gate|artifacts"
+    hardFail: ["assignee-after-confirmation"]
+  assert:
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/two-layer-issues.mjs
+    - type: javascript
+      value: file://asserts/hard-fail.mjs

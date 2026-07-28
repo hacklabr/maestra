@@ -9,40 +9,40 @@
 import { VARIANTE_LABELS } from "../platform/types.js"
 
 const VARIANTES: ReadonlySet<string> = new Set(VARIANTE_LABELS)
-const ETAPAS = new Set(["etapa-1", "etapa-2", "etapa-3"])
-const MARCADORES = new Set(["override-registrado", "bug-documentacao", "feedback-produto"])
+const ETAPAS = new Set(["stage-1", "stage-2", "stage-3"])
+const MARCADORES = new Set(["override-registered", "doc-bug", "product-feedback"])
 
 export interface LabelFacts {
-  variante: string | null
-  etapas: string[]
-  marcadores: string[]
+  variant: string | null
+  stages: string[]
+  markers: string[]
 }
 
 export function classifyLabels(labels: string[]): LabelFacts {
   return {
-    variante: labels.find((l) => VARIANTES.has(l)) ?? null,
-    etapas: labels.filter((l) => ETAPAS.has(l)),
-    marcadores: labels.filter((l) => MARCADORES.has(l)),
+    variant: labels.find((l) => VARIANTES.has(l)) ?? null,
+    stages: labels.filter((l) => ETAPAS.has(l)),
+    markers: labels.filter((l) => MARCADORES.has(l)),
   }
 }
 
 export interface P1Metadata {
-  variante: string | null
-  etapaAtual: string | null
-  epico: number | null
-  rodada: string | null
-  subestado: string | null
+  variant: string | null
+  currentStage: string | null
+  epic: number | null
+  round: string | null
+  substate: string | null
 }
 
 const P1_FIELD = /\*\*([^:*]+):\*\*\s*([^·\n]+)/g
 
 /**
  * Parses the P1 metadata line:
- *   **Variante:** X · **Etapa atual:** Y · **Épico:** #N · **Rodada:** Rnn · **Subestado:** Z
+ *   **Variant:** X · **Current stage:** Y · **Epic:** #N · **Round:** Rnn · **Substate:** Z
  * Returns null when the issue has no metadata line (fact for the J2 B1 branch).
  */
 export function parseMetadataLine(body: string): P1Metadata | null {
-  const line = body.split("\n").find((l) => l.includes("**Variante:**"))
+  const line = body.split("\n").find((l) => l.includes("**Variant:**"))
   if (!line) return null
 
   const fields = new Map<string, string>()
@@ -50,35 +50,35 @@ export function parseMetadataLine(body: string): P1Metadata | null {
     fields.set(match[1].trim(), match[2].trim())
   }
 
-  const epicoMatch = fields.get("Épico")?.match(/#(\d+)/)
+  const epicMatch = fields.get("Epic")?.match(/#(\d+)/)
   return {
-    variante: fields.get("Variante") ?? null,
-    etapaAtual: fields.get("Etapa atual") ?? null,
-    epico: epicoMatch ? Number.parseInt(epicoMatch[1], 10) : null,
-    rodada: fields.get("Rodada") ?? null,
-    subestado: fields.get("Subestado") ?? null,
+    variant: fields.get("Variant") ?? null,
+    currentStage: fields.get("Current stage") ?? null,
+    epic: epicMatch ? Number.parseInt(epicMatch[1], 10) : null,
+    round: fields.get("Round") ?? null,
+    substate: fields.get("Substate") ?? null,
   }
 }
 
-export type MarkedCommentKind = "override" | "evento" | "facilitador"
+export type MarkedCommentKind = "override" | "event" | "facilitator"
 
 /**
  * Classifies comments by our frozen markers:
- *  - override: P3 register (`**Registro de override**`)
- *  - evento: instrumentation event (`**Evento A–F**`)
- *  - facilitador: any other comment signed "— facilitador" (gate comments etc.)
+ *  - override: P3 register (`**Override register**`)
+ *  - event: instrumentation event (`**Event A–F**`)
+ *  - facilitator: any other comment signed "— facilitator" (gate comments etc.)
  * Plain human comments return null (excluded from the digest).
  */
 export function classifyComment(body: string): MarkedCommentKind | null {
-  if (/^\*\*Registro de override\*\*/m.test(body)) return "override"
-  if (/^\*\*Evento [A-F]\*\*/m.test(body)) return "evento"
-  if (/— facilitador\s*$/m.test(body)) return "facilitador"
+  if (/^\*\*Override register\*\*/m.test(body)) return "override"
+  if (/^\*\*Event [A-F]\*\*/m.test(body)) return "event"
+  if (/— facilitator\s*$/m.test(body)) return "facilitator"
   return null
 }
 
 export interface TasklistItem {
-  numero: number
-  marcado: boolean
+  number: number
+  checked: boolean
 }
 
 const TASK_ITEM = /^\s*[-*]\s*\[([ xX])\]\s*#(\d+)/gm
@@ -86,16 +86,16 @@ const TASK_ITEM = /^\s*[-*]\s*\[([ xX])\]\s*#(\d+)/gm
 /** Parses the GitLab epic tasklist (ADR-011 roll-up mechanism). */
 export function parseTasklist(body: string): TasklistItem[] {
   return [...body.matchAll(TASK_ITEM)].map((m) => ({
-    numero: Number.parseInt(m[2], 10),
-    marcado: m[1] !== " ",
+    number: Number.parseInt(m[2], 10),
+    checked: m[1] !== " ",
   }))
 }
 
-const ARTIFACT_PATH = /docs\/(?:referencia|rodadas|decisoes)\/[^\s)`*"']+?\.md/
+const ARTIFACT_PATH = /docs\/(?:reference|rounds|decisions)\/[^\s)`*"']+?\.md/
 
 /**
  * Extracts the declared delivery path from an artifact task body
- * (template 11.2 "Tipo e local de entrega"). First match wins.
+ * (template 11.2 "Type and delivery location"). First match wins.
  */
 export function extractDeclaredArtifactPath(body: string): string | null {
   const match = ARTIFACT_PATH.exec(body)

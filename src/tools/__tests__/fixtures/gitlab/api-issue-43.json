@@ -2,9 +2,9 @@
   "iid": 43,
   "id": 111,
   "title": "Mini-briefing",
-  "description": "## Épico\n\n#42\n\n## Tipo e local de entrega\n\nREGISTRO — docs/rodadas/R02-2026-10-exportacao/mini-briefing.md",
+  "description": "## Epic\n\n#42\n\n## Type and delivery location\n\nRECORD — docs/rounds/R02-2026-10-export/mini-briefing.md",
   "state": "closed",
-  "labels": ["etapa-1"],
+  "labels": ["stage-1"],
   "assignees": [{ "username": "rafael" }],
   "web_url": "https://gitlab.com/grupo/loja/-/issues/43",
   "task_completion_status": null

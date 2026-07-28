@@ -9,7 +9,7 @@ import {
 } from "../hooks/persona-expansion.js"
 import { loadPersonaById } from "../catalog/loader.js"
 
-const SHELL = "maestra/especialista"
+const SHELL = "maestra/specialist"
 
 let tmp: string
 
@@ -83,7 +83,7 @@ describe("persona-expansion hook", () => {
     const { hook, output } = call("persona::backend-architect@mesa-01")
     await hook({ tool: "task", sessionID: "s", callID: "c2" }, output)
 
-    expect(output.args.prompt).toContain('Declare sua persona na primeira linha')
+    expect(output.args.prompt).toContain('Declare your persona on the first line')
     expect(output.args.prompt).toContain('"[backend-architect]"')
   })
 
@@ -108,8 +108,8 @@ describe("persona-expansion hook", () => {
 
     const prompt = output.args.prompt as string
     expect(prompt).toContain(EXPANSION_FAILURE_SIGNATURE)
-    expect(prompt).toContain('"nonexistent-persona" não existe no catálogo instalado')
-    expect(prompt).toContain("NÃO improvise")
+    expect(prompt).toContain('Persona "nonexistent-persona" does not exist in the installed catalog')
+    expect(prompt).toContain("DO NOT improvise")
     expect(prompt).not.toContain("persona::nonexistent-persona")
     expect(prompt).toContain("Pauta: x.")
   })

@@ -22,21 +22,21 @@ const GOLDEN_DIR = join(EVALS_ROOT, "transcripts", "golden")
 /** Golden scenarios (mock-independent: they run with the LIVE model). */
 const GOLDEN_SCENARIOS = [
   {
-    id: "j2-b2-contraditorio",
+    id: "j2-b2-contradictory",
     vars: {
       fixture: "fixtures/github/epic-labels-contraditorias.json",
       repo: "fixtures/repo/rodada-aberta.json",
-      modules: ["jornadas/j2-retomada.md"],
+      modules: ["journeys/j2-resume.md"],
       entry: "12",
     },
   },
   {
-    id: "j8-recusa-requisito-novo",
+    id: "j8-refusal-new-requirement",
     vars: {
       fixture: "fixtures/github/epic-etapa3-execucao.json",
       repo: "fixtures/repo/rodada-aberta.json",
-      modules: ["jornadas/j5-etapa3.md", "jornadas/j8-guarda.md"],
-      entry: "Aproveita e coloca exportação em Excel também, rapidinho.",
+      modules: ["journeys/j5-stage3.md", "journeys/j8-guard.md"],
+      entry: "Since you're already touching it, add Excel export too, real quick.",
     },
   },
 ]
@@ -76,7 +76,7 @@ async function main() {
         baselinePath,
         JSON.stringify({ id: scenario.id, structure, transcript }, null, 2) + "\n",
       )
-      console.log(`[golden] ${scenario.id}: baseline ${baseline ? "ATUALIZADA (revisão humana confirmada?)" : "criada"}.`)
+      console.log(`[golden] ${scenario.id}: baseline ${baseline ? "UPDATED (human review confirmed?)" : "created"}.`)
       continue
     }
 
@@ -84,13 +84,13 @@ async function main() {
       JSON.stringify(baseline.structure.callSequence) === JSON.stringify(structure.callSequence) &&
       JSON.stringify(baseline.structure.events) === JSON.stringify(structure.events)
     if (same) {
-      console.log(`[golden] ${scenario.id}: estrutura íntegra.`)
+      console.log(`[golden] ${scenario.id}: structure intact.`)
     } else {
       drift++
-      console.log(`[golden] ${scenario.id}: DRIFT ESTRUTURAL`)
+      console.log(`[golden] ${scenario.id}: STRUCTURAL DRIFT`)
       console.log(`  baseline: ${JSON.stringify(baseline.structure.callSequence)}`)
-      console.log(`  atual:    ${JSON.stringify(structure.callSequence)}`)
-      console.log(`  Wording NÃO é comparado — revise a conversa e, se a mudança for intencional, rode --update.`)
+      console.log(`  current:  ${JSON.stringify(structure.callSequence)}`)
+      console.log(`  Wording is NOT compared — review the conversation and, if the change is intentional, run --update.`)
     }
   }
 
@@ -98,6 +98,6 @@ async function main() {
 }
 
 main().catch((e) => {
-  console.error(`[golden] erro: ${e instanceof Error ? e.message : String(e)}`)
+  console.error(`[golden] error: ${e instanceof Error ? e.message : String(e)}`)
   process.exit(1)
 })

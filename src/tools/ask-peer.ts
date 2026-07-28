@@ -6,7 +6,7 @@ import type { ToolContext } from "../host-types.js"
  *
  * Shell-specialist architecture: persona identity comes from the spawn-prompt
  * marker (persona::<id>@<mesaId>), registered by the peer-tracker hook —
- * NEVER from subagent_type (always maestra/especialista).
+ * NEVER from subagent_type (always maestra/specialist).
  *
  * Guards (spec D1/D8):
  *  - caller-identity gate: the caller's session MUST be a registered shell
@@ -98,7 +98,7 @@ export function resolvePeerSession(
       error:
         `Error: peer "${peerPersona}" has no session in this context. ` +
         `The facilitator must spawn the shell specialist (task/actor with subagent_type ` +
-        `"maestra/especialista" and marker \`persona::${peerPersona}@<mesaId>\` in the prompt) first.`,
+        `"maestra/specialist" and marker \`persona::${peerPersona}@<mesaId>\` in the prompt) first.`,
     }
   }
 

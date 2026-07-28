@@ -1,28 +1,28 @@
-# Template — ADR (`docs/decisoes/adr/ADR-NNN-titulo.md`)
+# Template — ADR (`docs/decisions/adr/ADR-NNN-title.md`)
 
-> Source: fluxo-de-desenvolvimento.md §11.5 (+ glossário ADR) · Module version: 1 — 2026-07-28
-> Anti-drift: verbatim da fonte. Classe: REGISTRO — imutável; a única mutação permitida é o campo **Status** (Vigente → Substituído por ADR-NNN), no mesmo commit do ADR que substitui.
+> Source: fluxo-de-desenvolvimento.md §11.5 (+ ADR glossary) · Module version: 1 — 2026-07-28
+> Anti-drift: verbatim from the source. Class: RECORD — immutable; the only allowed mutation is the **Status** field (Current → Replaced by ADR-NNN), in the same commit as the replacing ADR.
 
 ```markdown
-# ADR-NNN — <título da decisão>
+# ADR-NNN — <decision title>
 
-**Status:** Vigente | Substituído por ADR-MMM
-**Data:** YYYY-MM-DD
-**Rodada:** Rnn
+**Status:** Current | Replaced by ADR-MMM
+**Date:** YYYY-MM-DD
+**Round:** Rnn
 
-## Contexto
-<!-- O que motivou esta decisão -->
+## Context
+<!-- What motivated this decision -->
 
-## Decisão
-<!-- O que foi decidido -->
+## Decision
+<!-- What was decided -->
 
-## Consequências
-<!-- O que esta decisão implica, positivas e negativas -->
+## Consequences
+<!-- What this decision implies, positive and negative -->
 ```
 
-**Checkpoint de unicidade (anti-contradição #5, J4 Etapa 2):**
-1. **Antes de criar:** verificar se já existe ADR `Vigente` sobre o mesmo assunto (grep de status). ADR por hábito = touchpoint órfão — só se cria ADR para **decisão nova com consequência duradoura** (matriz 3.5 por variante).
-2. **Se a decisão substitui uma anterior:** o ADR antigo ganha `Substituído por ADR-NNN` **no mesmo commit** do novo. **Nunca existem dois ADRs vigentes sobre o mesmo assunto.**
-3. **Decisão revertida gera ADR novo** — nunca edição do antigo nem remoção.
-4. Decisão saída de mesa de discussão (J9): a síntese verbal e o texto do ADR são **o mesmo texto**; se a mesa reverteu decisão anterior, o ADR antigo é marcado `Substituído` no mesmo ato.
-5. A reconciliação (J5 Etapa 5) verifica: todo ADR cuja decisão foi substituída na rodada tem o status atualizado (evidência: grep de status).
+**Uniqueness checkpoint (anti-contradiction #5, J4 Stage 2):**
+1. **Before creating:** verify if there is already a `Current` ADR on the same subject (status grep). ADR by habit = orphan touchpoint — an ADR is created only for a **new decision with lasting consequence** (matrix 3.5 per variant).
+2. **If the decision replaces a previous one:** the old ADR gets `Replaced by ADR-NNN` **in the same commit** as the new one. **There are NEVER two current ADRs on the same subject.**
+3. **A reverted decision generates a new ADR** — never an edit of the old one nor a removal.
+4. Decision coming out of a discussion panel (J9): the verbal synthesis and the ADR text are **the same text**; if the panel reverted a previous decision, the old ADR is marked `Replaced` in the same act.
+5. Reconciliation (J5 Stage 5) verifies: every ADR whose decision was replaced in the round has the status updated (evidence: status grep).

@@ -8,9 +8,9 @@ import type { PlatformKind } from "./types.js"
  */
 
 export interface FluxoConfig {
-  plataforma?: PlatformKind
+  platform?: PlatformKind
   host?: string
-  projeto?: string
+  project?: string
   board?: string
 }
 
@@ -28,9 +28,9 @@ export async function readFluxoConfig(directory: string): Promise<FluxoConfig | 
   const config: FluxoConfig = {}
   for (const match of content.matchAll(ENTRY)) {
     const [, key, value] = match
-    if (key === "plataforma" && (value === "github" || value === "gitlab")) {
-      config.plataforma = value
-    } else if (key === "host" || key === "projeto" || key === "board") {
+    if (key === "platform" && (value === "github" || value === "gitlab")) {
+      config.platform = value
+    } else if (key === "host" || key === "project" || key === "board") {
       config[key] = value
     }
   }
@@ -39,14 +39,14 @@ export async function readFluxoConfig(directory: string): Promise<FluxoConfig | 
 
 export async function writeFluxoConfig(directory: string, config: FluxoConfig): Promise<void> {
   const lines = [
-    "# Configuração do Fluxo",
+    "# Fluxo Configuration",
     "",
-    "<!-- ADR-014: gerado na primeira triagem; edite à mão para sobrescrever a detecção. -->",
+    "<!-- ADR-014: generated at first triage; edit by hand to override detection. -->",
     "",
   ]
-  if (config.plataforma) lines.push(`- plataforma: ${config.plataforma}`)
+  if (config.platform) lines.push(`- platform: ${config.platform}`)
   if (config.host) lines.push(`- host: ${config.host}`)
-  if (config.projeto) lines.push(`- projeto: ${config.projeto}`)
+  if (config.project) lines.push(`- project: ${config.project}`)
   if (config.board) lines.push(`- board: ${config.board}`)
   lines.push("")
 

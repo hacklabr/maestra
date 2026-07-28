@@ -1,10 +1,10 @@
 {
   "id": "rodada-aberta-prd-responde",
-  "descricao": "Rodada R02 aberta. O PRD vivo JÁ responde (RF-03 inclui itens cancelados) — palco da lacuna com resposta (J8: recuperação, não decisão — citar a seção).",
+  "description": "Round R02 open. The living PRD ALREADY answers (RF-03 includes cancelled items) — stage for the gap with an answer (J8: recovery, not decision — cite the section).",
   "files": {
-    "docs/referencia/prd.md": "# PRD vivo\n\n## RF-03 — Exportação de relatórios\n\nO usuário exporta o relatório de vendas em CSV, com filtros por período e por vendedor. A exportação inclui itens cancelados, marcados na coluna \"status\".\n\n### Critérios de aceite\n\n- O arquivo exportado abre no Excel sem quebrar acentos.\n- O filtro por período limita as linhas exportadas.\n- Itens cancelados aparecem na exportação, identificados.\n\n## Fora de escopo\n\n- Exportação em Excel (xlsx).\n",
-    "docs/rodadas/R02-2026-10-exportacao-relatorios/escopo.md": "# Escopo da rodada R02 — exportação de relatórios\n\n## Variante\ncondensado\n\n## Requisitos introduzidos\n- RF-03 — Exportação de relatórios\n\n## Fora de escopo desta rodada\n- Exportação em Excel\n",
-    "docs/rodadas/R02-2026-10-exportacao-relatorios/desvios.md": "# Desvios da rodada R02 — exportação de relatórios\n\nNenhum desvio nesta rodada.\n",
-    ".maestra/team.md": "# Mapa de equipe\n\n- @rafael — Produto (PO)\n- @maria — Engenharia (dev sênior back-end)\n- @joao — Entrega (dev pleno full-stack)\n- @debora — Entrega (dev pleno back-end)\n- @quesia — Entrega (QA)\n"
+    "docs/reference/prd.md": "# Living PRD\n\n## RF-03 — Report export\n\nThe user exports the sales report in CSV, with filters by period and by salesperson. The export includes cancelled items, marked in the \"status\" column.\n\n### Acceptance criteria\n\n- The exported file opens in Excel without breaking accents.\n- The period filter limits the exported rows.\n- Cancelled items appear in the export, identified.\n\n## Out of scope\n\n- Excel export (xlsx).\n",
+    "docs/rounds/R02-2026-10-report-export/scope.md": "# Round R02 scope — report export\n\n## Variant\ncondensed\n\n## Requirements introduced\n- RF-03 — Report export\n\n## Out of scope for this round\n- Excel export\n",
+    "docs/rounds/R02-2026-10-report-export/deviations.md": "# Round R02 deviations — report export\n\nNo deviations in this round.\n",
+    ".maestra/team.md": "# Team map\n\n- @rafael — Product (PO)\n- @maria — Engineering (senior back-end dev)\n- @joao — Delivery (mid-level full-stack dev)\n- @debora — Delivery (mid-level back-end dev)\n- @quesia — Delivery (QA)\n"
   }
 }

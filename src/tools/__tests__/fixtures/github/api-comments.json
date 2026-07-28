@@ -1,22 +1,22 @@
 [
   {
     "user": { "login": "rafael" },
-    "body": "**Registro de override** — facilitador\n- Tipo: variante\n- De: Condensada → Para: Mínima\n- Critério objetivo contestado: estimativa > 5 dias\n- Motivo declarado: \"escopo fechado com o cliente\"\n- Decidido por: @rafael em 28/07/2026",
+    "body": "**Override register** — facilitator\n- Type: variant\n- From: Condensed → To: Minimal\n- Objective criterion disputed: estimate > 5 days\n- Declared reason: \"scope closed with the client\"\n- Decided by: @rafael on 2026-07-28",
     "created_at": "2026-07-28T10:00:00Z"
   },
   {
     "user": { "login": "rafael" },
-    "body": "**Evento A** — triagem épico #42: 3 perguntas de elicitação — facilitador",
+    "body": "**Event A** — triage epic #42: 3 elicitation questions — facilitator",
     "created_at": "2026-07-28T10:05:00Z"
   },
   {
     "user": { "login": "rafael" },
-    "body": "Gate da Etapa 1 verificado: 2 de 2 tarefas fechadas. Onda da Etapa 2 criada (#45, #46).\n— facilitador",
+    "body": "Stage 1 gate checked: 2 of 2 tasks closed. Stage 2 wave created (#45, #46).\n— facilitator",
     "created_at": "2026-07-28T11:00:00Z"
   },
   {
     "user": { "login": "joao" },
-    "body": "começando a fatia 1 hoje",
+    "body": "starting slice 1 today",
     "created_at": "2026-07-28T12:00:00Z"
   }
 ]

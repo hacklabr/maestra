@@ -10,10 +10,10 @@ const REF = { forge: FORGE, number: 42 }
 const GH_ISSUE = {
   number: 42,
   id: 123456789,
-  title: "Implementar exportação de relatórios",
-  body: "**Variante:** condensado",
+  title: "Implement report export",
+  body: "**Variant:** condensed",
   state: "open",
-  labels: [{ name: "variante-condensado" }, { name: "etapa-1" }],
+  labels: [{ name: "variant-condensed" }, { name: "stage-1" }],
   assignees: [{ login: "maria" }],
   html_url: "https://github.com/acme/loja/issues/42",
 }
@@ -26,9 +26,9 @@ describe("GitHub adapter", () => {
     expect(issue).toMatchObject({
       number: 42,
       id: 123456789,
-      title: "Implementar exportação de relatórios",
+      title: "Implement report export",
       state: "open",
-      labels: ["variante-condensado", "etapa-1"],
+      labels: ["variant-condensed", "stage-1"],
       assignees: ["maria"],
       url: "https://github.com/acme/loja/issues/42",
       taskCompletion: null,
@@ -59,23 +59,23 @@ describe("GitHub adapter", () => {
 
   it("listComments maps user.login and timestamps", async () => {
     const comments = [
-      { user: { login: "rafael" }, body: "**Evento A** — triagem", created_at: "2026-07-28T10:00:00Z" },
+      { user: { login: "rafael" }, body: "**Event A** — triage", created_at: "2026-07-28T10:00:00Z" },
     ]
     const { exec, calls } = makeExecStub([[/comments/, json(comments)]])
     const result = await createGitHubAdapter(FORGE, exec).listComments(REF)
 
     expect(calls[0].args.join(" ")).toContain("issues/42/comments?per_page=100")
-    expect(result).toEqual([{ author: "rafael", body: "**Evento A** — triagem", createdAt: "2026-07-28T10:00:00Z" }])
+    expect(result).toEqual([{ author: "rafael", body: "**Event A** — triage", createdAt: "2026-07-28T10:00:00Z" }])
   })
 
   it("postComment POSTs via gh api (GHES-compatible)", async () => {
     const { exec, calls } = makeExecStub([[/comments/, json({ id: 1 })]])
-    await createGitHubAdapter(FORGE, exec).postComment(REF, "comentário de gate — facilitador")
+    await createGitHubAdapter(FORGE, exec).postComment(REF, "gate comment — facilitator")
     expect(calls[0].args).toEqual([
       "api",
       "repos/acme/loja/issues/42/comments",
       "-f",
-      "body=comentário de gate — facilitador",
+      "body=gate comment — facilitator",
     ])
   })
 
@@ -105,7 +105,7 @@ describe("GitHub adapter", () => {
                   fieldValues: {
                     nodes: [
                       { name: "high", field: { name: "Priority" } },
-                      { name: "Em andamento", field: { name: "Status" } },
+                      { name: "In progress", field: { name: "Status" } },
                     ],
                   },
                 },
@@ -118,7 +118,7 @@ describe("GitHub adapter", () => {
     const { exec, calls } = makeExecStub([[/graphql/, json(response)]])
     const column = await createGitHubAdapter(FORGE, exec).getBoardColumn(REF)
 
-    expect(column).toBe("Em andamento")
+    expect(column).toBe("In progress")
     const line = calls[0].args.join(" ")
     expect(line).toContain("-F owner=acme")
     expect(line).toContain("-F repo=loja")
@@ -131,14 +131,14 @@ describe("GitHub adapter", () => {
     expect(await createGitHubAdapter(FORGE, exec).getBoardColumn(REF)).toBeNull()
   })
 
-  it("listEpics queries every variante label, dedupes and filters out pull requests", async () => {
-    const epic = { ...GH_ISSUE, labels: [{ name: "variante-condensado" }] }
+  it("listEpics queries every variant label, dedupes and filters out pull requests", async () => {
+    const epic = { ...GH_ISSUE, labels: [{ name: "variant-condensed" }] }
     const pr = { ...GH_ISSUE, number: 99, pull_request: { url: "https://api.github.com/..." } }
     const { exec } = makeExecStub([
-      [/labels=variante-completo/, json([])],
-      [/labels=variante-condensado/, json([epic, pr])],
-      [/labels=variante-minimo/, json([epic])], // duplicate of the condensado hit
-      [/labels=variante-tecnica/, json([])],
+      [/labels=variant-full/, json([])],
+      [/labels=variant-condensed/, json([epic, pr])],
+      [/labels=variant-minimal/, json([epic])], // duplicate of the condensed hit
+      [/labels=variant-technical/, json([])],
     ])
     const epics = await createGitHubAdapter(FORGE, exec).listEpics()
 

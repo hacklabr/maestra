@@ -82,9 +82,9 @@ function installForHost(host: HostSpec): void {
   writeFileSync(shellPath, buildShellAgentMarkdown(host.id), "utf-8")
 
   console.log(`[maestra] ${host.id}: instructions → ${instructionsDir}`)
-  console.log(`[maestra] ${host.id}: catálogo    → ${catalogDir} (grepável)`)
+  console.log(`[maestra] ${host.id}: catalog      → ${catalogDir} (greppable)`)
   console.log(`[maestra] ${host.id}: agent        → ${agentPath}`)
-  console.log(`[maestra] ${host.id}: shell        → ${shellPath} (persona sob demanda)`)
+  console.log(`[maestra] ${host.id}: shell        → ${shellPath} (persona on demand)`)
 
   registerPlugin(host)
 }

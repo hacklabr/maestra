@@ -1,119 +1,119 @@
 {
   "id": "epic-orfa",
-  "descricao": "Issue #48 é filha de #13, que está FECHADO — branch B5 (órfã): informar e tratar como foco avulso, sem derivar persona de épico morto.",
+  "description": "Issue #48 is a child of #13, which is CLOSED — branch B5 (orphan): inform and treat as standalone focus, without deriving a persona from a dead epic.",
   "digests": {
     "13": {
-      "plataforma": {
+      "platform": {
         "kind": "github",
         "host": "github.com",
-        "projeto": "acme/loja"
+        "project": "acme/loja"
       },
       "issue": {
-        "numero": 13,
+        "number": 13,
         "id": 9013,
-        "titulo": "Corrigir acentuação no relatório",
-        "estado": "closed",
+        "title": "Fix accents in the report",
+        "state": "closed",
         "url": "https://github.com/acme/loja/issues/13"
       },
       "labels": {
-        "variante": "variante-minimo",
-        "etapas": [],
-        "marcadores": []
+        "variant": "variant-minimal",
+        "stages": [],
+        "markers": []
       },
-      "metadados": {
-        "variante": "minimo",
-        "etapaAtual": "etapa-3",
-        "epico": null,
-        "rodada": "R01",
-        "subestado": "fechada-reconciliada"
+      "metadata": {
+        "variant": "minimal",
+        "currentStage": "stage-3",
+        "epic": null,
+        "round": "R01",
+        "substate": "closed-reconciled"
       },
-      "pai": null,
-      "filhos": [],
-      "comentarios": [
+      "parent": null,
+      "children": [],
+      "comments": [
         {
-          "tipo": "evento",
-          "autor": "rafael",
-          "data": "2026-07-10T10:00:00Z",
-          "corpo": "**Evento F** — rodada R01: desvios durante=0, na-reconciliação=0 — facilitador"
+          "type": "event",
+          "author": "rafael",
+          "date": "2026-07-10T10:00:00Z",
+          "body": "**Event F** — round R01: deviations during=0, at-reconciliation=0 — facilitator"
         }
       ],
       "board": {
-        "coluna": "Entregue"
+        "column": "Delivered"
       },
       "gate": {
-        "porEtapa": {},
-        "semEtapa": 0,
-        "reconciliacao": {
-          "existe": false,
-          "estado": null,
-          "numero": null
+        "perStage": {},
+        "noStage": 0,
+        "reconciliation": {
+          "exists": false,
+          "state": null,
+          "number": null
         }
       },
-      "artefatos": [],
-      "hierarquia": {
-        "tipo": "sub-issues",
+      "artifacts": [],
+      "hierarchy": {
+        "type": "sub-issues",
         "taskCompletion": null,
-        "dessincronia": []
+        "desync": []
       },
-      "paginacao": {
-        "filhosTruncados": false,
-        "comentariosTruncados": false
+      "pagination": {
+        "childrenTruncated": false,
+        "commentsTruncated": false
       },
-      "erros": []
+      "errors": []
     },
     "48": {
-      "plataforma": {
+      "platform": {
         "kind": "github",
         "host": "github.com",
-        "projeto": "acme/loja"
+        "project": "acme/loja"
       },
       "issue": {
-        "numero": 48,
+        "number": 48,
         "id": 9048,
-        "titulo": "Ajuste fino no layout do relatório",
-        "estado": "open",
+        "title": "Fine-tune the report layout",
+        "state": "open",
         "url": "https://github.com/acme/loja/issues/48"
       },
       "labels": {
-        "variante": null,
-        "etapas": [
-          "etapa-3"
+        "variant": null,
+        "stages": [
+          "stage-3"
         ],
-        "marcadores": []
+        "markers": []
       },
-      "metadados": {
-        "variante": "minimo",
-        "etapaAtual": "etapa-3",
-        "epico": 13,
-        "rodada": "R01",
-        "subestado": "em-execucao"
+      "metadata": {
+        "variant": "minimal",
+        "currentStage": "stage-3",
+        "epic": 13,
+        "round": "R01",
+        "substate": "in-execution"
       },
-      "pai": 13,
-      "filhos": [],
-      "comentarios": [],
+      "parent": 13,
+      "children": [],
+      "comments": [],
       "board": {
-        "coluna": "Não iniciada"
+        "column": "Not started"
       },
       "gate": {
-        "porEtapa": {},
-        "semEtapa": 0,
-        "reconciliacao": {
-          "existe": false,
-          "estado": null,
-          "numero": null
+        "perStage": {},
+        "noStage": 0,
+        "reconciliation": {
+          "exists": false,
+          "state": null,
+          "number": null
         }
       },
-      "artefatos": [],
-      "hierarquia": {
-        "tipo": "sub-issues",
+      "artifacts": [],
+      "hierarchy": {
+        "type": "sub-issues",
         "taskCompletion": null,
-        "dessincronia": []
+        "desync": []
       },
-      "paginacao": {
-        "filhosTruncados": false,
-        "comentariosTruncados": false
+      "pagination": {
+        "childrenTruncated": false,
+        "commentsTruncated": false
       },
-      "erros": []
+      "errors": []
     }
   },
   "execRoutes": []

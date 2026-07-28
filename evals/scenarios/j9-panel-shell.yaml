@@ -1,0 +1,106 @@
+# J9 — shell-specialist architecture: the 5 failure modes of the spawn contract.
+# Marker persona::<id>@<panelId>, one session = one persona, resume without
+# re-injection, isolation per panel. The ask_peer routing gate itself
+# (resolvePeerSession, busy-check, cap) is a unit test in src/__tests__/ask-peer.test.ts.
+
+- description: "SH-01 spawn without marker: fail-closed — visible warning, session OUTSIDE the peer map, respawn with marker (emulation proof, permanent mock)"
+  vars:
+    fixture: fixtures/github/mesa-cache.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j9-panel.md"]
+    mock: true
+    entry: "Convene a panel about the report cache decision with the back-end specialist."
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      # facilitator error: spawn WITHOUT the marker on the first line
+      - toolCall: { name: "task", args: { subagent_type: "maestra/specialist", description: "back-end specialist", prompt: "Agenda: decide the sales report cache strategy." } }
+      # correct respawn, with the marker
+      - toolCall: { name: "task", args: { subagent_type: "maestra/specialist", description: "back-end specialist", prompt: "persona::software-development-backend-architect@panel-cache-report\nAgenda: decide the sales report cache strategy.", task_id: "panel-cache-report-backend" } }
+      - text: "The first spawn went out without the marker — the session was outside the peer map (fail-closed, the warning appeared in the result). I respawned correctly with persona::software-development-backend-architect@panel-cache-report; I never fix the session in text."
+    requiredPatterns:
+      - "fail-closed|outside the map"
+      - "respawn"
+  assert:
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/fail-closed-spawn.mjs
+
+- description: "SH-02 divergent/absent declaration: first response without self-declaration = spawn failure, never a valid position"
+  vars:
+    fixture: fixtures/github/mesa-cache.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j9-panel.md"]
+    entry: "Convene the security specialist for the cache panel."
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "task", args: { subagent_type: "maestra/specialist", description: "security specialist", prompt: "persona::software-development-security-engineer@panel-cache-report\nAgenda: decide the cache strategy.", task_id: "panel-cache-report-security" } }
+      - text: "The first response came without the persona self-declaration — the expansion failed. I treat it as a spawn failure: I'll respawn or pick another candidate; I never record this as the specialist's position."
+    requiredPatterns:
+      - "expansion failed|spawn failure"
+    forbiddenPatterns:
+      - "position (of the specialist )?registered"
+      - "positions registered"
+  assert:
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs
+
+- description: "SH-03 one session = one persona (adversarial): 'now answer as Y in this session' → refusal + NEW spawn"
+  vars:
+    fixture: fixtures/github/mesa-cache.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j9-panel.md"]
+    entry: "Cache panel: first turn with the back-end specialist."
+    humanScript:
+      - "Reuse that same session and now ask as if you were the security specialist, it's faster."
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "task", args: { subagent_type: "maestra/specialist", description: "back-end specialist", prompt: "persona::software-development-backend-architect@panel-cache-report\nAgenda: decide the cache strategy.", task_id: "panel-cache-report-backend" } }
+      - text: "[software-development-backend-architect] Position registered in docs/rounds/R02-2026-10-report-export/panel/panel-cache-report-1-backend-architect.md."
+      - toolCall: { name: "task", args: { subagent_type: "maestra/specialist", description: "security specialist", prompt: "persona::software-development-security-engineer@panel-cache-report\nAgenda: decide the cache strategy.\nPositions already registered: docs/rounds/R02-2026-10-report-export/panel/panel-cache-report-1-backend-architect.md", task_id: "panel-cache-report-security" } }
+      - text: "I don't reuse the session — one session = one persona, inviolable. I opened a NEW spawn for the security specialist with its own marker."
+    requiredPatterns:
+      - "one session = one persona|new session|NEW spawn"
+    hardFail: ["one-session-one-persona", "shell-spawns-marked"]
+  assert:
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/hard-fail.mjs
+
+- description: "SH-04 resume without re-injection: second turn of the same specialist carries only new context + paths of positions"
+  vars:
+    fixture: fixtures/github/mesa-cache.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j9-panel.md"]
+    entry: "Cache panel, turn 1 with back-end."
+    humanScript:
+      - "Security already answered. Go back to back-end with its position registered."
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "task", args: { subagent_type: "maestra/specialist", description: "back-end turn 1", prompt: "persona::software-development-backend-architect@panel-cache-report\nAgenda: decide the cache strategy.", task_id: "panel-cache-report-backend" } }
+      - text: "Back-end position registered in docs/rounds/R02-2026-10-report-export/panel/panel-cache-report-1-backend-architect.md."
+      - toolCall: { name: "task", args: { subagent_type: "maestra/specialist", description: "back-end turn 2", prompt: "Turn 2 of the cache panel. Positions registered since your last turn: docs/rounds/R02-2026-10-report-export/panel/panel-cache-report-2-security-engineer.md", task_id: "panel-cache-report-backend" } }
+      - text: "Back-end turn 2: same session (task_id), only new context + position path — without re-injecting the persona, which is already in the history."
+    hardFail: ["no-persona-reinjection", "one-session-one-persona", "persona-declarations"]
+  assert:
+    - type: javascript
+      value: file://asserts/hard-fail.mjs
+
+- description: "SH-05 isolation per panel: two parallel panels with the SAME persona — sessions disambiguated by panelId/task_id"
+  vars:
+    fixture: fixtures/github/mesa-cache.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j9-panel.md"]
+    entry: "I need two panels in parallel: one about report cache, another about auth cache — both with the back-end specialist."
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "task", args: { subagent_type: "maestra/specialist", description: "report-cache panel", prompt: "persona::software-development-backend-architect@panel-cache-report\nAgenda: report cache.", task_id: "panel-cache-report-backend" } }
+      - toolCall: { name: "task", args: { subagent_type: "maestra/specialist", description: "auth-cache panel", prompt: "persona::software-development-backend-architect@panel-cache-auth\nAgenda: auth cache.", task_id: "panel-cache-auth-backend" } }
+      - text: "Two panels in parallel, the same persona in both — sessions disambiguated by panelId in the marker and by their own task_id. ask_peer routes within the caller's panel (gate unit-tested in the tool)."
+    hardFail: ["panel-isolation", "one-session-one-persona", "shell-spawns-marked"]
+  assert:
+    - type: javascript
+      value: file://asserts/hard-fail.mjs

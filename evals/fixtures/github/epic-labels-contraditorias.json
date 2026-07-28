@@ -1,182 +1,182 @@
 {
   "id": "epic-labels-contraditorias",
-  "descricao": "Épico #12 com label variante-condensado e metadados 'Etapa atual: etapa-1', mas TODAS as filhas de etapa-1 e etapa-2 fechadas e 2 de 3 de etapa-3 fechadas — branch B2 (contradição exposta como afirmação falseável).",
+  "description": "Epic #12 with label variant-condensed and metadata 'Current stage: stage-1', but ALL stage-1 and stage-2 children closed and 2 of 3 stage-3 closed — branch B2 (contradiction exposed as a falseable assertion).",
   "digests": {
     "12": {
-      "plataforma": {
+      "platform": {
         "kind": "github",
         "host": "github.com",
-        "projeto": "acme/loja"
+        "project": "acme/loja"
       },
       "issue": {
-        "numero": 12,
+        "number": 12,
         "id": 9002,
-        "titulo": "Implementar exportação de relatórios",
-        "estado": "open",
+        "title": "Implement report export",
+        "state": "open",
         "url": "https://github.com/acme/loja/issues/12"
       },
       "labels": {
-        "variante": "variante-condensado",
-        "etapas": [],
-        "marcadores": []
+        "variant": "variant-condensed",
+        "stages": [],
+        "markers": []
       },
-      "metadados": {
-        "variante": "condensado",
-        "etapaAtual": "etapa-1",
-        "epico": null,
-        "rodada": "R02",
-        "subestado": "em-artefatos"
+      "metadata": {
+        "variant": "condensed",
+        "currentStage": "stage-1",
+        "epic": null,
+        "round": "R02",
+        "substate": "in-artifacts"
       },
-      "pai": null,
-      "filhos": [
+      "parent": null,
+      "children": [
         {
-          "numero": 14,
-          "titulo": "Mini-briefing",
-          "estado": "closed",
-          "variante": null,
-          "etapas": [
-            "etapa-1"
+          "number": 14,
+          "title": "Mini-briefing",
+          "state": "closed",
+          "variant": null,
+          "stages": [
+            "stage-1"
           ],
           "assignees": [
             "rafael"
           ]
         },
         {
-          "numero": 15,
-          "titulo": "Atualização do PRD vivo",
-          "estado": "closed",
-          "variante": null,
-          "etapas": [
-            "etapa-1"
+          "number": 15,
+          "title": "Living PRD update",
+          "state": "closed",
+          "variant": null,
+          "stages": [
+            "stage-1"
           ],
           "assignees": [
             "rafael"
           ]
         },
         {
-          "numero": 16,
-          "titulo": "Análise de fit",
-          "estado": "closed",
-          "variante": null,
-          "etapas": [
-            "etapa-2"
+          "number": 16,
+          "title": "Fit analysis",
+          "state": "closed",
+          "variant": null,
+          "stages": [
+            "stage-2"
           ],
           "assignees": [
             "maria"
           ]
         },
         {
-          "numero": 17,
-          "titulo": "Decomposição técnica",
-          "estado": "closed",
-          "variante": null,
-          "etapas": [
-            "etapa-2"
+          "number": 17,
+          "title": "Technical decomposition",
+          "state": "closed",
+          "variant": null,
+          "stages": [
+            "stage-2"
           ],
           "assignees": [
             "maria"
           ]
         },
         {
-          "numero": 21,
-          "titulo": "Implementação — fatia 1",
-          "estado": "closed",
-          "variante": null,
-          "etapas": [
-            "etapa-3"
+          "number": 21,
+          "title": "Implementation — slice 1",
+          "state": "closed",
+          "variant": null,
+          "stages": [
+            "stage-3"
           ],
           "assignees": [
             "joao"
           ]
         },
         {
-          "numero": 22,
-          "titulo": "Implementação — fatia 2",
-          "estado": "closed",
-          "variante": null,
-          "etapas": [
-            "etapa-3"
+          "number": 22,
+          "title": "Implementation — slice 2",
+          "state": "closed",
+          "variant": null,
+          "stages": [
+            "stage-3"
           ],
           "assignees": [
             "joao"
           ]
         },
         {
-          "numero": 27,
-          "titulo": "Reconciliação da rodada",
-          "estado": "open",
-          "variante": null,
-          "etapas": [
-            "etapa-3"
+          "number": 27,
+          "title": "Round reconciliation",
+          "state": "open",
+          "variant": null,
+          "stages": [
+            "stage-3"
           ],
           "assignees": [
             "joao"
           ]
         }
       ],
-      "comentarios": [
+      "comments": [
         {
-          "tipo": "facilitador",
-          "autor": "rafael",
-          "data": "2026-07-20T10:00:00Z",
-          "corpo": "Etapa 1 concluída: artefatos no repositório e Engenharia validou. Criei as tarefas da Etapa 2 (#16, #17). — facilitador"
+          "type": "facilitator",
+          "author": "rafael",
+          "date": "2026-07-20T10:00:00Z",
+          "body": "Stage 1 complete: artifacts in the repository and Engineering validated. I created the Stage 2 tasks (#16, #17). — facilitator"
         },
         {
-          "tipo": "facilitador",
-          "autor": "maria",
-          "data": "2026-07-22T10:00:00Z",
-          "corpo": "Desenho fechado: 3 tarefas de implementação (#21, #22) mais a conferência final (#27). — facilitador"
+          "type": "facilitator",
+          "author": "maria",
+          "date": "2026-07-22T10:00:00Z",
+          "body": "Design closed: 3 implementation tasks (#21, #22) plus the final review (#27). — facilitator"
         }
       ],
       "board": {
-        "coluna": "Em andamento"
+        "column": "In progress"
       },
       "gate": {
-        "porEtapa": {
-          "etapa-1": {
-            "fechadas": 2,
+        "perStage": {
+          "stage-1": {
+            "closed_": 2,
             "total": 2
           },
-          "etapa-2": {
-            "fechadas": 2,
+          "stage-2": {
+            "closed_": 2,
             "total": 2
           },
-          "etapa-3": {
-            "fechadas": 2,
+          "stage-3": {
+            "closed_": 2,
             "total": 3
           }
         },
-        "semEtapa": 0,
-        "reconciliacao": {
-          "existe": true,
-          "estado": "open",
-          "numero": 27
+        "noStage": 0,
+        "reconciliation": {
+          "exists": true,
+          "state": "open",
+          "number": 27
         }
       },
-      "artefatos": [
+      "artifacts": [
         {
-          "numero": 14,
-          "titulo": "Mini-briefing",
-          "declarado": "docs/rodadas/R02-2026-10-exportacao-relatorios/mini-briefing.md",
-          "existe": true
+          "number": 14,
+          "title": "Mini-briefing",
+          "declared": "docs/rounds/R02-2026-10-report-export/mini-briefing.md",
+          "exists": true
         },
         {
-          "numero": 15,
-          "titulo": "Atualização do PRD vivo",
-          "declarado": "docs/referencia/prd.md",
-          "existe": true
+          "number": 15,
+          "title": "Living PRD update",
+          "declared": "docs/reference/prd.md",
+          "exists": true
         }
       ],
-      "hierarquia": {
-        "tipo": "sub-issues",
+      "hierarchy": {
+        "type": "sub-issues",
         "taskCompletion": null,
-        "dessincronia": []
+        "desync": []
       },
-      "paginacao": {
-        "filhosTruncados": false,
-        "comentariosTruncados": false
+      "pagination": {
+        "childrenTruncated": false,
+        "commentsTruncated": false
       },
-      "erros": []
+      "errors": []
     }
   },
   "execRoutes": []
