@@ -150,12 +150,24 @@ export const maestraEmitEventTool = tool({
       .describe("Event payload fields (per-type schema enforced by the tool)"),
   },
   async execute(args, context) {
-    const injectionError = rejectSignatureInjection(args.payload)
+    // The host (opencode/mimocode) does NOT re-parse tool args through zod —
+    // the schema above is for JSON Schema generation only. Complex object args
+    // (like this payload) can arrive as a JSON string. Normalize before use.
+    let payload = args.payload
+    if (typeof payload === "string") {
+      try {
+        payload = JSON.parse(payload)
+      } catch {
+        return `Error: payload is a string that is not valid JSON. Pass an object (e.g. {"elicitation_questions": 1}).`
+      }
+    }
+
+    const injectionError = rejectSignatureInjection(payload)
     if (injectionError) return injectionError
 
     let body: string
     try {
-      body = buildEventBody(args.type as EventType, args.payload)
+      body = buildEventBody(args.type as EventType, payload)
     } catch (e: unknown) {
       return `Error: ${(e as Error).message}`
     }
