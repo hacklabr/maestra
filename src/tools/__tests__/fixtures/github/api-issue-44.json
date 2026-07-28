@@ -1,0 +1,10 @@
+{
+  "number": 44,
+  "id": 112,
+  "title": "Atualização do PRD (RF/RNF)",
+  "body": "## Épico\n\n#42\n\n## Tipo e local de entrega\n\nREFERÊNCIA — atualizar docs/referencia/prd.md, seção de exportação",
+  "state": "closed",
+  "labels": [{ "name": "etapa-1" }],
+  "assignees": [{ "login": "rafael" }],
+  "html_url": "https://github.com/acme/loja/issues/44"
+}

@@ -1,0 +1,146 @@
+import { describe, expect, it } from "vitest"
+import { createGitHubAdapter } from "../github.js"
+import { createGitLabAdapter } from "../gitlab.js"
+import type { ExecFn } from "../exec.js"
+import type { ForgeAdapter, ForgeContext } from "../types.js"
+import { json, makeExecStub } from "./helpers.js"
+
+/**
+ * Unified adapter CONTRACT suite (spec acceptance criterion #2): the SAME
+ * assertions run against both implementations. Parity is now enforced by
+ * construction — adding a primitive or assertion here exercises both adapters
+ * in one place. The twin files (github.test.ts / gitlab.test.ts) keep the
+ * platform-specific gotchas (databaseId, system notes, GHES/self-hosted
+ * hostname, URL-encoding, tasklist roll-up).
+ */
+
+const GITHUB_FORGE: ForgeContext = { kind: "github", host: "github.com", project: "acme/loja" }
+const GITLAB_FORGE: ForgeContext = { kind: "gitlab", host: "gitlab.com", project: "grupo/loja" }
+
+// Same logical issue in both payload dialects.
+const GH_ISSUE = {
+  number: 42,
+  id: 123456789,
+  title: "Implementar exportação de relatórios",
+  body: "**Variante:** condensado · **Épico:** #7",
+  state: "open",
+  labels: [{ name: "variante-condensado" }],
+  assignees: [{ login: "maria" }],
+  html_url: "https://github.com/acme/loja/issues/42",
+}
+const GH_CHILD = { ...GH_ISSUE, number: 43, title: "Mini-briefing", state: "closed", labels: [{ name: "etapa-1" }] }
+const GL_ISSUE = {
+  iid: 42,
+  id: 196035106,
+  title: "Implementar exportação de relatórios",
+  description: "**Variante:** condensado · **Épico:** #7",
+  state: "opened",
+  labels: ["variante-condensado"],
+  assignees: [{ username: "maria" }],
+  web_url: "https://gitlab.com/grupo/loja/-/issues/42",
+  task_completion_status: null,
+}
+const GL_CHILD = { ...GL_ISSUE, iid: 43, title: "Mini-briefing", state: "closed", labels: ["etapa-1"] }
+
+interface ContractCell {
+  name: string
+  forge: ForgeContext
+  makeAdapter: (exec: ExecFn) => ForgeAdapter
+  routes: Array<[RegExp, object]>
+}
+
+const CELLS: ContractCell[] = [
+  {
+    name: "github",
+    forge: GITHUB_FORGE,
+    makeAdapter: (exec) => createGitHubAdapter(GITHUB_FORGE, exec),
+    routes: [
+      [/issues\/42\/sub_issues/, json([GH_CHILD])],
+      [/issues\/42\/comments/, json([{ user: { login: "rafael" }, body: "comentário", created_at: "2026-07-28T10:00:00Z" }])],
+      [/issues\/42\/parent/, json({ number: 7 })],
+      [/issues\/42$/, json(GH_ISSUE)],
+      [/issues\?labels=variante-completo/, json([])],
+      [/issues\?labels=variante-condensado/, json([GH_ISSUE])],
+      [/issues\?labels=variante-minimo/, json([])],
+      [/issues\?labels=variante-tecnica/, json([])],
+      [/graphql/, json({ data: { repository: { issue: { projectItems: { nodes: [{ fieldValues: { nodes: [{ name: "Em andamento", field: { name: "Status" } }] } }] } } } } })],
+    ],
+  },
+  {
+    name: "gitlab",
+    forge: GITLAB_FORGE,
+    makeAdapter: (exec) => createGitLabAdapter(GITLAB_FORGE, exec),
+    routes: [
+      [/issues\/42\/links/, json([GL_CHILD])],
+      [/issues\/42\/notes/, json([{ system: false, author: { username: "rafael" }, body: "comentário", created_at: "2026-07-28T10:00:00Z" }])],
+      [/issues\/42$/, json(GL_ISSUE)],
+      [/issues\?labels=variante-completo/, json([])],
+      [/issues\?labels=variante-condensado/, json([GL_ISSUE])],
+      [/issues\?labels=variante-minimo/, json([])],
+      [/issues\?labels=variante-tecnica/, json([])],
+    ],
+  },
+]
+
+describe.each(CELLS)("adapter contract ($name)", ({ forge, makeAdapter, routes }) => {
+  function setup() {
+    const { exec, calls } = makeExecStub(routes)
+    return { adapter: makeAdapter(exec), calls }
+  }
+  const ref = () => ({ forge, number: 42 })
+
+  it("getIssue maps core IssueFacts identically", async () => {
+    const { adapter } = setup()
+    const issue = await adapter.getIssue(ref())
+    expect(issue).toMatchObject({
+      number: 42,
+      title: "Implementar exportação de relatórios",
+      state: "open",
+      labels: ["variante-condensado"],
+      assignees: ["maria"],
+    })
+    expect(issue.url).toContain("http")
+  })
+
+  it("listChildren enumerates children with number and state", async () => {
+    const { adapter } = setup()
+    const children = await adapter.listChildren(ref())
+    expect(children).toHaveLength(1)
+    expect(children[0]).toMatchObject({ number: 43, state: "closed" })
+  })
+
+  it("listComments maps author, body and timestamp", async () => {
+    const { adapter } = setup()
+    const comments = await adapter.listComments(ref())
+    expect(comments).toEqual([{ author: "rafael", body: "comentário", createdAt: "2026-07-28T10:00:00Z" }])
+  })
+
+  it("postComment issues exactly one write carrying the body", async () => {
+    const { adapter, calls } = setup()
+    await adapter.postComment(ref(), "corpo do comentário")
+    expect(calls).toHaveLength(1)
+    expect(calls[0].args.join(" ")).toContain("corpo do comentário")
+  })
+
+  it("getParent resolves the parent issue number", async () => {
+    const { adapter } = setup()
+    // GitHub: /parent endpoint. GitLab: P1 metadata line ("**Épico:** #7").
+    expect(await adapter.getParent(ref())).toBe(7)
+  })
+
+  it("getBoardColumn resolves the current column name", async () => {
+    const { adapter } = setup()
+    // GitHub: Projects v2 Status field. GitLab: status::* label scan — the
+    // contract cell's issue has no status label, so GitLab returns null here;
+    // the COLUMN-PRESENT case is covered in the platform-specific suite.
+    const column = await adapter.getBoardColumn(ref())
+    expect(column === "Em andamento" || column === null).toBe(true)
+  })
+
+  it("listEpics sweeps variante labels and dedupes", async () => {
+    const { adapter } = setup()
+    const epics = await adapter.listEpics()
+    expect(epics).toHaveLength(1)
+    expect(epics[0]).toMatchObject({ number: 42, labels: ["variante-condensado"] })
+  })
+})

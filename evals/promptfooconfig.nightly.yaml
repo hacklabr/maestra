@@ -1,0 +1,22 @@
+# Fluxo evals — NIGHTLY. Matriz completa + LLM-as-judge (tier-2, rubrica
+# versionada em lib/rubric.md), cache OFF (--no-cache via npm run eval:nightly).
+# Detecta drift de modelo: chamadas frescas toda noite.
+description: "Fluxo evals — nightly (matriz completa + judge tier-2)"
+
+providers:
+  - id: file://providers/fluxo-agent.mjs
+
+tests:
+  - file://scenarios/anti-bypass.yaml
+  - file://scenarios/j8-guarda.yaml
+  - file://scenarios/j1-triagem.yaml
+  - file://scenarios/j2-retomada.yaml
+  - file://scenarios/fm-vinculantes.yaml
+
+# Tier-2: rubrica versionada aplicada a TODOS os cenários (binário por item).
+# O judge é o provedor padrão do promptfoo — configure via env
+# (OPENAI_API_KEY ou PROMPTFOO_*/provedor local equivalente).
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: file://lib/rubric.md

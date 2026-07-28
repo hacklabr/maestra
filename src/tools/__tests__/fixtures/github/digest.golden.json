@@ -1,0 +1,71 @@
+{
+  "plataforma": { "kind": "github", "host": "github.com", "projeto": "acme/loja" },
+  "issue": {
+    "numero": 42,
+    "id": 123456789,
+    "titulo": "Implementar exportação de relatórios",
+    "estado": "open",
+    "url": "https://github.com/acme/loja/issues/42"
+  },
+  "labels": { "variante": "variante-condensado", "etapas": [], "marcadores": [] },
+  "metadados": {
+    "variante": "condensado",
+    "etapaAtual": "etapa-2",
+    "epico": 42,
+    "rodada": "R02",
+    "subestado": "em-execucao"
+  },
+  "pai": null,
+  "filhos": [
+    { "numero": 43, "titulo": "Mini-briefing", "estado": "closed", "variante": null, "etapas": ["etapa-1"], "assignees": ["rafael"] },
+    { "numero": 44, "titulo": "Atualização do PRD (RF/RNF)", "estado": "closed", "variante": null, "etapas": ["etapa-1"], "assignees": ["rafael"] },
+    { "numero": 45, "titulo": "Implementação — fatia 1", "estado": "open", "variante": null, "etapas": ["etapa-3"], "assignees": ["joao"] },
+    { "numero": 46, "titulo": "Reconciliação da rodada", "estado": "open", "variante": null, "etapas": ["etapa-3"], "assignees": ["joao"] }
+  ],
+  "comentarios": [
+    {
+      "tipo": "override",
+      "autor": "rafael",
+      "data": "2026-07-28T10:00:00Z",
+      "corpo": "**Registro de override** — facilitador\n- Tipo: variante\n- De: Condensada → Para: Mínima\n- Critério objetivo contestado: estimativa > 5 dias\n- Motivo declarado: \"escopo fechado com o cliente\"\n- Decidido por: @rafael em 28/07/2026"
+    },
+    {
+      "tipo": "evento",
+      "autor": "rafael",
+      "data": "2026-07-28T10:05:00Z",
+      "corpo": "**Evento A** — triagem épico #42: 3 perguntas de elicitação — facilitador"
+    },
+    {
+      "tipo": "facilitador",
+      "autor": "rafael",
+      "data": "2026-07-28T11:00:00Z",
+      "corpo": "Gate da Etapa 1 verificado: 2 de 2 tarefas fechadas. Onda da Etapa 2 criada (#45, #46).\n— facilitador"
+    }
+  ],
+  "board": { "coluna": "Em andamento" },
+  "gate": {
+    "porEtapa": {
+      "etapa-1": { "fechadas": 2, "total": 2 },
+      "etapa-3": { "fechadas": 0, "total": 2 }
+    },
+    "semEtapa": 0,
+    "reconciliacao": { "existe": true, "estado": "open", "numero": 46 }
+  },
+  "artefatos": [
+    {
+      "numero": 43,
+      "titulo": "Mini-briefing",
+      "declarado": "docs/rodadas/R02-2026-10-exportacao/mini-briefing.md",
+      "existe": false
+    },
+    {
+      "numero": 44,
+      "titulo": "Atualização do PRD (RF/RNF)",
+      "declarado": "docs/referencia/prd.md",
+      "existe": true
+    }
+  ],
+  "hierarquia": { "tipo": "sub-issues", "taskCompletion": null, "dessincronia": [] },
+  "paginacao": { "filhosTruncados": false, "comentariosTruncados": false },
+  "erros": []
+}

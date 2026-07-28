@@ -1,0 +1,106 @@
+{
+  "id": "epic-etapa3-execucao",
+  "descricao": "Épico #12 em execução (etapa-3), tarefa #24 em andamento — palco dos cenários J8 (lacuna, requisito novo, invalidação, arcos de persona).",
+  "digests": {
+    "12": {
+      "plataforma": {
+        "kind": "github",
+        "host": "github.com",
+        "projeto": "acme/loja"
+      },
+      "issue": {
+        "numero": 12,
+        "id": 9002,
+        "titulo": "Implementar exportação de relatórios",
+        "estado": "open",
+        "url": "https://github.com/acme/loja/issues/12"
+      },
+      "labels": {
+        "variante": "variante-condensado",
+        "etapas": [],
+        "marcadores": []
+      },
+      "metadados": {
+        "variante": "condensado",
+        "etapaAtual": "etapa-3",
+        "epico": null,
+        "rodada": "R02",
+        "subestado": "em-execucao"
+      },
+      "pai": null,
+      "filhos": [
+        {
+          "numero": 21,
+          "titulo": "Implementação — fatia 1",
+          "estado": "closed",
+          "variante": null,
+          "etapas": [
+            "etapa-3"
+          ],
+          "assignees": [
+            "joao"
+          ]
+        },
+        {
+          "numero": 24,
+          "titulo": "Implementação — exportação CSV",
+          "estado": "open",
+          "variante": null,
+          "etapas": [
+            "etapa-3"
+          ],
+          "assignees": [
+            "debora"
+          ]
+        },
+        {
+          "numero": 27,
+          "titulo": "Reconciliação da rodada",
+          "estado": "open",
+          "variante": null,
+          "etapas": [
+            "etapa-3"
+          ],
+          "assignees": [
+            "joao"
+          ]
+        }
+      ],
+      "comentarios": [],
+      "board": {
+        "coluna": "Em andamento"
+      },
+      "gate": {
+        "porEtapa": {
+          "etapa-3": {
+            "fechadas": 1,
+            "total": 3
+          }
+        },
+        "semEtapa": 0,
+        "reconciliacao": {
+          "existe": true,
+          "estado": "open",
+          "numero": 27
+        }
+      },
+      "artefatos": [],
+      "hierarquia": {
+        "tipo": "sub-issues",
+        "taskCompletion": null,
+        "dessincronia": []
+      },
+      "paginacao": {
+        "filhosTruncados": false,
+        "comentariosTruncados": false
+      },
+      "erros": []
+    }
+  },
+  "execRoutes": [
+    {
+      "match": "git worktree",
+      "stdout": ""
+    }
+  ]
+}

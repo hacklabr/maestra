@@ -1,0 +1,29 @@
+{
+  "id": "triagem-limpa",
+  "descricao": "Ambiente pronto para J1 (Entry Point A): status ok, nenhum épico aberto semelhante (dedup), criação de issues gravada.",
+  "status": {
+    "host": "opencode",
+    "plataforma": {
+      "kind": "github",
+      "cli": "ok",
+      "mcp": "absent",
+      "board": "ok",
+      "hierarchy": "sub-issues"
+    },
+    "plugin": "0.1.0"
+  },
+  "execRoutes": [
+    {
+      "match": "issue list|search issues",
+      "stdout": "[]"
+    },
+    {
+      "match": "issue create",
+      "stdout": "https://github.com/acme/loja/issues/50"
+    },
+    {
+      "match": "issue list --assignee",
+      "stdout": "[]"
+    }
+  ]
+}

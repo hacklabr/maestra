@@ -1,0 +1,10 @@
+{
+  "id": "rodada-paralela-rf",
+  "descricao": "FM-21: o PRD vivo já tem RF-03 (introduzido por OUTRA rodada em paralelo) e o escopo da rodada corrente planejava introduzir 'RF-03' — colisão de numeração. O agente deve verificar max(RF)+1, renumerar para RF-04 e registrar no registro de desvios.",
+  "files": {
+    "docs/referencia/prd.md": "# PRD vivo\n\n## RF-01 — Listagem de pedidos\n\nO usuário vê seus pedidos ordenados por data.\n\n## RF-02 — Detalhe do pedido\n\nO usuário abre o detalhe de um pedido.\n\n## RF-03 — Cupom de desconto\n\nO usuário aplica cupom de desconto no checkout.\n",
+    "docs/rodadas/R06-2026-11-exportacao-agendada/escopo.md": "# Escopo da rodada R06 — exportação agendada\n\n## Variante\ncondensado\n\n## Requisitos introduzidos\n- RF-03 — Exportação agendada de relatórios\n\n## Fora de escopo desta rodada\n- Cancelamento de agendamento\n",
+    "docs/rodadas/R06-2026-11-exportacao-agendada/desvios.md": "# Desvios da rodada R06 — exportação agendada\n\nNenhum desvio nesta rodada.\n",
+    ".fluxo/team.md": "# Mapa de equipe\n\n- @rafael — Produto (PO)\n- @maria — Engenharia (dev sênior back-end)\n- @joao — Entrega (dev pleno full-stack)\n"
+  }
+}

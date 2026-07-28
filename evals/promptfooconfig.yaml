@@ -1,0 +1,13 @@
+# Fluxo evals — PR GATE. Deterministic only (tier-1): zero LLM-as-judge,
+# cache ON. Roda: npm run eval. Modelo vivo necessário (FLUXO_EVAL_*).
+description: "Fluxo evals — PR gate (bateria core: 16 anti-bypass + J1/J2/J8, tier-1)"
+
+providers:
+  - id: file://providers/fluxo-agent.mjs
+
+tests:
+  - file://scenarios/anti-bypass.yaml
+  - file://scenarios/j8-guarda.yaml
+  - file://scenarios/j1-triagem.yaml
+  - file://scenarios/j2-retomada.yaml
+  - file://scenarios/fm-vinculantes.yaml

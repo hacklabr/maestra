@@ -1,0 +1,9 @@
+# Dry-run — modelo mock, zero custo, prova o pipeline completo.
+# Roda: npm run eval:dry (FLUXO_EVAL_MOCK=1).
+description: "Fluxo evals — dry-run (mock model, plumbing proof)"
+
+providers:
+  - id: file://providers/fluxo-agent.mjs
+
+tests:
+  - file://scenarios/dry-run.yaml

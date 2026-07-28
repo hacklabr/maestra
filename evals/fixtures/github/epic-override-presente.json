@@ -1,0 +1,74 @@
+{
+  "id": "epic-override-presente",
+  "descricao": "Épico #18 com label override-registrado, registro P3 e evento D presentes — derivação deve mostrar o override como fato, sem julgar.",
+  "digests": {
+    "18": {
+      "plataforma": {
+        "kind": "github",
+        "host": "github.com",
+        "projeto": "acme/loja"
+      },
+      "issue": {
+        "numero": 18,
+        "id": 9018,
+        "titulo": "Ajuste na regra de frete",
+        "estado": "open",
+        "url": "https://github.com/acme/loja/issues/18"
+      },
+      "labels": {
+        "variante": "variante-minimo",
+        "etapas": [],
+        "marcadores": [
+          "override-registrado"
+        ]
+      },
+      "metadados": {
+        "variante": "minimo",
+        "etapaAtual": "etapa-1",
+        "epico": null,
+        "rodada": "R04",
+        "subestado": "em-artefatos"
+      },
+      "pai": null,
+      "filhos": [],
+      "comentarios": [
+        {
+          "tipo": "override",
+          "autor": "rafael",
+          "data": "2026-07-26T14:00:00Z",
+          "corpo": "**Registro de override** — facilitador\n- Tipo: variante\n- De: Condensada → Para: Mínima\n- Critério objetivo contestado: estimativa > 5 dias\n- Motivo declarado: \"escopo já está fechado com o cliente\"\n- Decidido por: @rafael em 2026-07-26"
+        },
+        {
+          "tipo": "evento",
+          "autor": "rafael",
+          "data": "2026-07-26T14:00:00Z",
+          "corpo": "**Evento D** — override: Condensada → Mínima; critério contestado: \"estimativa > 5 dias\" — facilitador"
+        }
+      ],
+      "board": {
+        "coluna": "Em andamento"
+      },
+      "gate": {
+        "porEtapa": {},
+        "semEtapa": 0,
+        "reconciliacao": {
+          "existe": false,
+          "estado": null,
+          "numero": null
+        }
+      },
+      "artefatos": [],
+      "hierarquia": {
+        "tipo": "sub-issues",
+        "taskCompletion": null,
+        "dessincronia": []
+      },
+      "paginacao": {
+        "filhosTruncados": false,
+        "comentariosTruncados": false
+      },
+      "erros": []
+    }
+  },
+  "execRoutes": []
+}

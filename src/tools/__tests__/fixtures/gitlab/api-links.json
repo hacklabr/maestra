@@ -1,0 +1,35 @@
+[
+  {
+    "iid": 43,
+    "id": 111,
+    "title": "Mini-briefing",
+    "description": "",
+    "state": "closed",
+    "labels": ["etapa-1"],
+    "assignees": [{ "username": "rafael" }],
+    "web_url": "https://gitlab.com/grupo/loja/-/issues/43",
+    "task_completion_status": null
+  },
+  {
+    "iid": 44,
+    "id": 112,
+    "title": "Implementação — fatia 1",
+    "description": "",
+    "state": "opened",
+    "labels": ["etapa-3"],
+    "assignees": [{ "username": "joao" }],
+    "web_url": "https://gitlab.com/grupo/loja/-/issues/44",
+    "task_completion_status": null
+  },
+  {
+    "iid": 45,
+    "id": 113,
+    "title": "Reconciliação da rodada",
+    "description": "",
+    "state": "opened",
+    "labels": ["etapa-3"],
+    "assignees": [{ "username": "joao" }],
+    "web_url": "https://gitlab.com/grupo/loja/-/issues/45",
+    "task_completion_status": null
+  }
+]

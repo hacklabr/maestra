@@ -1,0 +1,183 @@
+{
+  "id": "epic-labels-contraditorias",
+  "descricao": "Épico #12 com label variante-condensado e metadados 'Etapa atual: etapa-1', mas TODAS as filhas de etapa-1 e etapa-2 fechadas e 2 de 3 de etapa-3 fechadas — branch B2 (contradição exposta como afirmação falseável).",
+  "digests": {
+    "12": {
+      "plataforma": {
+        "kind": "github",
+        "host": "github.com",
+        "projeto": "acme/loja"
+      },
+      "issue": {
+        "numero": 12,
+        "id": 9002,
+        "titulo": "Implementar exportação de relatórios",
+        "estado": "open",
+        "url": "https://github.com/acme/loja/issues/12"
+      },
+      "labels": {
+        "variante": "variante-condensado",
+        "etapas": [],
+        "marcadores": []
+      },
+      "metadados": {
+        "variante": "condensado",
+        "etapaAtual": "etapa-1",
+        "epico": null,
+        "rodada": "R02",
+        "subestado": "em-artefatos"
+      },
+      "pai": null,
+      "filhos": [
+        {
+          "numero": 14,
+          "titulo": "Mini-briefing",
+          "estado": "closed",
+          "variante": null,
+          "etapas": [
+            "etapa-1"
+          ],
+          "assignees": [
+            "rafael"
+          ]
+        },
+        {
+          "numero": 15,
+          "titulo": "Atualização do PRD vivo",
+          "estado": "closed",
+          "variante": null,
+          "etapas": [
+            "etapa-1"
+          ],
+          "assignees": [
+            "rafael"
+          ]
+        },
+        {
+          "numero": 16,
+          "titulo": "Análise de fit",
+          "estado": "closed",
+          "variante": null,
+          "etapas": [
+            "etapa-2"
+          ],
+          "assignees": [
+            "maria"
+          ]
+        },
+        {
+          "numero": 17,
+          "titulo": "Decomposição técnica",
+          "estado": "closed",
+          "variante": null,
+          "etapas": [
+            "etapa-2"
+          ],
+          "assignees": [
+            "maria"
+          ]
+        },
+        {
+          "numero": 21,
+          "titulo": "Implementação — fatia 1",
+          "estado": "closed",
+          "variante": null,
+          "etapas": [
+            "etapa-3"
+          ],
+          "assignees": [
+            "joao"
+          ]
+        },
+        {
+          "numero": 22,
+          "titulo": "Implementação — fatia 2",
+          "estado": "closed",
+          "variante": null,
+          "etapas": [
+            "etapa-3"
+          ],
+          "assignees": [
+            "joao"
+          ]
+        },
+        {
+          "numero": 27,
+          "titulo": "Reconciliação da rodada",
+          "estado": "open",
+          "variante": null,
+          "etapas": [
+            "etapa-3"
+          ],
+          "assignees": [
+            "joao"
+          ]
+        }
+      ],
+      "comentarios": [
+        {
+          "tipo": "facilitador",
+          "autor": "rafael",
+          "data": "2026-07-20T10:00:00Z",
+          "corpo": "Etapa 1 concluída: artefatos no repositório e Engenharia validou. Criei as tarefas da Etapa 2 (#16, #17). — facilitador"
+        },
+        {
+          "tipo": "facilitador",
+          "autor": "maria",
+          "data": "2026-07-22T10:00:00Z",
+          "corpo": "Desenho fechado: 3 tarefas de implementação (#21, #22) mais a conferência final (#27). — facilitador"
+        }
+      ],
+      "board": {
+        "coluna": "Em andamento"
+      },
+      "gate": {
+        "porEtapa": {
+          "etapa-1": {
+            "fechadas": 2,
+            "total": 2
+          },
+          "etapa-2": {
+            "fechadas": 2,
+            "total": 2
+          },
+          "etapa-3": {
+            "fechadas": 2,
+            "total": 3
+          }
+        },
+        "semEtapa": 0,
+        "reconciliacao": {
+          "existe": true,
+          "estado": "open",
+          "numero": 27
+        }
+      },
+      "artefatos": [
+        {
+          "numero": 14,
+          "titulo": "Mini-briefing",
+          "declarado": "docs/rodadas/R02-2026-10-exportacao-relatorios/mini-briefing.md",
+          "existe": true
+        },
+        {
+          "numero": 15,
+          "titulo": "Atualização do PRD vivo",
+          "declarado": "docs/referencia/prd.md",
+          "existe": true
+        }
+      ],
+      "hierarquia": {
+        "tipo": "sub-issues",
+        "taskCompletion": null,
+        "dessincronia": []
+      },
+      "paginacao": {
+        "filhosTruncados": false,
+        "comentariosTruncados": false
+      },
+      "erros": []
+    }
+  },
+  "execRoutes": []
+}

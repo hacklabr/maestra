@@ -1,0 +1,205 @@
+# J1 — calibração da triagem (jornadas §2/§3): limites de perguntas,
+# hierarquia derivar>confirmar>perguntar, destino dos "não sei", vocabulário PO.
+
+- description: "J1 caminho rápido da Mínima: ≤3 perguntas no total, variante com 'nenhum critério se aplica'"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["jornadas/j1-triagem.md"]
+    persona: etapa-1
+    entry: "O relatório quebra quando o filtro tem acento. É um ajuste pequeno na geração do CSV — uma pessoa resolve em 1 dia, só mexe nessa parte, ninguém depende disso de fora."
+    humanScript:
+      - "Isso mesmo, confirmo."
+      - "Confirma a classificação."
+    questionCaps: { maxPerTurn: 3, maxTotal: 3 }
+    requiredPatterns:
+      - "Mínima"
+      - "nenhum critério|nenhum dos critérios"
+    expectEvent: "A"
+    hardFail: ["assignee-after-confirmation"]
+  assert:
+    - type: javascript
+      value: file://asserts/question-count.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/no-jargon.mjs
+    - type: javascript
+      value: file://asserts/event-emitted.mjs
+    - type: javascript
+      value: file://asserts/two-layer-issues.mjs
+    - type: javascript
+      value: file://asserts/hard-fail.mjs
+
+- description: "J1 Condensada: critérios objetivos citados na proposta; perguntas só o irredutível"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["jornadas/j1-triagem.md"]
+    persona: etapa-1
+    entry: "Precisamos adicionar exportação de relatórios pro módulo de vendas. Uma pessoa leva umas 2 semanas, mexe em vendas, relatórios e permissões, e tem muita gente usando relatório hoje."
+    humanScript:
+      - "Confirmo."
+    questionCaps: { maxPerTurn: 3, maxTotal: 5 }
+    requiredPatterns:
+      - "Condensada"
+      - "5 dias|estimativa"
+    expectEvent: "A"
+    hardFail: ["assignee-after-confirmation"]
+  assert:
+    - type: javascript
+      value: file://asserts/question-count.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/no-jargon.mjs
+    - type: javascript
+      value: file://asserts/event-emitted.mjs
+    - type: javascript
+      value: file://asserts/two-layer-issues.mjs
+    - type: javascript
+      value: file://asserts/hard-fail.mjs
+
+- description: "J1 PO nunca é perguntado sobre critério de engenharia (regra de ouro)"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["jornadas/j1-triagem.md"]
+    persona: etapa-1
+    entry: "Quero um relatório novo de vendas por período, com exportação. Umas 2 semanas de trabalho."
+    humanScript:
+      - "Confirmo."
+    questionCaps: { maxPerTurn: 3, maxTotal: 5 }
+    forbiddenPatterns:
+      - "modelo de dados"
+      - "contrato de API"
+      - "hooks?"
+      - "decisão técnica duradoura"
+      - "schema"
+      - "\\bADR\\b"
+      - "\\bDoR\\b"
+      - "\\bTDD\\b"
+  assert:
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs
+    - type: javascript
+      value: file://asserts/question-count.mjs
+    - type: javascript
+      value: file://asserts/no-jargon.mjs
+
+- description: "J1 demanda vaga: 1 pergunta focal; após 2 rodadas, Mínima como hipótese + ambiguidade nas palavras do humano"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["jornadas/j1-triagem.md"]
+    persona: etapa-1
+    entry: "Preciso melhorar os relatórios."
+    humanScript:
+      - "Sei lá, deixar melhor sabe?"
+      - "Não sei te dizer o que tá ruim."
+    questionCaps: { maxPerTurn: 3, maxTotal: 3 }
+    requiredPatterns:
+      - "Mínima"
+      - "descrição original|nas (suas|tuas) palavras|registrad[oa]?"
+  assert:
+    - type: javascript
+      value: file://asserts/question-count.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/no-jargon.mjs
+
+- description: "J1 'não sei' em critério de produto: hipótese mais segura + assunção registrada + evento C"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["jornadas/j1-triagem.md"]
+    persona: etapa-1
+    entry: "Quero um filtro novo por vendedor no relatório de vendas."
+    humanScript:
+      - "Não sei se tem gente usando esse relatório hoje."
+      - "Não sei mesmo."
+    requiredPatterns:
+      - "assumid|assumindo"
+      - "reclassificar"
+    expectEvent: "C"
+  assert:
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/event-emitted.mjs
+    - type: javascript
+      value: file://asserts/no-jargon.mjs
+
+- description: "J1 dedup (G-10): busca épicos abertos semelhantes ANTES de criar"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["jornadas/j1-triagem.md"]
+    persona: etapa-1
+    entry: "Adicionar exportação de relatórios em CSV."
+    humanScript:
+      - "Confirmo."
+    expectedCallOrder:
+      - "exec:.*(issue list|search issues)"
+      - "exec:.*issue create"
+  assert:
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+
+- description: "J1 Completa (Q2 iniciativa grande): vida própria, orçamento dedicado → classificação Completa citando o critério"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/repo-sem-team.json
+    modules: ["jornadas/j1-triagem.md"]
+    persona: etapa-1
+    entry: "Vamos construir um marketplace de serviços do zero — plataforma nova, com métricas de sucesso próprias, orçamento dedicado e prazo de lançamento em 6 meses."
+    humanScript:
+      - "Tem vida própria sim, é uma iniciativa nova."
+      - "Confirma a classificação."
+    questionCaps: { maxPerTurn: 3, maxTotal: 5 }
+    requiredPatterns:
+      - "Completa"
+      - "vida própria|iniciativa|identidade própria"
+    expectEvent: "A"
+    hardFail: ["assignee-after-confirmation"]
+  assert:
+    - type: javascript
+      value: file://asserts/question-count.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/no-jargon.mjs
+    - type: javascript
+      value: file://asserts/event-emitted.mjs
+    - type: javascript
+      value: file://asserts/two-layer-issues.mjs
+    - type: javascript
+      value: file://asserts/hard-fail.mjs
+
+- description: "Completa — fatia do funil: gate da Etapa 1 (6/6 artefatos) verificado → onda da Etapa 2 criada após confirmação P7"
+  vars:
+    fixture: fixtures/github/epic-completa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["jornadas/j2-retomada.md", "jornadas/j3-etapa1.md"]
+    persona: etapa-1
+    entry: "60"
+    humanScript:
+      - "Correto."
+      - "Confirma essa distribuição."
+    expectedCallOrder:
+      - "tool:fluxo_issue_digest"
+      - "exec:.*issue create"
+    requiredPatterns:
+      - "Etapa 2"
+      - "gate|artefatos"
+    hardFail: ["assignee-after-confirmation"]
+  assert:
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/two-layer-issues.mjs
+    - type: javascript
+      value: file://asserts/hard-fail.mjs

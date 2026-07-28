@@ -1,0 +1,115 @@
+# J2 — derivação de estado (branches B1–B6): zero perguntas sobre estado
+# presente na plataforma; resumo falseável com próxima ação.
+
+- description: "J2 B1 sem labels: oferece 3 opções; NUNCA assume Mínima nem persona"
+  vars:
+    fixture: fixtures/github/epic-sem-labels.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["jornadas/j2-retomada.md"]
+    entry: "42"
+    requiredPatterns:
+      - "[Cc]lassificar agora"
+      - "avulsa"
+      - "[Ee]tapa 1, 2 ou 3|diz (a )?etapa|me diz|me diga"
+    forbiddenPatterns:
+      - "assumir (a )?Mínima"
+      - "Mínima por (padrão|default)"
+      - "você está na Etapa"
+  assert:
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs
+
+- description: "J2 B2 estado contraditório: evidência + hipótese falseável + correção em 1 frase"
+  vars:
+    fixture: fixtures/github/epic-labels-contraditorias.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["jornadas/j2-retomada.md"]
+    entry: "12"
+    expectedCallOrder:
+      - "tool:fluxo_issue_digest"
+    requiredPatterns:
+      - "conflitante|contradi|sinais"
+      - "Etapa 3"
+  assert:
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/falseable-summary.mjs
+
+- description: "J2 B4 sub-issue: digest do PAI antes de derivar; conversa ancorada na filha"
+  vars:
+    fixture: fixtures/github/sub-issue.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["jornadas/j2-retomada.md"]
+    entry: "47"
+    expectedCallOrder:
+      - "tool:fluxo_issue_digest\\(\\{\"issue\":47\\}\\)"
+      - "tool:fluxo_issue_digest\\(\\{\"issue\":12\\}\\)"
+    requiredPatterns:
+      - "#12|épico"
+  assert:
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/falseable-summary.mjs
+
+- description: "J2 B5 órfã: épico pai fechado → informa e trata como foco avulso"
+  vars:
+    fixture: fixtures/github/epic-orfa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["jornadas/j2-retomada.md"]
+    entry: "48"
+    expectedCallOrder:
+      - "tool:fluxo_issue_digest\\(\\{\"issue\":48\\}\\)"
+      - "tool:fluxo_issue_digest\\(\\{\"issue\":13\\}\\)"
+    requiredPatterns:
+      - "fechad"
+      - "avuls"
+  assert:
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/falseable-summary.mjs
+
+- description: "J2 B6 fechada-sem-reconciliacao (FM-13): anomalia nomeada + reconciliação retroativa; nunca reabre em silêncio"
+  vars:
+    fixture: fixtures/github/epic-fechado-sem-reconciliacao.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["jornadas/j2-retomada.md"]
+    entry: "55"
+    requiredPatterns:
+      - "fechad[oa] sem|sem a conferência final|não está entregue"
+      - "retroativa"
+    forbiddenPatterns:
+      - "vou reabrir"
+      - "reabrindo"
+  assert:
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs
+    - type: javascript
+      value: file://asserts/falseable-summary.mjs
+
+- description: "J2 override presente: override mostrado como fato da derivação, sem julgamento"
+  vars:
+    fixture: fixtures/github/epic-override-presente.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["jornadas/j2-retomada.md"]
+    entry: "18"
+    requiredPatterns:
+      - "override|reclassifica"
+      - "Mínima"
+  assert:
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/falseable-summary.mjs

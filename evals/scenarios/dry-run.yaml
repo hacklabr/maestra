@@ -1,0 +1,44 @@
+# Dry-run — prova de plumbing com o modelo mock (FLUXO_EVAL_MOCK=1).
+# Valida provider + stub tools + fixtures + asserts SEM modelo vivo.
+
+- description: "DRY J2: mock chama status→digest e produz resumo falseável (pipeline íntegro)"
+  vars:
+    fixture: fixtures/github/epic-labels-contraditorias.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["jornadas/j2-retomada.md"]
+    mock: true
+    entry: "12"
+    mockSteps:
+      - toolCall: { name: "fluxo_status", args: {} }
+      - toolCall: { name: "fluxo_issue_digest", args: { issue: 12 } }
+      - text: "Li o estado a partir da plataforma: épico #12, variante Condensada, rodada R02 (exportação de relatórios). Os sinais estão conflitantes: os metadados dizem Etapa 1, mas as tarefas das Etapas 1 e 2 estão todas fechadas — pela estrutura, está na Etapa 3. Falta a conferência final (#27). Próximo passo: @joao executa a reconciliação. Correto?"
+    expectedCallOrder:
+      - "tool:fluxo_status"
+      - "tool:fluxo_issue_digest"
+    requiredPatterns:
+      - "Etapa 3"
+  assert:
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/falseable-summary.mjs
+
+- description: "DRY J8: mock emite evento E com a recusa estrutural (pipeline + formato)"
+  vars:
+    fixture: fixtures/github/epic-etapa3-execucao.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["jornadas/j5-etapa3.md", "jornadas/j8-guarda.md"]
+    mock: true
+    entry: "Coloca exportação em Excel na #24, rapidinho."
+    mockSteps:
+      - toolCall: { name: "fluxo_status", args: {} }
+      - toolCall: { name: "fluxo_emit_event", args: { epic: 12, type: "E", payload: { demanda_criada: "pendente" } } }
+      - text: "Boa ideia — e é exatamente por isso que ela não pode entrar por aqui: se eu implementar agora, ela some da rastreabilidade. Registrada, ela não se perde. Abro a demanda nova agora (leva 2 minutos, você só confirma a descrição) e essa tarefa segue com o escopo original. Abro a demanda?"
+    expectEvent: "E"
+  assert:
+    - type: javascript
+      value: file://asserts/refusal-structure.mjs
+    - type: javascript
+      value: file://asserts/event-emitted.mjs

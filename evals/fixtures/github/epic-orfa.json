@@ -1,0 +1,120 @@
+{
+  "id": "epic-orfa",
+  "descricao": "Issue #48 é filha de #13, que está FECHADO — branch B5 (órfã): informar e tratar como foco avulso, sem derivar persona de épico morto.",
+  "digests": {
+    "13": {
+      "plataforma": {
+        "kind": "github",
+        "host": "github.com",
+        "projeto": "acme/loja"
+      },
+      "issue": {
+        "numero": 13,
+        "id": 9013,
+        "titulo": "Corrigir acentuação no relatório",
+        "estado": "closed",
+        "url": "https://github.com/acme/loja/issues/13"
+      },
+      "labels": {
+        "variante": "variante-minimo",
+        "etapas": [],
+        "marcadores": []
+      },
+      "metadados": {
+        "variante": "minimo",
+        "etapaAtual": "etapa-3",
+        "epico": null,
+        "rodada": "R01",
+        "subestado": "fechada-reconciliada"
+      },
+      "pai": null,
+      "filhos": [],
+      "comentarios": [
+        {
+          "tipo": "evento",
+          "autor": "rafael",
+          "data": "2026-07-10T10:00:00Z",
+          "corpo": "**Evento F** — rodada R01: desvios durante=0, na-reconciliação=0 — facilitador"
+        }
+      ],
+      "board": {
+        "coluna": "Entregue"
+      },
+      "gate": {
+        "porEtapa": {},
+        "semEtapa": 0,
+        "reconciliacao": {
+          "existe": false,
+          "estado": null,
+          "numero": null
+        }
+      },
+      "artefatos": [],
+      "hierarquia": {
+        "tipo": "sub-issues",
+        "taskCompletion": null,
+        "dessincronia": []
+      },
+      "paginacao": {
+        "filhosTruncados": false,
+        "comentariosTruncados": false
+      },
+      "erros": []
+    },
+    "48": {
+      "plataforma": {
+        "kind": "github",
+        "host": "github.com",
+        "projeto": "acme/loja"
+      },
+      "issue": {
+        "numero": 48,
+        "id": 9048,
+        "titulo": "Ajuste fino no layout do relatório",
+        "estado": "open",
+        "url": "https://github.com/acme/loja/issues/48"
+      },
+      "labels": {
+        "variante": null,
+        "etapas": [
+          "etapa-3"
+        ],
+        "marcadores": []
+      },
+      "metadados": {
+        "variante": "minimo",
+        "etapaAtual": "etapa-3",
+        "epico": 13,
+        "rodada": "R01",
+        "subestado": "em-execucao"
+      },
+      "pai": 13,
+      "filhos": [],
+      "comentarios": [],
+      "board": {
+        "coluna": "Não iniciada"
+      },
+      "gate": {
+        "porEtapa": {},
+        "semEtapa": 0,
+        "reconciliacao": {
+          "existe": false,
+          "estado": null,
+          "numero": null
+        }
+      },
+      "artefatos": [],
+      "hierarquia": {
+        "tipo": "sub-issues",
+        "taskCompletion": null,
+        "dessincronia": []
+      },
+      "paginacao": {
+        "filhosTruncados": false,
+        "comentariosTruncados": false
+      },
+      "erros": []
+    }
+  },
+  "execRoutes": []
+}

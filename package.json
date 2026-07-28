@@ -1,0 +1,48 @@
+{
+  "name": "fluxo-facilitador",
+  "version": "0.1.0",
+  "description": "Plugin facilitador do fluxo de desenvolvimento (triagem → três etapas → reconciliação) para OpenCode e Mimo Code",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "fluxo-facilitador": "./dist/installer/install.js",
+    "fluxo-report": "./dist/cli/report.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "tsc && rm -rf dist/instructions dist/catalog/agency-agents && cp -r src/instructions dist/instructions && (mkdir -p dist/catalog/agency-agents && cp -r src/catalog/agency-agents/. dist/catalog/agency-agents/ || true)",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "eval": "promptfoo eval -c evals/promptfooconfig.yaml",
+    "eval:nightly": "promptfoo eval -c evals/promptfooconfig.nightly.yaml --no-cache",
+    "eval:dry": "FLUXO_EVAL_MOCK=1 promptfoo eval -c evals/promptfooconfig.dry.yaml --no-cache",
+    "eval:golden": "node evals/scripts/golden.mjs",
+    "check:vocab": "bash scripts/check-neutral-vocab.sh",
+    "check:dist": "bash scripts/check-dist-hygiene.sh",
+    "smoke": "bash scripts/smoke.sh",
+    "ci": "npm run build && npm run typecheck && npm test && npm run check:vocab && npm run check:dist && npm run smoke && npm run eval:dry",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "promptfoo": "^0.121.19",
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.0",
+    "yaml": "^2.9.0"
+  }
+}

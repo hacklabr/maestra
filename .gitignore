@@ -1,0 +1,8 @@
+node_modules/
+dist/
+
+# Reference codebases (Mesa, OpenCode, Mimo Code) — NEVER commit
+refs/
+
+*.log
+.DS_Store

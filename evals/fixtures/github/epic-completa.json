@@ -1,0 +1,41 @@
+{
+  "id": "epic-completa",
+  "descricao": "Épico #60 variante COMPLETA com todas as 6 tarefas de artefato da Etapa 1 fechadas (briefing, PRD, jornadas, critérios, escopo, parecer) — gate da Etapa 1 cumprido; palco da onda da Etapa 2 (fatia do funil da Completa).",
+  "digests": {
+    "60": {
+      "plataforma": { "kind": "github", "host": "github.com", "projeto": "acme/marketplace" },
+      "issue": { "numero": 60, "id": 9060, "titulo": "Marketplace de serviços (plataforma nova)", "estado": "open", "url": "https://github.com/acme/marketplace/issues/60" },
+      "labels": { "variante": "variante-completo", "etapas": [], "marcadores": [] },
+      "metadados": { "variante": "completo", "etapaAtual": "etapa-1", "epico": null, "rodada": "R01", "subestado": "em-artefatos" },
+      "pai": null,
+      "filhos": [
+        { "numero": 61, "titulo": "Briefing da rodada", "estado": "closed", "variante": null, "etapas": ["etapa-1"], "assignees": ["rafael"] },
+        { "numero": 62, "titulo": "PRD vivo (RF/RNF)", "estado": "closed", "variante": null, "etapas": ["etapa-1"], "assignees": ["rafael"] },
+        { "numero": 63, "titulo": "Mapa de jornadas", "estado": "closed", "variante": null, "etapas": ["etapa-1"], "assignees": ["rafael"] },
+        { "numero": 64, "titulo": "Critérios de aceite + fora de escopo", "estado": "closed", "variante": null, "etapas": ["etapa-1"], "assignees": ["rafael"] },
+        { "numero": 65, "titulo": "Escopo da rodada", "estado": "closed", "variante": null, "etapas": ["etapa-1"], "assignees": ["rafael"] },
+        { "numero": 66, "titulo": "Parecer de viabilidade", "estado": "closed", "variante": null, "etapas": ["etapa-1"], "assignees": ["maria"] }
+      ],
+      "comentarios": [
+        { "tipo": "facilitador", "autor": "maria", "data": "2026-07-25T10:00:00Z", "corpo": "Parecer de viabilidade registrado: aprovado com ressalva no gateway de pagamento. — facilitador" }
+      ],
+      "board": { "coluna": "Em andamento" },
+      "gate": {
+        "porEtapa": { "etapa-1": { "fechadas": 6, "total": 6 } },
+        "semEtapa": 0,
+        "reconciliacao": { "existe": false, "estado": null, "numero": null }
+      },
+      "artefatos": [
+        { "numero": 62, "titulo": "PRD vivo (RF/RNF)", "declarado": "docs/referencia/prd.md", "existe": true },
+        { "numero": 65, "titulo": "Escopo da rodada", "declarado": "docs/rodadas/R01-2026-07-marketplace/escopo.md", "existe": true }
+      ],
+      "hierarquia": { "tipo": "sub-issues", "taskCompletion": null, "dessincronia": [] },
+      "paginacao": { "filhosTruncados": false, "comentariosTruncados": false },
+      "erros": []
+    }
+  },
+  "execRoutes": [
+    { "match": "issue list --assignee", "stdout": "[]" },
+    { "match": "issue create", "stdout": "https://github.com/acme/marketplace/issues/70" }
+  ]
+}

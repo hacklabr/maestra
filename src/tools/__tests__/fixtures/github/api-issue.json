@@ -1,0 +1,10 @@
+{
+  "number": 42,
+  "id": 123456789,
+  "title": "Implementar exportação de relatórios",
+  "body": "## Resumo\n\nExportar relatórios em CSV e Excel.\n\n**Variante:** condensado · **Etapa atual:** etapa-2 · **Épico:** #42 · **Rodada:** R02 · **Subestado:** em-execucao\n\n---\n\n## Detalhes para execução\n\nVer PRD vivo.",
+  "state": "open",
+  "labels": [{ "name": "variante-condensado" }, { "name": "bug" }],
+  "assignees": [{ "login": "rafael" }],
+  "html_url": "https://github.com/acme/loja/issues/42"
+}

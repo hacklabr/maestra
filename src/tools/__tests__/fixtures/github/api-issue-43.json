@@ -1,0 +1,10 @@
+{
+  "number": 43,
+  "id": 111,
+  "title": "Mini-briefing",
+  "body": "## Épico\n\n#42\n\n## Tipo e local de entrega\n\nREGISTRO — docs/rodadas/R02-2026-10-exportacao/mini-briefing.md",
+  "state": "closed",
+  "labels": [{ "name": "etapa-1" }],
+  "assignees": [{ "login": "rafael" }],
+  "html_url": "https://github.com/acme/loja/issues/43"
+}

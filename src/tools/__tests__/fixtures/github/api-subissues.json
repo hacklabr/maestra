@@ -1,0 +1,42 @@
+[
+  {
+    "number": 43,
+    "id": 111,
+    "title": "Mini-briefing",
+    "body": "",
+    "state": "closed",
+    "labels": [{ "name": "etapa-1" }],
+    "assignees": [{ "login": "rafael" }],
+    "html_url": "https://github.com/acme/loja/issues/43"
+  },
+  {
+    "number": 44,
+    "id": 112,
+    "title": "Atualização do PRD (RF/RNF)",
+    "body": "",
+    "state": "closed",
+    "labels": [{ "name": "etapa-1" }],
+    "assignees": [{ "login": "rafael" }],
+    "html_url": "https://github.com/acme/loja/issues/44"
+  },
+  {
+    "number": 45,
+    "id": 113,
+    "title": "Implementação — fatia 1",
+    "body": "",
+    "state": "open",
+    "labels": [{ "name": "etapa-3" }],
+    "assignees": [{ "login": "joao" }],
+    "html_url": "https://github.com/acme/loja/issues/45"
+  },
+  {
+    "number": 46,
+    "id": 114,
+    "title": "Reconciliação da rodada",
+    "body": "",
+    "state": "open",
+    "labels": [{ "name": "etapa-3" }],
+    "assignees": [{ "login": "joao" }],
+    "html_url": "https://github.com/acme/loja/issues/46"
+  }
+]

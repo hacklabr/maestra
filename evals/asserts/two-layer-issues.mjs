@@ -1,0 +1,6 @@
+import { assertTwoLayerIssues } from "../lib/transcript-asserts.mjs"
+
+/** P1: created issue bodies must be two-layer (## Resumo → **Variante:** → ## Detalhes para execução). */
+export default async function (output, _context) {
+  return assertTwoLayerIssues(JSON.parse(output))
+}

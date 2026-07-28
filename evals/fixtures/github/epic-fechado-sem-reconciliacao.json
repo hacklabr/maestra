@@ -1,0 +1,89 @@
+{
+  "id": "epic-fechado-sem-reconciliacao",
+  "descricao": "Épico #55 FECHADO com reconciliação ausente (fechado pela UI, dois cliques) — branch B6/FM-13: subestado anômalo fechada-sem-reconciliacao + reconciliação retroativa oferecida.",
+  "digests": {
+    "55": {
+      "plataforma": {
+        "kind": "github",
+        "host": "github.com",
+        "projeto": "acme/loja"
+      },
+      "issue": {
+        "numero": 55,
+        "id": 9055,
+        "titulo": "Cupom de desconto no checkout",
+        "estado": "closed",
+        "url": "https://github.com/acme/loja/issues/55"
+      },
+      "labels": {
+        "variante": "variante-condensado",
+        "etapas": [],
+        "marcadores": []
+      },
+      "metadados": {
+        "variante": "condensado",
+        "etapaAtual": "etapa-3",
+        "epico": null,
+        "rodada": "R05",
+        "subestado": "em-execucao"
+      },
+      "pai": null,
+      "filhos": [
+        {
+          "numero": 56,
+          "titulo": "Implementação — cupom",
+          "estado": "closed",
+          "variante": null,
+          "etapas": [
+            "etapa-3"
+          ],
+          "assignees": [
+            "joao"
+          ]
+        },
+        {
+          "numero": 57,
+          "titulo": "Reconciliação da rodada",
+          "estado": "open",
+          "variante": null,
+          "etapas": [
+            "etapa-3"
+          ],
+          "assignees": [
+            "joao"
+          ]
+        }
+      ],
+      "comentarios": [],
+      "board": {
+        "coluna": "Entregue"
+      },
+      "gate": {
+        "porEtapa": {
+          "etapa-3": {
+            "fechadas": 1,
+            "total": 2
+          }
+        },
+        "semEtapa": 0,
+        "reconciliacao": {
+          "existe": true,
+          "estado": "open",
+          "numero": 57
+        }
+      },
+      "artefatos": [],
+      "hierarquia": {
+        "tipo": "sub-issues",
+        "taskCompletion": null,
+        "dessincronia": []
+      },
+      "paginacao": {
+        "filhosTruncados": false,
+        "comentariosTruncados": false
+      },
+      "erros": []
+    }
+  },
+  "execRoutes": []
+}

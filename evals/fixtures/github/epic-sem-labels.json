@@ -1,0 +1,58 @@
+{
+  "id": "epic-sem-labels",
+  "descricao": "Issue #42 sem nenhuma label de fluxo nem linha de metadados — branch B1 (nunca assumir; oferecer 3 opções).",
+  "digests": {
+    "42": {
+      "plataforma": {
+        "kind": "github",
+        "host": "github.com",
+        "projeto": "acme/loja"
+      },
+      "issue": {
+        "numero": 42,
+        "id": 9001,
+        "titulo": "Relatório quebra quando filtro tem acento",
+        "estado": "open",
+        "url": "https://github.com/acme/loja/issues/42"
+      },
+      "labels": {
+        "variante": null,
+        "etapas": [],
+        "marcadores": []
+      },
+      "metadados": null,
+      "pai": null,
+      "filhos": [],
+      "comentarios": [],
+      "board": {
+        "coluna": null
+      },
+      "gate": {
+        "porEtapa": {},
+        "semEtapa": 0,
+        "reconciliacao": {
+          "existe": false,
+          "estado": null,
+          "numero": null
+        }
+      },
+      "artefatos": [],
+      "hierarquia": {
+        "tipo": "sub-issues",
+        "taskCompletion": null,
+        "dessincronia": []
+      },
+      "paginacao": {
+        "filhosTruncados": false,
+        "comentariosTruncados": false
+      },
+      "erros": []
+    }
+  },
+  "execRoutes": [
+    {
+      "match": "issue list|search issues",
+      "stdout": "[]"
+    }
+  ]
+}

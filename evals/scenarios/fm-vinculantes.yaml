@@ -1,0 +1,93 @@
+# Cenários vinculantes do dogfood #1 (Guardian V-4 + consenso): FM-04, FM-06, FM-21.
+# FM-13 já está coberto no fluxo-report (report-core.ts) + J2 B6.
+
+- description: "FM-06 abandono pré-épico: sessão nova NÃO alucina conversa anterior; nomeia o recomeço honestamente"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/repo-sem-team.json
+    modules: ["jornadas/j1-triagem.md"]
+    persona: etapa-1
+    entry: "Quero retomar aquela conversa sobre a exportação de relatórios que a gente começou ontem. Onde paramos?"
+    requiredPatterns:
+      - "não (encontrei|tenho) (nenhum )?registro|não tenho (memória|registro)|não encontro"
+      - "recomeç|começar (de novo|do zero)|5 minutos"
+    forbiddenPatterns:
+      - "como (eu )?estávamos dizendo"
+      - "continuando de onde paramos"
+      - "da (nossa )?última (conversa|sessão)"
+      - "como combinamos"
+  assert:
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs
+
+- description: "FM-04 sem permissão de listar colaboradores: mapa parcial, papéis mínimos — NUNCA bloqueia o épico"
+  vars:
+    fixture: fixtures/github/sem-permissao-colaboradores.json
+    repo: fixtures/repo/repo-sem-team.json
+    modules: ["jornadas/j1-triagem.md"]
+    persona: etapa-1
+    entry: "Ajustar a regra de frete no checkout — mudança pequena, 1 dia, só nessa parte."
+    humanScript:
+      - "Confirma a Mínima."
+      - "Pode criar com os papéis que der."
+    expectedCallOrder:
+      - "exec:.*(members|collaborators)"
+      - "exec:.*issue create"
+    requiredPatterns:
+      - "parcial|permissão|não consegui listar"
+    forbiddenPatterns:
+      - "não posso criar o épico|bloqueado|impossível criar"
+  assert:
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs
+
+- description: "FM-21 colisão de RF: outra rodada introduziu RF-03 em paralelo — renumera para RF-04 e registra no desvios.md"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/rodada-paralela-rf.json
+    modules: ["jornadas/j3-etapa1.md"]
+    persona: etapa-1
+    entry: "Registra o requisito novo da rodada no PRD vivo: exportação agendada de relatórios. No escopo da rodada ele estava como RF-03."
+    patternScope: files
+    requiredPatterns:
+      - "RF-04"
+      - "colisão|renumerad"
+    forbiddenPatterns:
+      - "RF-03 — Exportação agendada"
+  assert:
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs
+
+- description: "FM-12 worktree órfão: conferência final lista remanescentes (git worktree list como evidência) e trata o órfão antes do veredito"
+  vars:
+    fixture: fixtures/github/reconciliacao-worktree-orfa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["jornadas/j5-etapa3.md"]
+    persona: etapa-3
+    entry: "Vamos fazer a conferência final da rodada R02 (#27)."
+    expectedCallOrder:
+      - "exec:.*git worktree list"
+    requiredPatterns:
+      - "worktree"
+      - "órfã|remanescente|residual"
+      - "remov|prune|limpa"
+    forbiddenPatterns:
+      - "nenhum worktree|sem worktrees? remanescente"
+    hardFail: ["evidence-before-verdict"]
+  assert:
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs
+    - type: javascript
+      value: file://asserts/hard-fail.mjs

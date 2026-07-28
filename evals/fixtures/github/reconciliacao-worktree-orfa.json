@@ -1,0 +1,38 @@
+{
+  "id": "reconciliacao-worktree-orfa",
+  "descricao": "FM-12: rodada pronta para a conferência final (implementações fechadas, reconciliação #27 aberta) com um WORKTREE ÓRFÃO — a tarefa #22 (fatia 2) está fechada mas o worktree .worktrees/fatia-2 continua registrado no 'git worktree list'. A conferência deve listar remanescentes (evidência executada) e tratá-los.",
+  "digests": {
+    "12": {
+      "plataforma": { "kind": "github", "host": "github.com", "projeto": "acme/loja" },
+      "issue": { "numero": 12, "id": 9002, "titulo": "Implementar exportação de relatórios", "estado": "open", "url": "https://github.com/acme/loja/issues/12" },
+      "labels": { "variante": "variante-condensado", "etapas": [], "marcadores": [] },
+      "metadados": { "variante": "condensado", "etapaAtual": "etapa-3", "epico": null, "rodada": "R02", "subestado": "aguardando-reconciliacao" },
+      "pai": null,
+      "filhos": [
+        { "numero": 21, "titulo": "Implementação — fatia 1", "estado": "closed", "variante": null, "etapas": ["etapa-3"], "assignees": ["joao"] },
+        { "numero": 22, "titulo": "Implementação — fatia 2", "estado": "closed", "variante": null, "etapas": ["etapa-3"], "assignees": ["joao"] },
+        { "numero": 27, "titulo": "Reconciliação da rodada", "estado": "open", "variante": null, "etapas": ["etapa-3"], "assignees": ["joao"] }
+      ],
+      "comentarios": [
+        { "tipo": "facilitador", "autor": "joao", "data": "2026-07-27T18:00:00Z", "corpo": "Aceite da #22: critérios 1–3 atendidos, veredito registrado. — facilitador" }
+      ],
+      "board": { "coluna": "Em revisão" },
+      "gate": {
+        "porEtapa": { "etapa-3": { "fechadas": 2, "total": 3 } },
+        "semEtapa": 0,
+        "reconciliacao": { "existe": true, "estado": "open", "numero": 27 }
+      },
+      "artefatos": [],
+      "hierarquia": { "tipo": "sub-issues", "taskCompletion": null, "dessincronia": [] },
+      "paginacao": { "filhosTruncados": false, "comentariosTruncados": false },
+      "erros": []
+    }
+  },
+  "execRoutes": [
+    { "match": "git worktree list", "stdout": "/home/rafael/devel/loja                        abc1234 [main]\n/home/rafael/devel/loja/.worktrees/fatia-2  def5678 [fatia-2]" },
+    { "match": "git worktree remove", "stdout": "" },
+    { "match": "git diff", "stdout": "" },
+    { "match": "grep -r", "stdout": "docs/decisoes/adr/ADR-002-cache.md: **Status:** Vigente" },
+    { "match": "pr list", "stdout": "[{\"number\": 33, \"title\": \"fatia 1\"}, {\"number\": 34, \"title\": \"fatia 2\"}]" }
+  ]
+}

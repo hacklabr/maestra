@@ -1,0 +1,15 @@
+{
+  "id": "sem-permissao-colaboradores",
+  "descricao": "FM-04: plataforma OK para issues mas listagem de colaboradores/membros nega permissão (403) — o mapeamento de equipe deve degradar (papéis mínimos, mapa parcial) SEM bloquear o épico.",
+  "status": {
+    "host": "opencode",
+    "plataforma": { "kind": "github", "cli": "ok", "mcp": "absent", "board": "ok", "hierarchy": "sub-issues" },
+    "plugin": "0.1.0"
+  },
+  "execRoutes": [
+    { "match": "orgs/.*/members|collaborators|members", "stdout": "", "stderr": "gh: Forbidden (HTTP 403)", "code": 1 },
+    { "match": "issue list|search issues", "stdout": "[]" },
+    { "match": "issue create", "stdout": "https://github.com/acme/loja/issues/51" },
+    { "match": "issue list --assignee", "stdout": "[]" }
+  ]
+}
