@@ -29,7 +29,17 @@ npx fluxo-facilitador --host mimocode
 npx fluxo-facilitador --host both
 ```
 
-O que o instalador faz (nas três vias): instala dependências e compila (`tsc`), copia as instructions para `<config-do-host>/fluxo/instructions/`, gera `agents/fluxo.md` com o **dialeto correto do host** (um host por máquina — resolvido em tempo de instalação) e registra o plugin em `opencode.json` / `mimocode.json`.
+O que o instalador faz (nas três vias): instala dependências e compila (`tsc`), copia as instructions para `<config-do-host>/fluxo/instructions/` (incluindo o **catálogo completo grepável** de personas em `instructions/catalog/`), gera `agents/fluxo.md` com o **dialeto correto do host** (um host por máquina — resolvido em tempo de instalação), gera **UM shell subagent** `agents/fluxo/especialista.md` (não-hidden, descrição de 1 linha) e registra o plugin em `opencode.json` / `mimocode.json`.
+
+## Mesa de discussão: shell specialist (design A)
+
+Em vez de registrar personas como subagentes (o Mesa registra ~369 — cada um vira uma linha na description da tool de subagente, ~22k tokens permanentes por sessão), o plugin instala **um único subagente quase vazio** (`fluxo/especialista`). Na convocação da mesa, o facilitador:
+
+1. escolhe a persona no catálogo grepável (`instructions/catalog/<divisão>/<persona>.md`) — receita: `grep -ril "<domínio>" instructions/catalog/ | head -5`, depois `read` do arquivo escolhido;
+2. invoca o shell via tool de subagente do host (`task` no OpenCode / `actor` no Mimo) **com o conteúdo da persona inline no prompt de delegação** — a persona viaja como primeira mensagem da sessão fresca do shell;
+3. o shell declara o nome da persona e analisa a pauta a partir dela.
+
+Custo: 1 linha no enum de subagentes (~60 tokens/msg) em vez de 12+. Funciona identicamente nos dois hosts (verificado nos fontes: `describeTask` do OpenCode não filtra hidden; o enum do `actor` do Mimo filtra `!hidden`). **Sem tool de busca** — grep nativo basta; gatilho de promoção para uma `fluxo_catalog_search` está no [ROADMAP.md](ROADMAP.md), junto com o upgrade persona-via-`system.transform` (fase 2).
 
 ## Plataformas de issues suportadas
 

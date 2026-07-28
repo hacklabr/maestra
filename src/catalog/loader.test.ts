@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { join } from "node:path"
 import { loadCatalogFromDirectory, parseFrontmatter, parsePersonaFile } from "./loader.js"
-import { ROSTER } from "./roster.js"
 
 const CATALOG_ROOT = join(__dirname, "agency-agents")
 
@@ -63,32 +62,14 @@ describe("loadCatalogFromDirectory (real vendored catalog)", () => {
     // ~4 catalog files are docs (README/EXECUTIVE-BRIEF/QUICKSTART) without
     // frontmatter description — personas proper all have one
     expect(personas.filter((p) => p.description.length > 0).length).toBeGreaterThanOrEqual(360)
-    expect(ROSTER.every((e) => personas.find((p) => p.id === e.id && p.description.length > 0))).toBe(true)
   })
 
-  it("parses real roster personas with all fields", async () => {
+  it("parses real catalog personas with all fields", async () => {
     const { personas } = await loadCatalogFromDirectory(CATALOG_ROOT)
     const cms = personas.find((p) => p.id === "software-development-cms-developer")
     expect(cms).toBeDefined()
     expect(cms!.division).toBe("software-development")
     expect(cms!.description).toContain("WordPress")
     expect(cms!.emoji.length).toBeGreaterThan(0)
-  })
-})
-
-describe("ROSTER ⊆ catalog (install-time contract, mirrored in tests)", () => {
-  it("every curated id exists in the vendored catalog", async () => {
-    const { personas } = await loadCatalogFromDirectory(CATALOG_ROOT)
-    const ids = new Set(personas.map((p) => p.id))
-    const missing = ROSTER.filter((e) => !ids.has(e.id)).map((e) => e.id)
-    expect(missing).toEqual([])
-  })
-
-  it("roster has exactly 12 entries with one-line domains", () => {
-    expect(ROSTER).toHaveLength(12)
-    for (const entry of ROSTER) {
-      expect(entry.domain.length).toBeGreaterThan(0)
-      expect(entry.domain).not.toContain("\n")
-    }
   })
 })

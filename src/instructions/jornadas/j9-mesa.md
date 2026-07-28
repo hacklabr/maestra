@@ -1,8 +1,8 @@
-# J9 — Mesa de Discussão Ad-hoc
+# J9 — Mesa de Discussão Ad-hoc (arquitetura shell-specialist)
 
-> Source: docs/referencia/jornadas.md v2.1 (§6 J9, §7.9; G-08, W-04) + especificação D4/ADR-004 · Module version: 1 — 2026-07-28
+> Source: docs/referencia/jornadas.md v2.3 (§6 J9, §7.9; G-08) + decisão humana (shell-specialist) · Module version: 2 — 2026-07-28
 > Anti-drift: módulo derivado da fonte; divergência é finding, nunca ajuste silencioso.
-> Changelog: v1 — versão inicial (T9): convocação com pauta, roster curado (12), turnos sequenciais com ask_peer, persistência por turno (G-08), síntese sem votação.
+> Changelog: v1 (T9) — roster curado de 12 personas + W-04. v2 (jornadas v2.3, decisão humana) — **roster eliminado**: UM subagente shell `fluxo/especialista` + marcador `persona::<id>@<mesaId>` expandido pelo hook do plugin a partir do catálogo instalado (`instructions/catalog/`); catálogo INTEIRO invocável; busca por grep/glob nativo (sem tool dedicada, com gatilho de promoção documentado); W-04 deletada (não há mais subconjunto instalado).
 
 **Gatilho:** convocação humana (livre, a qualquer momento) ou sugestão sua (somente quando estas instructions indicarem — decisão com consequência duradoura que toca múltiplos domínios). **Colisão de vocabulário:** a mesa nunca usa "rodada" sozinha — "rodada de discussão" ou "mesa"; os turnos da mesa são "turnos".
 
@@ -10,38 +10,41 @@
 
 **Pauta explícita obrigatória** — mesa sem pauta é o anti-padrão de discussão obrigatória disfarçado. O convite (microcopy §7.9) diz em uma frase: **por que agora, quem, quanto custa** — e **"seguir sem" é sempre opção visível**.
 
-**Seleção de especialistas (dois níveis):**
-1. Necessidade de domínio → busque no catálogo completo (arquivos grepáveis, operação no cookbook do host).
-2. Está no **roster invocável** (tabela abaixo) → inclua no convite.
-3. NÃO está → microcopy §7.9 **variante honesta (W-04)**: (1) instalar agora (edição de config + reinício — custo real declarado); (2) seguir com o especialista curado mais próximo (nomeie qual); (3) seguir sem a mesa — decisão registrada como tomada sem consulta. Nunca prometa "leva uns minutos" quando é falso; nunca transforme ausência de catálogo em beco sem saída.
+**Seleção de especialistas (receita de busca — catálogo inteiro invocável):**
 
-**Roster invocável (12 personas — descrições de 1 linha, não-hidden; custo permanente no enum da tool de subagente):**
+1. `glob("instructions/catalog/**/*.md")` — o universo de personas instaladas.
+2. `grep` pelo domínio da decisão (ex.: `grep -ril "segurança\|security" instructions/catalog/`) — restrinja por diretório de divisão quando óbvio.
+3. Leia o **frontmatter** dos 2–3 candidatos principais (nome, descrição, divisão) — nunca o arquivo inteiro nesta etapa.
+4. Escolha e inclua no convite pelo nome de domínio legível ("back-end e segurança"), não pelo ID.
 
-| ID (`fluxo/` prefixado no spawn) | Domínio em uma linha |
-|---|---|
-| `software-development-software-architect` | Decisões duradouras, arquitetura, análise de fit |
-| `software-development-backend-architect` | Contratos, APIs, performance server-side |
-| `software-development-frontend-developer` | UI, blocos, temas, integração visual |
-| `software-development-senior-developer` | Decomposição pragmática, refatoração, revisão |
-| `software-development-database-administrator` | Modelo de dados, migrações, queries espaciais |
-| `security-security-engineer` | Segurança, permissões, superfície de ataque |
-| `quality-assurance-test-automation-engineer` | Estratégia de testes, critérios checáveis |
-| `software-development-devops-engineer` | Deploy, infra, CI/CD, observabilidade |
-| `product-manager` | Prioridade, escopo, custo de oportunidade |
-| `design-ux-researcher` | Hipóteses de UX, validação com usuários |
-| `design-ux-writer` | Microcopy, camada humana, clareza |
-| `software-development-cms-developer` | Ecossistema WP/Mapas Culturais, hooks, distribuição |
+Sem tool dedicada de busca: grep/glob nativos bastam. **Gatilho de promoção documentado:** se o dogfood mostrar buscas falhando (domínio correto não encontrado em 1 tentativa de grep, recorrente) ou custo de tokens de listagem perceptível → promover uma tool de busca no catálogo. Decisão por dados, não antecipada.
 
-IDs validados contra o catálogo vendored (`src/catalog/agency-agents`, submodule hacklabr/agency-agents) — fonte de verdade em código: `src/catalog/roster.ts`. **O installer valida cada ID contra o catálogo vendored e falha nomeando os ofensores** — roster errado nunca chega ao runtime. Ajuste fino do roster (12–15) é decisão de dogfood: cada descrição é custo permanente por mensagem no host Mimo.
+## ETAPA 2 — Turnos sequenciais (contrato de spawn shell)
 
-## ETAPA 2 — Turnos sequenciais com ask_peer
+**Um especialista por vez.** Cada especialista é UM spawn do subagente shell com UMA persona — o hook do plugin expande a persona do catálogo para dentro da sessão.
 
-- **Um especialista por vez**, invocado via tool nativa de subagente do host (dialeto assado no install: `task` com `task_id` × `actor` com `actor_id` capturado). Passe **file paths, nunca resumos** — cada especialista lê as posições anteriores ele mesmo.
-- Cada especialista recebe: a pauta, o contexto da decisão e os paths das posições já registradas nesta mesa.
-- **`ask_peer` disponível aos especialistas** durante o turno: consultas direcionadas entre pares (clarificar, contestar, pedir elaboração). Os guards vivem na tool: busy-check anti-ciclo, cap de consultas, e você (facilitador) é mecanicamente excluído — para falar com um especialista, delegue outro turno.
-- **Contrato de persistência por turno (G-08):** a posição de cada especialista é escrita **no fim de cada turno**, não só na síntese — sem isso, "sessão morta → nada se perde" é falso:
-  - Pasta da rodada existente → `docs/rodadas/Rnn-.../mesa/<id-mesa>-<turno>-<persona>.md` (**REGISTRO auxiliar da rodada**: imutável após escrita; NUNCA deletada quando a síntese vira ADR — a síntese é o documento da decisão, as posições são o registro de quem disse o quê).
-  - Mesa antes do nascimento da pasta (ex.: durante a triagem) → posições como **comentários no épico** (um por turno, assinados), migrando para a pasta quando ela nascer. Nunca ficam só na sessão.
+**Contrato de spawn (inviolável):**
+
+- `subagent_type="fluxo/especialista"` — sempre o mesmo shell.
+- **Primeira linha do prompt:** `persona::<id>@<mesaId>` — o marcador que o hook usa para expandir a persona e registrar a sessão (ex.: `persona::software-development-backend-architect@mesa-cache-relatorio`). Sem o marcador na primeira linha, não há expansão.
+- **Resume por turno:** OpenCode → `task_id="mesa-<mesaId>-<personaId>"`; Mimo → capture o session id retornado e reuse como `actor_id`. O mesmo par mesa+persona = a mesma sessão em todos os turnos.
+- **UMA SESSÃO = UMA PERSONA, inviolável.** Nova persona = novo spawn. NUNCA peça a uma sessão expandida como X que "agora responda como Y" — isso destrói a contaminação deliberada e a auditabilidade das posições.
+- **No resume (turnos seguintes): NÃO re-injete a persona** — ela já está no histórico da sessão. Envie apenas o contexto novo do turno: a pauta (se mudou) e os **paths das posições** registradas desde o último turno deste especialista. File paths, nunca resumos — cada especialista lê as posições anteriores ele mesmo.
+
+**Conteúdo do primeiro turno de cada especialista:** marcador (linha 1) + pauta + contexto da decisão + paths das posições já registradas nesta mesa (se houver).
+
+**Auto-checagem barata:** a primeira resposta de cada especialista começa com a auto-declaração da persona expandida (ex.: "[backend-architect]"). Declaração ausente ou divergente do marcador = expansão falhou — trate como falha de spawn (abaixo).
+
+**Falhas de spawn:**
+- **Spawn sem marcador** (ou marcador malformado) → o hook não expande, a sessão NÃO entra no mapa de pares e o `ask_peer` **nega consultas** com aviso (fail-closed: mesa sem expansão registrada não delibera). Respawn corrigindo o marcador — nunca tente "consertar" a sessão em texto.
+- **Arquivo de persona inexistente** no catálogo (`instructions/catalog/<id>.md`) → o hook reporta o erro; escolha outro candidato da busca (Etapa 1) ou informe o humano. Nunca improvise a persona você mesmo.
+
+**`ask_peer` entre especialistas:** consultas direcionadas (clarificar, contestar, pedir elaboração). Guards na tool: **busy-check anti-ciclo** (A ocupada aguardando B quando C a consulta), **cap de 3 consultas por par por sessão**, e você (facilitador) **mecanicamente excluído** — para falar com um especialista, delegue outro turno.
+
+**Contrato de persistência por turno (G-08):** a posição de cada especialista é escrita **no fim de cada turno**, não só na síntese — sem isso, "sessão morta → nada se perde" é falso:
+
+- Pasta da rodada existente → `docs/rodadas/Rnn-.../mesa/<mesaId>-<turno>-<personaId>.md` (**REGISTRO auxiliar da rodada**: imutável após escrita; NUNCA deletada quando a síntese vira ADR — a síntese é o documento da decisão, as posições são o registro de quem disse o quê).
+- Mesa antes do nascimento da pasta (ex.: durante a triagem) → posições como **comentários no épico** (um por turno, assinados), migrando para a pasta quando ela nascer. Nunca ficam só na sessão.
 
 ## ETAPA 3 — Síntese e registro
 
@@ -52,5 +55,6 @@ IDs validados contra o catálogo vendored (`src/catalog/agency-agents`, submodul
 ## Critérios de sucesso da jornada
 
 - Pauta em uma frase registrada; zero mesas obrigatórias em pontos fixos; "seguir sem" oferecido.
+- Todo especialista spawnado via shell com marcador válido na primeira linha; auto-declaração de persona presente na primeira resposta; uma sessão = uma persona.
 - Posição persistida por turno no local correto da classe documental; retomada após sessão morta reconstrói a mesa pelos artefatos.
 - Síntese com divergências e desempate registrada no artefato (ADR com status; substituição no mesmo ato).

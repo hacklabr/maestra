@@ -1,8 +1,8 @@
 # Biblioteca de Microcopy (L3 — camada de linguagem)
 
-> Source: docs/referencia/jornadas.md §7, v2.1 · Module version: 1 — 2026-07-28
+> Source: docs/referencia/jornadas.md §7, v2.3 · Module version: 2 — 2026-07-28
 > Anti-drift: templates verbatim com slots tipados; ajuste pós-dogfood AQUI, nunca em código. Divergência entre este módulo e a fonte é finding, nunca ajuste silencioso.
-> Changelog: v0 scaffold (T6) → v1 (T10): transcrição integral de §7.1–§7.11 com slots tipados; bloco do hook desvios.md preservado verbatim; comentário de override substituído por referência ao contrato da tool (`fluxo_emit_event`); adaptações de plataforma-neutro marcadas explicitamente.
+> Changelog: v0 scaffold (T6) → v1 (T10): transcrição integral de §7.1–§7.11 com slots tipados; bloco do hook desvios.md preservado verbatim; comentário de override substituído por referência ao contrato da tool (`fluxo_emit_event`); adaptações de plataforma-neutro marcadas explicitamente. v2 (jornadas v2.3, decisão humana) — bloco §7.9 W-04 ("especialista fora do catálogo instalado") DELETADO: arquitetura shell-specialist torna o catálogo inteiro invocável; não existe mais subconjunto instalado nem especialista "mais próximo".
 
 ## Convenções de uso
 
@@ -23,7 +23,7 @@
 | §7.6 | Sugestão de distribuição (P7) |
 | §7.7 | Troca de persona na co-triagem (Técnica) |
 | §7.8 | Declaração de pendência técnica |
-| §7.9 | Mesa de discussão (convite ×2, fechamento) |
+| §7.9 | Mesa de discussão (convite, fechamento) |
 | §7.10 | Handoffs (E1→2, E2→3, devolutiva, disfarce) |
 | §7.11 | Reconciliação e desvios |
 
@@ -353,22 +353,6 @@ Leva uns minutos. Convoco? Ou prefere seguir sem a rodada de discussão?
 | `{ESPECIALISTAS}` | lista | Ex.: "back-end e segurança". |
 
 "Seguir sem" é sempre opção visível. "Leva uns minutos" só se verdadeiro (Pattern 6).
-
-### Convite — especialista fora do catálogo instalado (W-04)
-
-```text
-Essa decisão pedia o especialista de {DOMINIO}, que não está instalado
-neste ambiente. Opções:
-1. Instalo agora (edição de config + reinício — alguns minutos a mais)
-2. Sigo com o especialista disponível mais próximo: {ESPECIALISTA_PROXIMO}
-3. Seguimos sem a rodada de discussão — a decisão fica registrada como
-   tomada sem consulta
-```
-
-| Slot | Tipo | Condição |
-|---|---|---|
-| `{DOMINIO}` | texto | Domínio do especialista ausente. |
-| `{ESPECIALISTA_PROXIMO}` | nome | O especialista curado mais próximo disponível (emenda Guardian — nunca beco sem saída). |
 
 ### Fechamento (síntese, sem votação)
 

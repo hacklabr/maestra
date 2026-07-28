@@ -160,12 +160,14 @@ MD
   check_grep "instructions path in frontmatter" "$home/.config/$configdir/fluxo/instructions" "$home/.config/$configdir/agents/fluxo.md"
   check_file "instructions copied" "$home/.config/$configdir/fluxo/instructions/kernel/fluxo-kernel.md"
   check_grep "plugin registered" "fluxo-facilitador\|dist/index.js" "$home/.config/$configdir/$configdir.json"
-  # curated roster: 12 non-hidden specialist subagents + greppable full catalog
+  # design A: exactly ONE shell specialist + greppable full catalog
   local n_specialists
   n_specialists=$(find "$home/.config/$configdir/agents/fluxo" -name "*.md" 2>/dev/null | wc -l)
-  [ "$n_specialists" -eq 12 ] && ok "12 specialists generated" || bad "12 specialists generated (got $n_specialists)"
-  check_grep "specialist non-hidden with task dialect" "$([ "$host" = opencode ] && echo 'task:' || echo 'actor:')" "$home/.config/$configdir/agents/fluxo/security-security-engineer.md"
-  ! grep -q "hidden" "$home/.config/$configdir/agents/fluxo/security-security-engineer.md" && ok "specialist is non-hidden (Mimo actor enum)" || bad "specialist is non-hidden (Mimo actor enum)"
+  [ "$n_specialists" -eq 1 ] && ok "exactly 1 shell agent generated" || bad "exactly 1 shell agent generated (got $n_specialists)"
+  local shell="$home/.config/$configdir/agents/fluxo/especialista.md"
+  check_grep "shell has task/actor dialect" "$([ "$host" = opencode ] && echo 'task:' || echo 'actor:')" "$shell"
+  ! grep -q "^hidden:" "$shell" && ok "shell is non-hidden (Mimo actor enum)" || bad "shell is non-hidden (Mimo actor enum)"
+  check_grep "shell base prompt: persona on delegation" "persona é definida integralmente pelo prompt de delegação" "$shell"
   check_file "greppable catalog installed" "$home/.config/$configdir/fluxo/instructions/catalog/design/design-ux-researcher.md"
 
   # 2. fluxo_status

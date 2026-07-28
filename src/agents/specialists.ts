@@ -1,27 +1,39 @@
-import type { Persona } from "../catalog/types.js"
-import type { RosterEntry } from "../catalog/roster.js"
 import type { HostId } from "./fluxo-agent.js"
 
 /**
- * Specialist subagent generation (spec D5). Mirrors Mesa's generate-agents.js
- * subdirectory namespacing (agents/fluxo/<id>.md → spawnable as "fluxo/<id>")
- * with two deliberate differences:
+ * The shell specialist subagent (human-approved design A): ONE nearly-empty
+ * subagent replaces the 12 curated personas. The persona is injected ON
+ * DEMAND at spawn time — the facilitator reads the persona file from the
+ * greppable catalog (instructions/catalog/) and inlines it in the task/actor
+ * prompt. Token cost: 1 line in the subagent enum (~60 tokens/msg) instead of
+ * 12+ — and zero on Mimo, where hidden agents can't spawn anyway.
  *
- *  1. NON-HIDDEN: Mimo's actor enum only lists `mode: subagent && !hidden`
- *     (actor.ts:325) — Mesa's hidden:true would make specialists unspawnable
- *     there. We omit `hidden` entirely (default false).
- *  2. Per-host permission dialect: subagent spawning is `task` on OpenCode
- *     and `actor` on Mimo — both denied here so a specialist cannot nest
- *     subagents (A→B→C→A via task is dead; ask_peer is the only consultation
- *     channel, and it is guarded in-tool).
- *
- * Description = the roster's one-line domain (per-message tax on Mimo).
+ * Non-hidden (Mimo's actor enum only lists `mode: subagent && !hidden`).
+ * Description: 1 line (per-message tax). Subagent nesting denied per host
+ * (task × actor — the consultation channel is ask_peer, guarded in-tool).
  */
-export function buildSpecialistMarkdown(host: HostId, persona: Persona, entry: RosterEntry): string {
+export const SHELL_AGENT_FILENAME = "especialista.md"
+
+const BASE_PROMPT = `Você é um consultor especialista convocado para uma mesa de discussão.
+
+Sua persona é definida integralmente pelo prompt de delegação que você recebeu:
+nome, domínio, vocabulário, perspectiva e estilo de análise. Adote essa persona
+por completo — não responda como generalista.
+
+Regras:
+- Ao responder pela primeira vez, declare seu nome de persona em uma linha
+  (ex.: "Backend Architect — perspectiva de contratos e performance").
+- Analise a pauta a partir do seu domínio; leia os arquivos que o convocador
+  indicar (posições anteriores vivem em arquivos, nunca em resumos).
+- Seja direto e específico; registre divergências com critério, não com tom.
+- Você NÃO convoca outros subagentes. Para consultar um par, use ask_peer
+  (somente durante turnos sequenciais da mesa, quando disponível).`
+
+export function buildShellAgentMarkdown(host: HostId): string {
   const denyKey = host === "opencode" ? "task" : "actor"
   return [
     "---",
-    `description: ${entry.domain}`,
+    "description: Especialista de domínio convocado para a mesa (persona injetada no prompt de delegação)",
     "mode: subagent",
     "permission:",
     "  edit: allow",
@@ -31,7 +43,7 @@ export function buildSpecialistMarkdown(host: HostId, persona: Persona, entry: R
     '    "*": deny',
     "---",
     "",
-    persona.systemPrompt || `You are ${persona.name}. ${persona.description}`,
+    BASE_PROMPT,
     "",
   ].join("\n")
 }

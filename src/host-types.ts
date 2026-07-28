@@ -52,6 +52,10 @@ export type Hooks = {
   config?: (input: unknown) => Promise<void>
   tool?: Record<string, ToolDefinition>
   "permission.ask"?: (input: unknown, output: { status: "ask" | "deny" | "allow" }) => Promise<void>
+  "tool.execute.before"?: (
+    input: { tool: string; sessionID: string; callID: string },
+    output: { args: Record<string, unknown> },
+  ) => Promise<void>
   "tool.execute.after"?: (
     input: { tool: string; sessionID: string; callID: string; args?: Record<string, unknown> },
     output: { title?: string; output: string; metadata?: any },

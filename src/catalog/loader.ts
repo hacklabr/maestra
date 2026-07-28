@@ -1,4 +1,5 @@
 import { promises as fs } from "node:fs"
+import { existsSync } from "node:fs"
 import { join, basename } from "node:path"
 import type { Persona, CatalogSummary } from "./types.js"
 
@@ -96,4 +97,38 @@ export async function loadCatalogFromDirectory(
     personas,
     summary: { totalPersonas: personas.length, divisions, personasPerDivision },
   }
+}
+
+/**
+ * Single-persona lookup by id (e.g. "software-development-backend-architect").
+ *
+ * Catalog filenames are ALREADY division-prefixed and equal to the persona id
+ * (<root>/<division>/<id>.md), but the id→division split is not derivable
+ * from the id alone (divisions contain dashes: "quality-assurance") — so we
+ * scan division dirs for the exact filename. One readdir per division, no
+ * full catalog load (used per-spawn by the persona-expansion hook).
+ */
+export async function loadPersonaById(catalogRoot: string, id: string): Promise<Persona | null> {
+  let entries
+  try {
+    entries = await fs.readdir(catalogRoot, { withFileTypes: true })
+  } catch {
+    return null
+  }
+
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue
+    if (entry.name.startsWith(".") || SKIP_DIRS.has(entry.name)) continue
+
+    const filePath = join(catalogRoot, entry.name, `${id}.md`)
+    if (!existsSync(filePath)) continue
+
+    try {
+      const raw = await fs.readFile(filePath, "utf-8")
+      return parsePersonaFile(raw, `${id}.md`, entry.name)
+    } catch {
+      return null
+    }
+  }
+  return null
 }
