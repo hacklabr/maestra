@@ -8,13 +8,13 @@
 
 ## ETAPA 0 — Pre-flight
 
-`fluxo_status` fresco (pule se já rodou nesta sessão e nada mudou). Escrita na plataforma confirmada → siga. Só MCP configurado → tabela de paridade no cookbook da plataforma. Nenhum dos dois → conduza a triagem conversacionalmente e entregue os comandos prontos ao humano; **nunca épico pela metade**.
+`maestra_status` fresco (pule se já rodou nesta sessão e nada mudou). Escrita na plataforma confirmada → siga. Só MCP configurado → tabela de paridade no cookbook da plataforma. Nenhum dos dois → conduza a triagem conversacionalmente e entregue os comandos prontos ao humano; **nunca épico pela metade**.
 
 ## ETAPA 1 — Entendimento
 
 Formule em 2–3 frases o que entendeu (o PROBLEMA, não a solução) + proponha a origem (produto × técnica) como confirmação.
 
-- Confirmação com ≤1 rodada de correção → siga. **>1 rodada → emita evento B** (`fluxo_emit_event`).
+- Confirmação com ≤1 rodada de correção → siga. **>1 rodada → emita evento B** (`maestra_emit_event`).
 - Descrição vaga → 1 pergunta focal ("qual problema isso resolve para quem usa?"). Persistindo vaga após 2 rodadas → hipótese Mínima + ambiguidade registrada **nas palavras do humano** ("descrição original: '...'"), nunca como diagnóstico seu.
 
 ## ETAPA 2 — Classificação objetiva
@@ -50,12 +50,12 @@ Hierarquia de operação por critério: **1º derivar** (texto da demanda, estru
 
 ## ETAPA 3 — Confirmação ou contestação
 
-Confirmação em uma mensagem. Contestação → gatilho #1 do kernel: **evidência reapresentada → persistência → registro → ação**; NUNCA pushback → cedência. Override → registre via `fluxo_emit_event type=override` ANTES de agir (a direção e o critério contestado ficam registrados — evento D na mesma emissão). Impasse (não confirma nem contesta com argumento) → classifique pelos critérios e ofereça o caminho de override registrado — **nunca default-up automático**.
+Confirmação em uma mensagem. Contestação → gatilho #1 do kernel: **evidência reapresentada → persistência → registro → ação**; NUNCA pushback → cedência. Override → registre via `maestra_emit_event type=override` ANTES de agir (a direção e o critério contestado ficam registrados — evento D na mesma emissão). Impasse (não confirma nem contesta com argumento) → classifique pelos critérios e ofereça o caminho de override registrado — **nunca default-up automático**.
 
 ## ETAPA 4 — Equipe e configuração (condicional)
 
-- **`.fluxo/team.md`** ausente ou desatualizado (diff contra colaboradores do board): leia microcopy §7.5 e `referencia/protocolos.md` §P5. Uma mensagem com papéis PROPOSTOS (sinais de histórico; sem histórico, palpite marcado como palpite) — o humano corrige, não constrói, em uma única resposta. Nota de visibilidade incluída; arquivo commitado. Sem permissão de listagem → papéis mínimos para a onda atual, mapa marcado como parcial — **nunca bloqueia o épico**. Mapa válido → etapa pulada em silêncio.
-- **`.fluxo/config.md`** ausente → persista plataforma/host/board aqui (a detecção das tools já derivou o que pôde; pergunte UMA vez só o que faltar). Uma vez por repositório.
+- **`.maestra/team.md`** ausente ou desatualizado (diff contra colaboradores do board): leia microcopy §7.5 e `referencia/protocolos.md` §P5. Uma mensagem com papéis PROPOSTOS (sinais de histórico; sem histórico, palpite marcado como palpite) — o humano corrige, não constrói, em uma única resposta. Nota de visibilidade incluída; arquivo commitado. Sem permissão de listagem → papéis mínimos para a onda atual, mapa marcado como parcial — **nunca bloqueia o épico**. Mapa válido → etapa pulada em silêncio.
+- **`.maestra/config.md`** ausente → persista plataforma/host/board aqui (a detecção das tools já derivou o que pôde; pergunte UMA vez só o que faltar). Uma vez por repositório.
 
 ## ETAPA 5 — Dedup, distribuição, nascimento do épico e primeira onda
 
@@ -69,7 +69,7 @@ Confirmação em uma mensagem. Contestação → gatilho #1 do kernel: **evidên
 
 **A pasta da rodada NÃO nasce aqui** — nasce no primeiro commit de artefato (J3/J6 Etapa 1), sempre, em todas as variantes.
 
-**Fechamento da triagem:** emita o **evento A** (`fluxo_emit_event`): contagem de elicitação + `perguntas_derivaveis` (deriváveis feitas mesmo assim — alvo zero). Gatilhos detalhados: `referencia/instrumentacao.md`.
+**Fechamento da triagem:** emita o **evento A** (`maestra_emit_event`): contagem de elicitação + `perguntas_derivaveis` (deriváveis feitas mesmo assim — alvo zero). Gatilhos detalhados: `referencia/instrumentacao.md`.
 
 **Falha parcial na criação:** relato exato do que existe e do que falta + **retomada idempotente** (verifique existência antes de recriar — o digest mostra o que já foi criado; labels são idempotentes).
 

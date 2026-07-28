@@ -1,7 +1,7 @@
 /**
  * Persona marker convention for the shell-specialist architecture.
  *
- * The facilitator spawns the single shell subagent (fluxo/especialista) with
+ * The facilitator spawns the single shell subagent (maestra/especialista) with
  * a marker in the prompt: `persona::<id>@<mesaId>` (@<mesaId> optional for
  * one-off consultations outside a mesa). The marker is the ONLY source of
  * persona identity — subagent_type is always the shell.

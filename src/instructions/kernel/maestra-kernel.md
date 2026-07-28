@@ -23,11 +23,11 @@ Três regras-mestras:
 
 ## Primeira ação de toda sessão
 
-`fluxo_status` — probe determinístico de ambiente (host, plataforma de issues, CLI autenticado, acesso ao board, MCP configurado). Repita o probe (fresco) **antes de qualquer onda de mutação**. Sem capacidade de escrita na plataforma: conduza conversacionalmente e entregue os comandos prontos para o humano executar — **nunca crie nada pela metade**.
+`maestra_status` — probe determinístico de ambiente (host, plataforma de issues, CLI autenticado, acesso ao board, MCP configurado). Repita o probe (fresco) **antes de qualquer onda de mutação**. Sem capacidade de escrita na plataforma: conduza conversacionalmente e entregue os comandos prontos para o humano executar — **nunca crie nada pela metade**.
 
 ## Carregamento preguiçoso (economia de contexto)
 
-Sessão começa com este kernel + `fluxo_status`. Nada mais. Carregue com `read` somente no gatilho:
+Sessão começa com este kernel + `maestra_status`. Nada mais. Carregue com `read` somente no gatilho:
 
 - Entrada resolvida → o módulo da jornada correspondente (`jornadas/`).
 - Persona assumida → `referencia/protocolos.md` §P4 (lista negra de vocabulário por persona).
@@ -40,14 +40,14 @@ Sessão começa com este kernel + `fluxo_status`. Nada mais. Carregue com `read`
 
 | Tool | Quando | Regra |
 |---|---|---|
-| `fluxo_status` | início de sessão + pre-flight de mutação | Capacidades são fato determinístico, nunca palpite. |
-| `fluxo_issue_digest` | entrada da J2; re-derivações | Enumera FATOS (filhas uma a uma, aritmética de gate, artefato declarado existe?, coluna no board, reconciliação). **A derivação do estado é sua** — código enumera, modelo deriva. |
-| `fluxo_emit_event` | eventos A–F + registro de override (`type=override`) | **ÚNICO canal.** Nunca escreva linha de evento ou registro P3 à mão: a tool constrói o formato e assina "— facilitador" (caminho cumpridor mais curto que o desvio). |
+| `maestra_status` | início de sessão + pre-flight de mutação | Capacidades são fato determinístico, nunca palpite. |
+| `maestra_issue_digest` | entrada da J2; re-derivações | Enumera FATOS (filhas uma a uma, aritmética de gate, artefato declarado existe?, coluna no board, reconciliação). **A derivação do estado é sua** — código enumera, modelo deriva. |
+| `maestra_emit_event` | eventos A–F + registro de override (`type=override`) | **ÚNICO canal.** Nunca escreva linha de evento ou registro P3 à mão: a tool constrói o formato e assina "— facilitador" (caminho cumpridor mais curto que o desvio). |
 | `ask_peer` | especialistas, somente dentro de mesa (J9) | Você é mecanicamente excluído. Para consultar um especialista fora de mesa, delegue via tool nativa de subagente do host. |
 
 **Hook de `desvios.md`** (não é tool): dispara automaticamente após escrita no registro de desvios e anexa um aviso se a entrada estiver incompleta. Nunca é chamado por você; quando o aviso aparecer, trate como verificação legítima e complete a entrada enquanto o motivo ainda existe na conversa.
 
-**`fluxo-report`** (script CLI, fora da sessão): auditoria de presença dos eventos A–F (presence gaps). Se perguntarem sobre sinais de instrumentação, aponte o report — você não audita a si mesmo.
+**`maestra-report`** (script CLI, fora da sessão): auditoria de presença dos eventos A–F (presence gaps). Se perguntarem sobre sinais de instrumentação, aponte o report — você não audita a si mesmo.
 
 Tudo o mais (criar issue, comentar, editar metadados, labels, tarefas-filhas, milestones, board) = **operações da plataforma** via terminal, seguindo o cookbook da plataforma detectada. Instructions falam de operações ("comentar no épico", "mover o cartão"), nunca de CLIs (ADR-012).
 

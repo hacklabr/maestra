@@ -25,7 +25,7 @@ Apresente as alternativas em **linguagem de produto**: cortar escopo, pagar o cu
 
 ## ETAPA 3 — Retomada
 
-Re-derive o estado (`fluxo_issue_digest`) — nunca assuma que a memória da sessão basta. Atualize:
+Re-derive o estado (`maestra_issue_digest`) — nunca assuma que a memória da sessão basta. Atualize:
 
 - tarefas-filhas (escopo cortado → tarefas ajustadas ou fechadas com comentário);
 - `escopo.md` da rodada (RFs afetados pela decisão);

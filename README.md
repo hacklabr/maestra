@@ -1,4 +1,4 @@
-# fluxo-facilitador
+# maestra
 
 Plugin para **OpenCode** e **Mimo Code** que facilita o fluxo de desenvolvimento da equipe (triagem → três etapas → reconciliação, com gates e quatro variantes de profundidade), substituindo o Mesa: um **agente facilitador único** conduz demandas do texto livre à rodada reconciliada, com **estado derivado da plataforma de issues** — nunca local à sessão — e comportamento definido em *instructions* enxutas. A plataforma de issues é a memória; o plugin é a disciplina.
 
@@ -7,14 +7,14 @@ Plugin para **OpenCode** e **Mimo Code** que facilita o fluxo de desenvolvimento
 **Linha única (curl):**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hacklabr/fluxo/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/hacklabr/maestra/main/install.sh | bash
 ```
 
 **A partir do clone (instala/atualiza e gera tudo):**
 
 ```bash
-git clone https://github.com/hacklabr/fluxo
-cd fluxo/fluxo-facilitador
+git clone https://github.com/hacklabr/maestra
+cd Fluxo/maestra
 bash install.sh                    # auto-detecta os hosts presentes
 bash install.sh --host both        # ou: opencode | mimocode
 bash install.sh --tag v0.1.0       # fixa uma versão (modo clone/update)
@@ -23,41 +23,41 @@ bash install.sh --tag v0.1.0       # fixa uma versão (modo clone/update)
 **Via npx (pacote já publicado):**
 
 ```bash
-npx fluxo-facilitador              # detecta o host automaticamente
-npx fluxo-facilitador --host opencode
-npx fluxo-facilitador --host mimocode
-npx fluxo-facilitador --host both
+npx maestra              # detecta o host automaticamente
+npx maestra --host opencode
+npx maestra --host mimocode
+npx maestra --host both
 ```
 
-O que o instalador faz (nas três vias): instala dependências e compila (`tsc`), copia as instructions para `<config-do-host>/fluxo/instructions/` (incluindo o **catálogo completo grepável** de personas em `instructions/catalog/`), gera `agents/fluxo.md` com o **dialeto correto do host** (um host por máquina — resolvido em tempo de instalação), gera **UM shell subagent** `agents/fluxo/especialista.md` (não-hidden, descrição de 1 linha) e registra o plugin em `opencode.json` / `mimocode.json`.
+O que o instalador faz (nas três vias): instala dependências e compila (`tsc`), copia as instructions para `<config-do-host>/maestra/instructions/` (incluindo o **catálogo completo grepável** de personas em `instructions/catalog/`), gera `agents/maestra.md` com o **dialeto correto do host** (um host por máquina — resolvido em tempo de instalação), gera **UM shell subagent** `agents/maestra/especialista.md` (não-hidden, descrição de 1 linha) e registra o plugin em `opencode.json` / `mimocode.json`.
 
 ## Mesa de discussão: shell specialist (design A)
 
-Em vez de registrar personas como subagentes (o Mesa registra ~369 — cada um vira uma linha na description da tool de subagente, ~22k tokens permanentes por sessão), o plugin instala **um único subagente quase vazio** (`fluxo/especialista`). Na convocação da mesa, o facilitador:
+Em vez de registrar personas como subagentes (o Mesa registra ~369 — cada um vira uma linha na description da tool de subagente, ~22k tokens permanentes por sessão), o plugin instala **um único subagente quase vazio** (`maestra/especialista`). Na convocação da mesa, o facilitador:
 
 1. escolhe a persona no catálogo grepável (`instructions/catalog/<divisão>/<persona>.md`) — receita: `grep -ril "<domínio>" instructions/catalog/ | head -5`, depois `read` do arquivo escolhido;
 2. invoca o shell via tool de subagente do host (`task` no OpenCode / `actor` no Mimo) **com o conteúdo da persona inline no prompt de delegação** — a persona viaja como primeira mensagem da sessão fresca do shell;
 3. o shell declara o nome da persona e analisa a pauta a partir dela.
 
-Custo: 1 linha no enum de subagentes (~60 tokens/msg) em vez de 12+. Funciona identicamente nos dois hosts (verificado nos fontes: `describeTask` do OpenCode não filtra hidden; o enum do `actor` do Mimo filtra `!hidden`). **Sem tool de busca** — grep nativo basta; gatilho de promoção para uma `fluxo_catalog_search` está no [ROADMAP.md](ROADMAP.md), junto com o upgrade persona-via-`system.transform` (fase 2).
+Custo: 1 linha no enum de subagentes (~60 tokens/msg) em vez de 12+. Funciona identicamente nos dois hosts (verificado nos fontes: `describeTask` do OpenCode não filtra hidden; o enum do `actor` do Mimo filtra `!hidden`). **Sem tool de busca** — grep nativo basta; gatilho de promoção para uma `maestra_catalog_search` está no [ROADMAP.md](ROADMAP.md), junto com o upgrade persona-via-`system.transform` (fase 2).
 
 ## Plataformas de issues suportadas
 
 - **GitHub** (github.com e Enterprise) — plataforma primária de dogfooding
 - **GitLab** (gitlab.com e self-hosted) — suporte dual completo desde o MVP, via mapeamento canônico épico-como-issue + links `relates_to` + tasklist (ADR-011)
 
-A plataforma **não** é assada na instalação: é detectada **por repositório** (`.fluxo/config.md` → remote → probe → pergunta única persistida — ADR-010). O mesmo plugin serve repos em plataformas diferentes na mesma máquina.
+A plataforma **não** é assada na instalação: é detectada **por repositório** (`.maestra/config.md` → remote → probe → pergunta única persistida — ADR-010). O mesmo plugin serve repos em plataformas diferentes na mesma máquina.
 
 ## O que o plugin expõe
 
 | Item | Tipo | Função |
 |---|---|---|
-| `fluxo_status` | tool | Probe de ambiente: host, plataforma de issues, CLI autenticado (`gh`×`glab`), capability matrix, acesso ao board |
-| `fluxo_issue_digest` | tool | Parser factual das convenções do fluxo (labels, hierarquia épico→tarefas, comentários de gate/override, campos de gate, reconciliação). **Enumera fatos; nunca deriva estado** |
+| `maestra_status` | tool | Probe de ambiente: host, plataforma de issues, CLI autenticado (`gh`×`glab`), capability matrix, acesso ao board |
+| `maestra_issue_digest` | tool | Parser factual das convenções do fluxo (labels, hierarquia épico→tarefas, comentários de gate/override, campos de gate, reconciliação). **Enumera fatos; nunca deriva estado** |
 | `ask_peer` | tool | Consulta especialista↔especialista dentro da mesa de discussão sequencial (anti-ciclo por busy-check; facilitador excluído por caller-identity) |
-| `fluxo_emit_event` | tool | Emissão dos eventos de instrumentação A–F + `type=override`, com assinatura "— facilitador" por construção |
+| `maestra_emit_event` | tool | Emissão dos eventos de instrumentação A–F + `type=override`, com assinatura "— facilitador" por construção |
 | Hook `desvios.md` | hook | Validação pós-escrita da trinca planejado→implementado→motivo em `docs/rodadas/*/desvios.md`. **Flag, nunca block** |
-| `fluxo-report` | script CLI | Auditoria de presence-gap: épico sem evento A, rodada fechada sem F, override sem D, paridade E, FM-13 |
+| `maestra-report` | script CLI | Auditoria de presence-gap: épico sem evento A, rodada fechada sem F, override sem D, paridade E, FM-13 |
 
 ## Arquitetura de instructions (L0–L4)
 

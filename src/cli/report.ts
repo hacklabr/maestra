@@ -5,7 +5,7 @@ import type { CommentFacts, IssueRef } from "../platform/types.js"
 import { auditEpic, buildReport, renderReport, type EpicSnapshot, type ReportResult } from "./report-core.js"
 
 /**
- * fluxo-report — presence-gap audit over Fluxo instrumentation events
+ * maestra-report — presence-gap audit over Fluxo instrumentation events
  * (A–F + override registers). CLI script, never a plugin tool, never in
  * checklist 8.3 (spec D1). Ships before dogfood #1.
  *
@@ -14,7 +14,7 @@ import { auditEpic, buildReport, renderReport, type EpicSnapshot, type ReportRes
  * (report-parse.ts). Every check compares event × STATE.
  *
  * Usage:
- *   fluxo-report [--directory <path>] [--epics 12,15,20]
+ *   maestra-report [--directory <path>] [--epics 12,15,20]
  */
 
 const RECONCILIACAO_TITLE = /reconcilia/i
@@ -50,9 +50,9 @@ function parseArgs(argv: string[]): CliArgs {
   return args
 }
 
-const USAGE = `fluxo-report — auditoria de presence-gap da instrumentação A–F
+const USAGE = `maestra-report — auditoria de presence-gap da instrumentação A–F
 
-Uso: fluxo-report [--directory <path>] [--epics 12,15,20]
+Uso: maestra-report [--directory <path>] [--epics 12,15,20]
 
   --directory  Repositório alvo (default: cwd)
   --epics      Auditar apenas os épicos listados (default: sweep — todas as
@@ -120,8 +120,8 @@ export async function main(argv: string[], deps: ReportDeps = {}): Promise<numbe
   const resolved = await resolve(args.directory)
   if (!resolved) {
     error(
-      "fluxo-report: plataforma de issues não detectada neste repositório. " +
-        "Configure .fluxo/config.md (plataforma, host, projeto) ou rode fluxo_status para diagnosticar.",
+      "maestra-report: plataforma de issues não detectada neste repositório. " +
+        "Configure .maestra/config.md (plataforma, host, projeto) ou rode maestra_status para diagnosticar.",
     )
     return 1
   }
@@ -136,7 +136,7 @@ export async function main(argv: string[], deps: ReportDeps = {}): Promise<numbe
       const epics = await adapter.listEpics()
       epicNumbers = epics.map((e) => e.number)
     } catch (e: unknown) {
-      error(`fluxo-report: falha ao listar épicos: ${e instanceof Error ? e.message : String(e)}`)
+      error(`maestra-report: falha ao listar épicos: ${e instanceof Error ? e.message : String(e)}`)
       return 1
     }
   }
@@ -147,7 +147,7 @@ export async function main(argv: string[], deps: ReportDeps = {}): Promise<numbe
     try {
       comments = await adapter.listComments({ forge, number })
     } catch (e: unknown) {
-      error(`fluxo-report: falha ao ler comentários de #${number}: ${e instanceof Error ? e.message : String(e)}`)
+      error(`maestra-report: falha ao ler comentários de #${number}: ${e instanceof Error ? e.message : String(e)}`)
       return 1
     }
     const snapshot = await fetchSnapshot(resolved, number, comments)
@@ -165,7 +165,7 @@ if (invokedAsScript) {
   main(process.argv.slice(2)).then(
     (code) => process.exit(code),
     (e: unknown) => {
-      console.error(`fluxo-report: erro inesperado: ${e instanceof Error ? e.message : String(e)}`)
+      console.error(`maestra-report: erro inesperado: ${e instanceof Error ? e.message : String(e)}`)
       process.exit(1)
     },
   )

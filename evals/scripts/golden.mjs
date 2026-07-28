@@ -14,7 +14,7 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises"
 import { fileURLToPath } from "node:url"
 import { join } from "node:path"
-import { runScenario } from "../providers/fluxo-agent.mjs"
+import { runScenario } from "../providers/maestra-agent.mjs"
 
 const EVALS_ROOT = fileURLToPath(new URL("..", import.meta.url))
 const GOLDEN_DIR = join(EVALS_ROOT, "transcripts", "golden")
@@ -49,7 +49,7 @@ function structureOf(transcript) {
     callSequence: transcript.calls.map((c) =>
       c.kind === "exec" ? `exec:${(c.command ?? "").slice(0, 60)}` : c.kind === "write" ? `write:${c.path}` : `tool:${c.name}`,
     ),
-    events: transcript.calls.filter((c) => c.kind === "tool" && c.name === "fluxo_emit_event").map((c) => c.args?.type),
+    events: transcript.calls.filter((c) => c.kind === "tool" && c.name === "maestra_emit_event").map((c) => c.args?.type),
     filesWritten: Object.keys(transcript.files ?? {}),
   }
 }

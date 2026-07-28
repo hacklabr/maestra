@@ -13,7 +13,7 @@ import {
 } from "./digest-parse.js"
 
 /**
- * fluxo_issue_digest — factual parser of Fluxo conventions (D1 contract).
+ * maestra_issue_digest — factual parser of Fluxo conventions (D1 contract).
  * FROZEN SCOPE: enumerates FACTS, never derives state. State derivation is
  * the model's job (anti-bypass #6 is served by construction: children are
  * enumerated one by one by the adapter, and gate arithmetic is computed here —
@@ -44,7 +44,7 @@ interface ArtifactFact {
   existe: boolean | null
 }
 
-export const fluxoIssueDigestTool = tool({
+export const maestraIssueDigestTool = tool({
   description:
     "Factual parser of Fluxo conventions for a given issue (platform-aware via adapter): variant/etapa labels, epic→task hierarchy enumerated one by one (sub-issues on GitHub; links+tasklist on GitLab), gate/override/event comments or notes, declared-artifact existence on local fs (G-05), gate arithmetic per etapa, board column (Projects v2 × status::* labels), reconciliation field. Enumerates facts; NEVER derives state.",
   args: {
@@ -55,7 +55,7 @@ export const fluxoIssueDigestTool = tool({
     if (!resolved) {
       return (
         "Error: issue platform not detected for this repository. " +
-        "Ask the human ONCE (GitHub or GitLab? which host?) and persist the answer in .fluxo/config.md " +
+        "Ask the human ONCE (GitHub or GitLab? which host?) and persist the answer in .maestra/config.md " +
         "(plataforma, host, projeto) — never ask again (ADR-010)."
       )
     }

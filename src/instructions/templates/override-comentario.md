@@ -1,7 +1,7 @@
 # Template — Comentário de registro de override (P3)
 
 > Source: docs/referencia/jornadas.md §5 P3 (v2.1) + src/tools/emit-event.ts (formato real) · Module version: 1 — 2026-07-28
-> Anti-drift: este formato é CONTRATO de auditoria (fluxo-report). É construído e assinado pela tool `fluxo_emit_event` (`type=override`) — **NUNCA escrito à mão**. Este arquivo existe como referência de leitura para humanos e para a revisão de dogfooding.
+> Anti-drift: este formato é CONTRATO de auditoria (maestra-report). É construído e assinado pela tool `maestra_emit_event` (`type=override`) — **NUNCA escrito à mão**. Este arquivo existe como referência de leitura para humanos e para a revisão de dogfooding.
 
 ```text
 **Registro de override** — facilitador

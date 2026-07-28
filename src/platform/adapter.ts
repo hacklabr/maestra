@@ -16,7 +16,7 @@ export interface ResolvedForge {
  * createAdapter in runtime.ts was removed; runtime.ts keeps only the test
  * seam, which this edge consumes by default).
  * Returns null when the platform cannot be determined (the tool surfaces a
- * clean error pointing to .fluxo/config.md / fluxo_status).
+ * clean error pointing to .maestra/config.md / maestra_status).
  */
 export async function resolveForge(
   directory: string,

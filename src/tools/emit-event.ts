@@ -4,7 +4,7 @@ import { resolveForge, type ResolvedForge } from "../platform/adapter.js"
 import { ForgeError } from "../platform/exec.js"
 
 /**
- * fluxo_emit_event — instrumentation events A–F + override registry (P3 fold).
+ * maestra_emit_event — instrumentation events A–F + override registry (P3 fold).
  *
  * The tool CONSTRUCTS and POSTS the comment: the zod union is the format
  * contract (jornadas §8 + P3), the signature "— facilitador" is appended by
@@ -12,7 +12,7 @@ import { ForgeError } from "../platform/exec.js"
  * the signature marker are rejected, preventing duplication).
  *
  * Format-as-contract rationale (spec D1): these lines exist FOR future
- * consolidation queries (fluxo-report); format drift = silent data loss.
+ * consolidation queries (maestra-report); format drift = silent data loss.
  */
 
 const SIGNATURE = "— facilitador"
@@ -137,9 +137,9 @@ export function setForgeResolver(resolver: (directory: string) => Promise<Resolv
   forgeResolver = resolver
 }
 
-export const fluxoEmitEventTool = tool({
+export const maestraEmitEventTool = tool({
   description:
-    'Emit a Fluxo instrumentation event (A–F) or an override register (type=override, P3 format) as a structured comment on the epic, signed "— facilitador" by construction. The body is built and validated by the tool (zod union of formats); posting goes through the platform adapter (GitHub comment × GitLab note). In type=override, motivo_declarado is REQUIRED (the human-worded reason is the payload). NEVER write event/override comments by hand — format is a contract for the fluxo-report audit.',
+    'Emit a Fluxo instrumentation event (A–F) or an override register (type=override, P3 format) as a structured comment on the epic, signed "— facilitador" by construction. The body is built and validated by the tool (zod union of formats); posting goes through the platform adapter (GitHub comment × GitLab note). In type=override, motivo_declarado is REQUIRED (the human-worded reason is the payload). NEVER write event/override comments by hand — format is a contract for the maestra-report audit.',
   args: {
     epic: tool.schema.number().describe("Epic issue number (GitHub) or iid (GitLab)"),
     type: tool.schema
@@ -164,7 +164,7 @@ export const fluxoEmitEventTool = tool({
     if (!resolved) {
       return (
         "Error: issue platform not detected for this repository. " +
-        "Run fluxo_status to diagnose, or set platform/host/project in .fluxo/config.md."
+        "Run maestra_status to diagnose, or set platform/host/project in .maestra/config.md."
       )
     }
 

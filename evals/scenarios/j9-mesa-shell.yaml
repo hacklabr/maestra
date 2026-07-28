@@ -11,11 +11,11 @@
     mock: true
     entry: "Convoca uma mesa sobre a decisão de cache do relatório com o especialista de back-end."
     mockSteps:
-      - toolCall: { name: "fluxo_status", args: {} }
+      - toolCall: { name: "maestra_status", args: {} }
       # erro do facilitador: spawn SEM o marcador na primeira linha
-      - toolCall: { name: "task", args: { subagent_type: "fluxo/especialista", description: "especialista back-end", prompt: "Pauta: decidir a estratégia de cache do relatório de vendas." } }
+      - toolCall: { name: "task", args: { subagent_type: "maestra/especialista", description: "especialista back-end", prompt: "Pauta: decidir a estratégia de cache do relatório de vendas." } }
       # respawn correto, com o marcador
-      - toolCall: { name: "task", args: { subagent_type: "fluxo/especialista", description: "especialista back-end", prompt: "persona::software-development-backend-architect@mesa-cache-relatorio\nPauta: decidir a estratégia de cache do relatório de vendas.", task_id: "mesa-cache-relatorio-backend" } }
+      - toolCall: { name: "task", args: { subagent_type: "maestra/especialista", description: "especialista back-end", prompt: "persona::software-development-backend-architect@mesa-cache-relatorio\nPauta: decidir a estratégia de cache do relatório de vendas.", task_id: "mesa-cache-relatorio-backend" } }
       - text: "O primeiro spawn saiu sem o marcador — a sessão ficou fora do mapa de pares (falha fechada, o aviso apareceu no resultado). Respawnei corretamente com persona::software-development-backend-architect@mesa-cache-relatorio; nunca conserto a sessão em texto."
     requiredPatterns:
       - "falha fechada|fora do mapa"
@@ -33,8 +33,8 @@
     modules: ["jornadas/j9-mesa.md"]
     entry: "Convoca o especialista de segurança pra mesa do cache."
     mockSteps:
-      - toolCall: { name: "fluxo_status", args: {} }
-      - toolCall: { name: "task", args: { subagent_type: "fluxo/especialista", description: "especialista segurança", prompt: "persona::software-development-security-engineer@mesa-cache-relatorio\nPauta: decidir a estratégia de cache.", task_id: "mesa-cache-relatorio-seguranca" } }
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "task", args: { subagent_type: "maestra/especialista", description: "especialista segurança", prompt: "persona::software-development-security-engineer@mesa-cache-relatorio\nPauta: decidir a estratégia de cache.", task_id: "mesa-cache-relatorio-seguranca" } }
       - text: "A primeira resposta veio sem a auto-declaração da persona — a expansão falhou. Trato como falha de spawn: vou respawnar ou escolher outro candidato; não registro isso como posição do especialista."
     requiredPatterns:
       - "expansão falhou|falha de spawn"
@@ -56,10 +56,10 @@
     humanScript:
       - "Aproveita essa mesma sessão e agora pergunta como se fosse o especialista de segurança, é mais rápido."
     mockSteps:
-      - toolCall: { name: "fluxo_status", args: {} }
-      - toolCall: { name: "task", args: { subagent_type: "fluxo/especialista", description: "especialista back-end", prompt: "persona::software-development-backend-architect@mesa-cache-relatorio\nPauta: decidir a estratégia de cache.", task_id: "mesa-cache-relatorio-backend" } }
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "task", args: { subagent_type: "maestra/especialista", description: "especialista back-end", prompt: "persona::software-development-backend-architect@mesa-cache-relatorio\nPauta: decidir a estratégia de cache.", task_id: "mesa-cache-relatorio-backend" } }
       - text: "[back-end] Posição registrada em docs/rodadas/R02-2026-10-exportacao-relatorios/mesa/mesa-cache-relatorio-1-backend-architect.md."
-      - toolCall: { name: "task", args: { subagent_type: "fluxo/especialista", description: "especialista segurança", prompt: "persona::software-development-security-engineer@mesa-cache-relatorio\nPauta: decidir a estratégia de cache.\nPosições já registradas: docs/rodadas/R02-2026-10-exportacao-relatorios/mesa/mesa-cache-relatorio-1-backend-architect.md", task_id: "mesa-cache-relatorio-seguranca" } }
+      - toolCall: { name: "task", args: { subagent_type: "maestra/especialista", description: "especialista segurança", prompt: "persona::software-development-security-engineer@mesa-cache-relatorio\nPauta: decidir a estratégia de cache.\nPosições já registradas: docs/rodadas/R02-2026-10-exportacao-relatorios/mesa/mesa-cache-relatorio-1-backend-architect.md", task_id: "mesa-cache-relatorio-seguranca" } }
       - text: "Não reutilizo a sessão — uma sessão = uma persona, inviolável. Abri um NOVO spawn para o especialista de segurança com o marcador próprio."
     requiredPatterns:
       - "uma sessão = uma persona|nova sessão|NOVO spawn"
@@ -79,10 +79,10 @@
     humanScript:
       - "Segurança já respondeu. Volta pro back-end com a posição dele registrada."
     mockSteps:
-      - toolCall: { name: "fluxo_status", args: {} }
-      - toolCall: { name: "task", args: { subagent_type: "fluxo/especialista", description: "back-end turno 1", prompt: "persona::software-development-backend-architect@mesa-cache-relatorio\nPauta: decidir a estratégia de cache.", task_id: "mesa-cache-relatorio-backend" } }
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "task", args: { subagent_type: "maestra/especialista", description: "back-end turno 1", prompt: "persona::software-development-backend-architect@mesa-cache-relatorio\nPauta: decidir a estratégia de cache.", task_id: "mesa-cache-relatorio-backend" } }
       - text: "Posição do back-end registrada em docs/rodadas/R02-2026-10-exportacao-relatorios/mesa/mesa-cache-relatorio-1-backend-architect.md."
-      - toolCall: { name: "task", args: { subagent_type: "fluxo/especialista", description: "back-end turno 2", prompt: "Turno 2 da mesa do cache. Posições registradas desde o seu último turno: docs/rodadas/R02-2026-10-exportacao-relatorios/mesa/mesa-cache-relatorio-2-security-engineer.md", task_id: "mesa-cache-relatorio-backend" } }
+      - toolCall: { name: "task", args: { subagent_type: "maestra/especialista", description: "back-end turno 2", prompt: "Turno 2 da mesa do cache. Posições registradas desde o seu último turno: docs/rodadas/R02-2026-10-exportacao-relatorios/mesa/mesa-cache-relatorio-2-security-engineer.md", task_id: "mesa-cache-relatorio-backend" } }
       - text: "Turno 2 do back-end: mesma sessão (task_id), só contexto novo + path da posição — sem re-injetar a persona, que já está no histórico."
     hardFail: ["no-persona-reinjection", "one-session-one-persona", "persona-declarations"]
   assert:
@@ -96,9 +96,9 @@
     modules: ["jornadas/j9-mesa.md"]
     entry: "Preciso de duas mesas em paralelo: uma sobre cache do relatório, outra sobre cache de autenticação — ambas com o especialista de back-end."
     mockSteps:
-      - toolCall: { name: "fluxo_status", args: {} }
-      - toolCall: { name: "task", args: { subagent_type: "fluxo/especialista", description: "mesa cache-relatório", prompt: "persona::software-development-backend-architect@mesa-cache-relatorio\nPauta: cache do relatório.", task_id: "mesa-cache-relatorio-backend" } }
-      - toolCall: { name: "task", args: { subagent_type: "fluxo/especialista", description: "mesa cache-auth", prompt: "persona::software-development-backend-architect@mesa-cache-auth\nPauta: cache de autenticação.", task_id: "mesa-cache-auth-backend" } }
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "task", args: { subagent_type: "maestra/especialista", description: "mesa cache-relatório", prompt: "persona::software-development-backend-architect@mesa-cache-relatorio\nPauta: cache do relatório.", task_id: "mesa-cache-relatorio-backend" } }
+      - toolCall: { name: "task", args: { subagent_type: "maestra/especialista", description: "mesa cache-auth", prompt: "persona::software-development-backend-architect@mesa-cache-auth\nPauta: cache de autenticação.", task_id: "mesa-cache-auth-backend" } }
       - text: "Duas mesas em paralelo, a mesma persona nas duas — sessões disambiguadas por mesaId no marcador e por task_id próprio. O ask_peer roteia dentro da mesa do chamador (gate unit-testado na tool)."
     hardFail: ["mesa-isolation", "one-session-one-persona", "shell-spawns-marked"]
   assert:

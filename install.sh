@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# fluxo-facilitador installer — modeled on Mesa's install.sh (refs/opencode-mesa).
+# maestra installer — modeled on Mesa's install.sh (refs/opencode-mesa).
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/hacklabr/fluxo/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/hacklabr/maestra/main/install.sh | bash
 #   bash install.sh [--host opencode|mimocode|both] [--tag vX.Y.Z]
 set -euo pipefail
 
@@ -13,7 +13,7 @@ while [[ $# -gt 0 ]]; do
     --host)
       case "${2:-}" in
         opencode|mimocode|both) HOST_FLAG="$2"; shift 2 ;;
-        *) echo "[fluxo] --host inválido: ${2:-<vazio>} (use opencode|mimocode|both)" >&2; exit 1 ;;
+        *) echo "[maestra] --host inválido: ${2:-<vazio>} (use opencode|mimocode|both)" >&2; exit 1 ;;
       esac
       ;;
     --tag) TAG_FLAG="$2"; shift 2 ;;
@@ -26,14 +26,14 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-info()  { printf "${GREEN}[fluxo]${NC} %s\n" "$1"; }
-warn()  { printf "${YELLOW}[fluxo]${NC} %s\n" "$1"; }
-error() { printf "${RED}[fluxo]${NC} %s\n" "$1" >&2; exit 1; }
+info()  { printf "${GREEN}[maestra]${NC} %s\n" "$1"; }
+warn()  { printf "${YELLOW}[maestra]${NC} %s\n" "$1"; }
+error() { printf "${RED}[maestra]${NC} %s\n" "$1" >&2; exit 1; }
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 detect_local_repo() {
-  if [ -f "$SCRIPT_DIR/package.json" ] && grep -q '"fluxo-facilitador"' "$SCRIPT_DIR/package.json" 2>/dev/null; then
+  if [ -f "$SCRIPT_DIR/package.json" ] && grep -q '"maestra"' "$SCRIPT_DIR/package.json" 2>/dev/null; then
     echo "$SCRIPT_DIR"
     return 0
   fi
@@ -48,8 +48,8 @@ if [ -n "$LOCAL_REPO" ]; then
   info "Atualizando submodules (catálogo de personas)"
   git -C "$INSTALL_DIR" submodule update --init --recursive
 else
-  REPO_URL="${1:-https://github.com/hacklabr/fluxo}"
-  INSTALL_DIR="${2:-$HOME/.local/share/fluxo}"
+  REPO_URL="${1:-https://github.com/hacklabr/maestra}"
+  INSTALL_DIR="${2:-$HOME/.local/share/maestra}"
 
   command -v git >/dev/null 2>&1 || error "git é obrigatório"
 
@@ -64,7 +64,7 @@ else
     fi
     git -C "$INSTALL_DIR" submodule update --init --recursive
   else
-    info "Clonando fluxo-facilitador em $INSTALL_DIR"
+    info "Clonando maestra em $INSTALL_DIR"
     git clone --depth 1 "$REPO_URL" "$INSTALL_DIR"
     git -C "$INSTALL_DIR" submodule update --init --recursive
   fi
@@ -106,8 +106,8 @@ else
 fi
 info ""
 info "Como usar:"
-info "  /agent fluxo  — facilitador do fluxo (triagem → etapas → reconciliação)"
-info "  fluxo-report  — auditoria de instrumentação (eventos A–F)"
+info "  /agent maestra  — facilitador do fluxo (triagem → etapas → reconciliação)"
+info "  maestra-report  — auditoria de instrumentação (eventos A–F)"
 info ""
 info "Para instalar também em outro host depois:"
 info "  node $INSTALL_DIR/dist/installer/install.js --host opencode|mimocode"

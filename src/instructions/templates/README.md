@@ -19,8 +19,8 @@
 | `retro.md` | Retro da rodada (REGISTRO) — template derivado (Q2) | jornadas J5 Etapa 4 + fluxo §9.4/§10 |
 | `mesa/posicao.md` | Posição de mesa por turno (REGISTRO auxiliar) — template derivado | jornadas J9 (G-08) |
 | `override-comentario.md` | Referência do registro P3 (emitido pela tool, nunca à mão) | jornadas §5 P3 + emit-event.ts |
-| `team.md` | Mapa de equipe `.fluxo/team.md` | jornadas §5 P5 |
-| `config.md` | Config `.fluxo/config.md` (formato exato do parser) | src/platform/config.ts (ADR-014) |
+| `team.md` | Mapa de equipe `.maestra/team.md` | jornadas §5 P5 |
+| `config.md` | Config `.maestra/config.md` (formato exato do parser) | src/platform/config.ts (ADR-014) |
 
 **Templates derivados (fonte não fixa formato interno):** `retro.md`, `mesa/posicao.md` — marcados como derivados no cabeçalho; ajuste de formato exige registro no Audit Log do jornadas.md.
 

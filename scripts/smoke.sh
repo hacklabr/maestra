@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # 4-cell smoke test (spec T12/D7): 2 hosts (OpenCode/Mimo) × 2 platforms (GitHub/GitLab).
-# Each cell: fake HOME + stub gh/glab binaries → installer dialect → fluxo_status →
-# fluxo_issue_digest → desvios hook → fluxo-report. Requires dist/ (npm run build).
+# Each cell: fake HOME + stub gh/glab binaries → installer dialect → maestra_status →
+# maestra_issue_digest → desvios hook → maestra-report. Requires dist/ (npm run build).
 set -u
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-WORK="$(mktemp -d /tmp/fluxo-smoke-XXXXXX)"
+WORK="$(mktemp -d /tmp/maestra-smoke-XXXXXX)"
 trap 'rm -rf "$WORK"' EXIT
 
 PASSED=0
@@ -134,11 +134,11 @@ run_cell() {
     gitlab) cli_name="glab"; project="grupo/loja"; hierarchy="links+tasklist"; make_glab_stub "$stubdir" ;;
   esac
 
-  mkdir -p "$repo/docs/referencia" "$repo/docs/rodadas/R01-smoke" "$repo/.fluxo"
+  mkdir -p "$repo/docs/referencia" "$repo/docs/rodadas/R01-smoke" "$repo/.maestra"
   echo "# PRD vivo" > "$repo/docs/referencia/prd.md"
   printf -- '- plataforma: %s\n- host: %s\n- projeto: %s\n' \
     "$platform" "$([ "$platform" = github ] && echo github.com || echo gitlab.com)" "$project" \
-    > "$repo/.fluxo/config.md"
+    > "$repo/.maestra/config.md"
   cat > "$repo/docs/rodadas/R01-smoke/desvios.md" <<'MD'
 # Desvios da rodada R01 — smoke
 
@@ -154,30 +154,30 @@ MD
   # 1. installer
   node "$ROOT/dist/installer/install.js" --host "$host" > /dev/null 2>&1 \
     && ok "installer ran ($host)" || bad "installer ran ($host)"
-  check_file "agent md generated" "$home/.config/$configdir/agents/fluxo.md"
-  check_grep "dialect baked ($dialect)" "$dialect" "$home/.config/$configdir/agents/fluxo.md"
-  check_grep "external_directory allow" 'external_directory' "$home/.config/$configdir/agents/fluxo.md"
-  check_grep "instructions path in frontmatter" "$home/.config/$configdir/fluxo/instructions" "$home/.config/$configdir/agents/fluxo.md"
-  check_file "instructions copied" "$home/.config/$configdir/fluxo/instructions/kernel/fluxo-kernel.md"
-  check_grep "plugin registered" "fluxo-facilitador\|dist/index.js" "$home/.config/$configdir/$configdir.json"
+  check_file "agent md generated" "$home/.config/$configdir/agents/maestra.md"
+  check_grep "dialect baked ($dialect)" "$dialect" "$home/.config/$configdir/agents/maestra.md"
+  check_grep "external_directory allow" 'external_directory' "$home/.config/$configdir/agents/maestra.md"
+  check_grep "instructions path in frontmatter" "$home/.config/$configdir/maestra/instructions" "$home/.config/$configdir/agents/maestra.md"
+  check_file "instructions copied" "$home/.config/$configdir/maestra/instructions/kernel/maestra-kernel.md"
+  check_grep "plugin registered" "maestra\|dist/index.js" "$home/.config/$configdir/$configdir.json"
   # design A: exactly ONE shell specialist + greppable full catalog
   local n_specialists
-  n_specialists=$(find "$home/.config/$configdir/agents/fluxo" -name "*.md" 2>/dev/null | wc -l)
+  n_specialists=$(find "$home/.config/$configdir/agents/maestra" -name "*.md" 2>/dev/null | wc -l)
   [ "$n_specialists" -eq 1 ] && ok "exactly 1 shell agent generated" || bad "exactly 1 shell agent generated (got $n_specialists)"
-  local shell="$home/.config/$configdir/agents/fluxo/especialista.md"
+  local shell="$home/.config/$configdir/agents/maestra/especialista.md"
   check_grep "shell has task/actor dialect" "$([ "$host" = opencode ] && echo 'task:' || echo 'actor:')" "$shell"
   ! grep -q "^hidden:" "$shell" && ok "shell is non-hidden (Mimo actor enum)" || bad "shell is non-hidden (Mimo actor enum)"
   check_grep "shell base prompt: persona on delegation" "persona é definida integralmente pelo prompt de delegação" "$shell"
-  check_file "greppable catalog installed" "$home/.config/$configdir/fluxo/instructions/catalog/design/design-ux-researcher.md"
+  check_file "greppable catalog installed" "$home/.config/$configdir/maestra/instructions/catalog/design/design-ux-researcher.md"
 
-  # 2. fluxo_status
+  # 2. maestra_status
   node "$ROOT/scripts/smoke/run-tool.mjs" status "$repo" > "$cell/status.json" 2>/dev/null
   check_json "status: platform=$platform" "$cell/status.json" "d.capabilities.platform==='$platform'"
   check_json "status: cli authed" "$cell/status.json" "d.capabilities.cli===true"
   check_json "status: host=$host" "$cell/status.json" "d.host.id==='$host'"
   check_json "status: hierarchy=$hierarchy" "$cell/status.json" "d.capabilities.hierarchy==='$hierarchy'"
 
-  # 3. fluxo_issue_digest
+  # 3. maestra_issue_digest
   node "$ROOT/scripts/smoke/run-tool.mjs" digest "$repo" 42 > "$cell/digest.json" 2>/dev/null
   check_json "digest: metadados parsed" "$cell/digest.json" "d.metadados && d.metadados.variante==='condensado'"
   check_json "digest: 2 children enumerated" "$cell/digest.json" "d.filhos.length===2"
@@ -196,11 +196,11 @@ MD
   node "$ROOT/scripts/smoke/run-tool.mjs" hook "$repo" "$repo/docs/rodadas/R01-smoke/desvios.md" > "$cell/hook-valid.txt" 2>/dev/null
   [ "$(cat "$cell/hook-valid.txt")" = "write ok" ] && ok "hook silent on valid file" || bad "hook silent on valid file"
 
-  # 5. fluxo-report
+  # 5. maestra-report
   node "$ROOT/dist/cli/report.js" --directory "$repo" --epics 42 > "$cell/report.txt" 2>&1
   local code=$?
-  { [ "$code" -eq 0 ] || [ "$code" -eq 1 ]; } && ok "fluxo-report ran (exit $code)" || bad "fluxo-report ran (exit $code)"
-  check_grep "report output rendered" "fluxo-report" "$cell/report.txt"
+  { [ "$code" -eq 0 ] || [ "$code" -eq 1 ]; } && ok "maestra-report ran (exit $code)" || bad "maestra-report ran (exit $code)"
+  check_grep "report output rendered" "maestra-report" "$cell/report.txt"
 }
 
 for host in opencode mimocode; do

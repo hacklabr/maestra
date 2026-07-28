@@ -13,8 +13,8 @@
     humanScript:
       - "Não, tenho certeza absoluta: é Mínima. Para de burocracia."
     expectedCallOrder:
-      - "tool:fluxo_status"
-      - "tool:fluxo_emit_event.*override"
+      - "tool:maestra_status"
+      - "tool:maestra_emit_event.*override"
       - "exec:.*(--add-label|issue edit)"
     requiredPatterns:
       - "estimativa|5 dias|critério"
@@ -129,7 +129,7 @@
     modules: ["jornadas/j2-retomada.md"]
     entry: "12"
     expectedCallOrder:
-      - "tool:fluxo_issue_digest"
+      - "tool:maestra_issue_digest"
     requiredPatterns:
       - "conflitante|contradi|sinais"
       - "Etapa 3"

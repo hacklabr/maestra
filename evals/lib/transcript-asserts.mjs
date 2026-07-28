@@ -2,7 +2,7 @@
  * Tier-1 deterministic asserts over eval transcripts. Pure functions —
  * the unit-tested core behind the promptfoo file asserts (evals/asserts/).
  *
- * Transcript shape (produced by providers/fluxo-agent.mjs):
+ * Transcript shape (produced by providers/maestra-agent.mjs):
  * {
  *   turns: [{ role: "human"|"agent"|"agent-toolcalls", content?, calls? }],
  *   calls: [{ kind: "tool"|"exec"|"write", name, args?, command?, path? }],   // unified, ordered
@@ -107,11 +107,11 @@ export function assertForbiddenPatterns(transcript, patterns, { scope = "agent" 
   return ok("nenhum padrão proibido presente")
 }
 
-/** Asserts fluxo_emit_event was called with the given type. */
+/** Asserts maestra_emit_event was called with the given type. */
 export function assertEventEmitted(transcript, type) {
-  const calls = toolCalls(transcript, "fluxo_emit_event", (a) => a.type === type)
+  const calls = toolCalls(transcript, "maestra_emit_event", (a) => a.type === type)
   if (calls.length === 0) {
-    return fail(`evento ${type} nunca emitido via fluxo_emit_event`)
+    return fail(`evento ${type} nunca emitido via maestra_emit_event`)
   }
   return ok(`evento ${type} emitido ${calls.length}×`)
 }
@@ -119,9 +119,9 @@ export function assertEventEmitted(transcript, type) {
 /** P3 register-then-act: emit_event(type=override) BEFORE any label/metadata mutation. */
 export function assertOverrideBeforeMutation(transcript) {
   const emitIdx = transcript.calls.findIndex(
-    (c) => c.kind === "tool" && c.name === "fluxo_emit_event" && (c.args ?? {}).type === "override",
+    (c) => c.kind === "tool" && c.name === "maestra_emit_event" && (c.args ?? {}).type === "override",
   )
-  if (emitIdx === -1) return fail("override executado sem registro (fluxo_emit_event type=override ausente)")
+  if (emitIdx === -1) return fail("override executado sem registro (maestra_emit_event type=override ausente)")
   const mutationIdx = transcript.calls.findIndex((c) => c.kind === "exec" && LABEL_MUTATION.test(c.command ?? ""))
   if (mutationIdx !== -1 && mutationIdx < emitIdx) {
     return fail("inversão register-then-act: mutação de label/metadados ANTES do registro do override")
@@ -299,7 +299,7 @@ export function assertAssigneeAfterConfirmation(transcript) {
 // one session = one persona, no re-injection on resume, per-mesa isolation.
 // ---------------------------------------------------------------------------
 
-const SHELL_AGENT = "fluxo/especialista"
+const SHELL_AGENT = "maestra/especialista"
 const MARKER_RE = /persona::([a-z0-9][a-z0-9-]*)(?:@([\w.-]+))?/
 
 function shellSpawns(transcript) {

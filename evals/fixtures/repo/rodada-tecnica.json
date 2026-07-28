@@ -6,6 +6,6 @@
     "docs/referencia/arquitetura.md": "# Arquitetura (interna)\n\nMódulo de pagamentos acoplado ao módulo de pedidos via chamadas diretas.\n",
     "docs/rodadas/R03-2027-01-refatoracao-pagamentos/motivacao.md": "# Refatoração: módulo de pagamentos\n\n## Problema\n\nAcoplamento pagamentos×pedidos gera bugs recorrentes (7 bugs em 3 meses na área) e trava a evolução do checkout.\n\n## Meta mensurável\n\nDesacoplar o módulo de pagamentos para permitir a feature de pagamento recorrente, com tempo de resposta da listagem mantido abaixo de 400ms.\n\n## Análise de impacto\n\nToca `src/pagamentos/` e os pontos de chamada em `src/pedidos/`.\n\n## Inegociáveis\n\n- O usuário não pode perceber mudança no fluxo de checkout.\n\n## O que pode mudar de propósito\n\n- (lista vazia)\n",
     "docs/rodadas/R03-2027-01-refatoracao-pagamentos/desvios.md": "# Desvios da rodada R03 — refatoração de pagamentos\n\nNenhum desvio nesta rodada.\n",
-    ".fluxo/team.md": "# Mapa de equipe\n\n- @rafael — Produto (PO)\n- @tiago — Engenharia (tech lead sênior)\n- @joao — Entrega (dev pleno full-stack)\n- @quesia — Entrega (QA)\n"
+    ".maestra/team.md": "# Mapa de equipe\n\n- @rafael — Produto (PO)\n- @tiago — Engenharia (tech lead sênior)\n- @joao — Entrega (dev pleno full-stack)\n- @quesia — Entrega (QA)\n"
   }
 }

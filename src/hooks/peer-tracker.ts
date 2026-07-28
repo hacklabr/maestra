@@ -4,7 +4,7 @@ import { EXPANSION_FAILURE_SIGNATURE } from "./persona-expansion.js"
 
 /**
  * Peer tracker hook (shell-specialist architecture) — observes shell spawns
- * (tool.execute.after on task/actor with subagent_type "fluxo/especialista")
+ * (tool.execute.after on task/actor with subagent_type "maestra/especialista")
  * and registers persona→{sessionId, mesaId} for ask_peer.
  *
  * Persona identity comes from the MARKER in args.prompt (persona::<id>@<mesaId>)
@@ -22,11 +22,11 @@ import { EXPANSION_FAILURE_SIGNATURE } from "./persona-expansion.js"
  * The facilitator itself is never spawned via the shell → never enters the
  * map → structurally excluded from ask_peer (pending decision #2).
  */
-const SHELL_AGENT = "fluxo/especialista"
+const SHELL_AGENT = "maestra/especialista"
 
 const NO_MARKER_WARNING = [
   "",
-  "[fluxo] Shell spawnado SEM marker persona:: — esta sessão NÃO poderá usar ask_peer",
+  "[maestra] Shell spawnado SEM marker persona:: — esta sessão NÃO poderá usar ask_peer",
   "(caller-identity falha fechada) e não será encontrada por peers.",
   "Respawne com `persona::<id>@<mesaId>` na primeira linha do prompt.",
 ].join("\n")

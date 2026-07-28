@@ -1,7 +1,7 @@
 // Smoke runner: executes plugin tools against a fixture repo with stub CLIs.
 // Usage: node scripts/smoke/run-tool.mjs <status|digest|hook> <directory> [arg]
-import { fluxoStatusTool } from "../../dist/tools/status.js"
-import { fluxoIssueDigestTool } from "../../dist/tools/digest.js"
+import { maestraStatusTool } from "../../dist/tools/status.js"
+import { maestraIssueDigestTool } from "../../dist/tools/digest.js"
 import { createDesviosHook } from "../../dist/hooks/desvios.js"
 
 const [what, dir, arg] = process.argv.slice(2)
@@ -10,9 +10,9 @@ const ctx = { sessionID: "smoke", directory: dir }
 const print = (r) => console.log(typeof r === "string" ? r : r.output)
 
 if (what === "status") {
-  print(await fluxoStatusTool.execute({}, ctx))
+  print(await maestraStatusTool.execute({}, ctx))
 } else if (what === "digest") {
-  print(await fluxoIssueDigestTool.execute({ issue: Number(arg) }, ctx))
+  print(await maestraIssueDigestTool.execute({ issue: Number(arg) }, ctx))
 } else if (what === "hook") {
   const hook = createDesviosHook()
   const output = { output: "write ok" }

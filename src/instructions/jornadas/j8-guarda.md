@@ -33,7 +33,7 @@ Registre a classificação com o teste na issue. Risco duplo a evitar: tudo lacu
 
 ## ETAPA 3 — Registro
 
-Registre a ocorrência em formato legível pela consolidação futura e emita o **evento E** (`fluxo_emit_event`): recusa ou demanda criada — o par alimenta a paridade **recusas ≈ demandas criadas**, o detector do bypass silencioso.
+Registre a ocorrência em formato legível pela consolidação futura e emita o **evento E** (`maestra_emit_event`): recusa ou demanda criada — o par alimenta a paridade **recusas ≈ demandas criadas**, o detector do bypass silencioso.
 
 ## Os três arcos da recusa (calibre por persona)
 

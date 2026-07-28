@@ -23,7 +23,7 @@ import {
   assertTwoLayerIssues,
   P4_BLACKLIST,
 } from "../lib/transcript-asserts.mjs"
-import { runScenario } from "../providers/fluxo-agent.mjs"
+import { runScenario } from "../providers/maestra-agent.mjs"
 
 // ---------------------------------------------------------------------------
 // 1. Structure validation: every scenario loads, references existing fixtures
@@ -101,13 +101,13 @@ describe("tier-1 assert functions", () => {
   it("assertCallOrder: subsequence respected and violated", () => {
     const t = transcript({
       calls: [
-        { kind: "tool", name: "fluxo_status", args: {} },
-        { kind: "tool", name: "fluxo_issue_digest", args: { issue: 12 } },
+        { kind: "tool", name: "maestra_status", args: {} },
+        { kind: "tool", name: "maestra_issue_digest", args: { issue: 12 } },
         { kind: "exec", command: "gh issue comment 12" },
       ],
     })
-    expect(assertCallOrder(t, ["tool:fluxo_status", "tool:fluxo_issue_digest"]).pass).toBe(true)
-    expect(assertCallOrder(t, ["tool:fluxo_issue_digest", "tool:fluxo_status"]).pass).toBe(false)
+    expect(assertCallOrder(t, ["tool:maestra_status", "tool:maestra_issue_digest"]).pass).toBe(true)
+    expect(assertCallOrder(t, ["tool:maestra_issue_digest", "tool:maestra_status"]).pass).toBe(false)
   })
 
   it("assertQuestionCaps: per-turn and total limits", () => {
@@ -148,13 +148,13 @@ describe("tier-1 assert functions", () => {
     const inverted = transcript({
       calls: [
         { kind: "exec", command: "gh issue edit 12 --add-label variante-minimo" },
-        { kind: "tool", name: "fluxo_emit_event", args: { type: "override" } },
+        { kind: "tool", name: "maestra_emit_event", args: { type: "override" } },
       ],
     })
     expect(assertOverrideBeforeMutation(inverted).pass).toBe(false)
     const right = transcript({
       calls: [
-        { kind: "tool", name: "fluxo_emit_event", args: { type: "override" } },
+        { kind: "tool", name: "maestra_emit_event", args: { type: "override" } },
         { kind: "exec", command: "gh issue edit 12 --add-label variante-minimo" },
       ],
     })
@@ -239,7 +239,7 @@ describe("tier-1 assert functions", () => {
     const spawn = (prompt, task_id, result) => ({
       kind: "tool",
       name: "task",
-      args: { subagent_type: "fluxo/especialista", prompt, task_id },
+      args: { subagent_type: "maestra/especialista", prompt, task_id },
       result,
     })
     const M = "persona::software-development-backend-architect@mesa-cache"
@@ -304,14 +304,14 @@ describe("tier-1 assert functions", () => {
     // fail-closed: unmarked spawn warned + outside the map + respawn marked
     const failClosed = transcript({
       calls: [
-        spawn("Pauta sem marcador", null, "Subagente finalizado.\n[fluxo] Shell spawnado SEM marker persona:: ..."),
+        spawn("Pauta sem marcador", null, "Subagente finalizado.\n[maestra] Shell spawnado SEM marker persona:: ..."),
         spawn(`${M}\nPauta`, "t1", "[backend-architect] ok"),
       ],
       mesa: { sessions: [{ personaId: "software-development-backend-architect", mesaId: "mesa-cache", sessionId: "sess-t1", taskId: "t1" }] },
     })
     expect(assertFailClosedSpawn(failClosed).pass).toBe(true)
     const contaminated = transcript({
-      calls: [spawn("Pauta sem marcador", null, "Subagente finalizado.\n[fluxo] Shell spawnado SEM marker persona:: ...")],
+      calls: [spawn("Pauta sem marcador", null, "Subagente finalizado.\n[maestra] Shell spawnado SEM marker persona:: ...")],
       mesa: { sessions: [{ personaId: "x", sessionId: "sess-errada", taskId: null }] },
     })
     expect(assertFailClosedSpawn(contaminated).pass).toBe(false)
@@ -362,8 +362,8 @@ describe("dry-run with the mock model (no live model needed)", () => {
       mock: true,
       entry: "12",
       mockSteps: [
-        { toolCall: { name: "fluxo_status", args: {} } },
-        { toolCall: { name: "fluxo_issue_digest", args: { issue: 12 } } },
+        { toolCall: { name: "maestra_status", args: {} } },
+        { toolCall: { name: "maestra_issue_digest", args: { issue: 12 } } },
         {
           text: "Os sinais estão conflitantes: metadados dizem Etapa 1, mas Etapas 1 e 2 estão fechadas. Pela estrutura, está na Etapa 3. Falta a conferência final (#27). Próximo passo: @joao reconcilia. Correto?",
         },
@@ -371,7 +371,7 @@ describe("dry-run with the mock model (no live model needed)", () => {
     })
 
     expect(t.calls.map((c: any) => c.kind)).toEqual(["tool", "tool"])
-    expect(assertCallOrder(t, ["tool:fluxo_status", "tool:fluxo_issue_digest"]).pass).toBe(true)
+    expect(assertCallOrder(t, ["tool:maestra_status", "tool:maestra_issue_digest"]).pass).toBe(true)
     expect(assertRequiredPatterns(t, ["Etapa 3"]).pass).toBe(true)
   })
 

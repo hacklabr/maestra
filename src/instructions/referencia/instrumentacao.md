@@ -2,13 +2,13 @@
 
 > Source: docs/referencia/jornadas.md §8 (v2.1) + src/tools/emit-event.ts (contrato real) · Module version: 1 — 2026-07-28
 > Anti-drift: os formatos abaixo são cópia do schema zod da tool — se a tool mudar, este arquivo muda junto; divergência é finding.
-> Changelog: v0 scaffold (T6) → v1 (T10): gatilhos de emissão, payloads exatos do schema, formatos de corpo verbatim da `buildEventBody`, exemplos trabalhados, thresholds do `fluxo-report`.
+> Changelog: v0 scaffold (T6) → v1 (T10): gatilhos de emissão, payloads exatos do schema, formatos de corpo verbatim da `buildEventBody`, exemplos trabalhados, thresholds do `maestra-report`.
 
 ## Contrato (não negociável)
 
-- **Canal único:** `fluxo_emit_event`. Nunca escreva linha de evento ou registro de override à mão — a tool constrói o corpo, valida o payload (zod) e **assina "— facilitador" por construção**.
+- **Canal único:** `maestra_emit_event`. Nunca escreva linha de evento ou registro de override à mão — a tool constrói o corpo, valida o payload (zod) e **assina "— facilitador" por construção**.
 - **Injeção de assinatura rejeitada:** qualquer string de payload contendo "— facilitador" faz a chamada falhar. Nunca inclua a assinatura no payload.
-- **Formato é contrato de auditoria:** estas linhas existem PARA as queries futuras do `fluxo-report`. Drift de formato = perda silenciosa de dados.
+- **Formato é contrato de auditoria:** estas linhas existem PARA as queries futuras do `maestra-report`. Drift de formato = perda silenciosa de dados.
 - **Args da tool:** `epic` (número da issue/iid), `type` (`A` | `B` | `C` | `D` | `E` | `F` | `override`), `payload` (record validado por tipo).
 
 ---
@@ -103,7 +103,7 @@ modelo-dados-ou-contrato · decisao-tecnica-duradoura · comportamento-em-uso ·
 
 ## Evento D — Override com direção + critério contestado
 
-**Gatilho:** junto de todo registro de override (ver `type=override` abaixo). O override é o registro formal P3; o evento D é a linha de calibração dos critérios 3.3 — um sem o outro é presence gap para o `fluxo-report`.
+**Gatilho:** junto de todo registro de override (ver `type=override` abaixo). O override é o registro formal P3; o evento D é a linha de calibração dos critérios 3.3 — um sem o outro é presence gap para o `maestra-report`.
 **O que detecta:** pressão por rebaixamento de variante; dataset de calibração dos critérios de escala.
 
 **Payload:**
@@ -234,9 +234,9 @@ modelo-dados-ou-contrato · decisao-tecnica-duradoura · comportamento-em-uso ·
 
 ---
 
-## Thresholds e leitura (`fluxo-report`)
+## Thresholds e leitura (`maestra-report`)
 
-O agente não audita a si mesmo — o leitor dos sinais é o **`fluxo-report` (CLI)**, rodado sob demanda/CI (G-15). Referência para interpretação na revisão de dogfooding:
+O agente não audita a si mesmo — o leitor dos sinais é o **`maestra-report` (CLI)**, rodado sob demanda/CI (G-15). Referência para interpretação na revisão de dogfooding:
 
 | Sinal | Threshold | Leitura |
 |---|---|---|

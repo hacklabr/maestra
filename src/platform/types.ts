@@ -58,7 +58,7 @@ export interface CommentFacts {
  */
 export interface ForgeAdapter {
   readonly kind: PlatformKind
-  /** All issues (any state) carrying a variante-* label — the fluxo epics. Used by the fluxo-report sweep. */
+  /** All issues (any state) carrying a variante-* label — the fluxo epics. Used by the maestra-report sweep. */
   listEpics(): Promise<IssueFacts[]>
   getIssue(ref: IssueRef): Promise<IssueFacts>
   listChildren(ref: IssueRef): Promise<ChildIssue[]>

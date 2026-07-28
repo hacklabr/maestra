@@ -167,7 +167,7 @@ glab api projects/<ENC>/issues/<I> -X PUT -f "state_event=close"
 glab release create v<X.Y.Z>   # no diretório do repo
 ```
 
-## 5. Setup do board (1× por projeto; persistir id em `.fluxo/config.md` → `board:`)
+## 5. Setup do board (1× por projeto; persistir id em `.maestra/config.md` → `board:`)
 
 ```bash
 # 1) criar o board (se não existir)
@@ -190,7 +190,7 @@ glab auth status --hostname <host>     # self-hosted
 | PAT necessário | escopo **`api`** (notes, labels, links, boards, issues, releases) |
 | `read_api` | leitura apenas → P6 em todas as escritas |
 | Self-hosted | `GITLAB_HOST=https://gitlab.empresa.com` env · ou `--hostname <host>` por chamada · ou `glab config set host` |
-| Probe de instância | `GET https://<host>/api/v4/version` → 401/200 = viva (usado por `fluxo_status`) |
+| Probe de instância | `GET https://<host>/api/v4/version` → 401/200 = viva (usado por `maestra_status`) |
 
 ### 6.1 Status de verificação das flags (T12)
 
@@ -216,5 +216,5 @@ glab auth status --hostname <host>     # self-hosted
 ## 8. Paridade MCP (fallback declarativo — NÃO VERIFICADO até o primeiro piloto GitLab)
 
 O GitLab tem MCP server oficial próprio (docs/user/model_context_protocol/mcp_server).
-`fluxo_status` reporta "configured" quando presente; a tabela de equivalências será
+`maestra_status` reporta "configured" quando presente; a tabela de equivalências será
 pinada após o piloto — até lá, preferir `glab api` e tratar MCP como experimental.

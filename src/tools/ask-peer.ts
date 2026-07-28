@@ -6,7 +6,7 @@ import type { ToolContext } from "../host-types.js"
  *
  * Shell-specialist architecture: persona identity comes from the spawn-prompt
  * marker (persona::<id>@<mesaId>), registered by the peer-tracker hook —
- * NEVER from subagent_type (always fluxo/especialista).
+ * NEVER from subagent_type (always maestra/especialista).
  *
  * Guards (spec D1/D8):
  *  - caller-identity gate: the caller's session MUST be a registered shell
@@ -65,7 +65,7 @@ export function setSdkClient(client: unknown): void {
 
 /** Registers a spawned shell session. Called by the peer-tracker hook. */
 export function recordPeerSession(personaId: string, sessionId: string, mesaId?: string): void {
-  const normalized = personaId.startsWith("fluxo/") ? personaId.slice("fluxo/".length) : personaId
+  const normalized = personaId.startsWith("maestra/") ? personaId.slice("maestra/".length) : personaId
   if (!normalized || !sessionId) return
   const entries = peerSessions.get(normalized) ?? []
   entries.push({ sessionId, mesaId })
@@ -98,7 +98,7 @@ export function resolvePeerSession(
       error:
         `Error: peer "${peerPersona}" has no session in this context. ` +
         `The facilitator must spawn the shell specialist (task/actor with subagent_type ` +
-        `"fluxo/especialista" and marker \`persona::${peerPersona}@<mesaId>\` in the prompt) first.`,
+        `"maestra/especialista" and marker \`persona::${peerPersona}@<mesaId>\` in the prompt) first.`,
     }
   }
 
@@ -147,8 +147,8 @@ export const askPeerTool = tool({
       )
     }
 
-    const peerPersona = args.peer_id.startsWith("fluxo/")
-      ? args.peer_id.slice("fluxo/".length)
+    const peerPersona = args.peer_id.startsWith("maestra/")
+      ? args.peer_id.slice("maestra/".length)
       : args.peer_id
 
     // Gate 2 — per-mesa routing: the peer must live in the caller's mesa.

@@ -9,7 +9,7 @@ import { parsePersonaMarker } from "./persona-marker.js"
  * Persona-expansion hook (shell-specialist architecture, option A).
  *
  * tool.execute.before on task/actor — STRICT scope: only when
- * subagent_type === "fluxo/especialista" (zero blast radius on other spawns).
+ * subagent_type === "maestra/especialista" (zero blast radius on other spawns).
  * Verified mechanics: output.args is mutable in both hosts and propagates to
  * execution (OC session/tools.ts:106-124; Mimo session/prompt.ts:1071-1097).
  *
@@ -26,7 +26,7 @@ import { parsePersonaMarker } from "./persona-marker.js"
  *    tracker recognizes the failure signature and does not register).
  */
 
-const SHELL_AGENT = "fluxo/especialista"
+const SHELL_AGENT = "maestra/especialista"
 
 export interface PersonaExpansionOptions {
   catalogRoot: string
@@ -83,18 +83,18 @@ export function createPersonaExpansionHook(opts: PersonaExpansionOptions) {
 
 /**
  * Catalog root resolution (first existing wins):
- *  1. FLUXO_CATALOG_DIR env override
+ *  1. MAESTRA_CATALOG_DIR env override
  *  2. installed instructions dir (project .opencode/.mimocode, then global)
  *  3. package-bundled dist/catalog (dev checkout: src/catalog — same relative
  *     path from src/hooks and dist/hooks, so one candidate serves both)
  */
 export function resolveCatalogRoot(directory: string): string {
   const candidates = [
-    process.env.FLUXO_CATALOG_DIR,
-    join(directory, ".opencode", "fluxo", "instructions", "catalog"),
-    join(directory, ".mimocode", "fluxo", "instructions", "catalog"),
-    join(homedir(), ".config", "opencode", "fluxo", "instructions", "catalog"),
-    join(homedir(), ".config", "mimocode", "fluxo", "instructions", "catalog"),
+    process.env.MAESTRA_CATALOG_DIR,
+    join(directory, ".opencode", "maestra", "instructions", "catalog"),
+    join(directory, ".mimocode", "maestra", "instructions", "catalog"),
+    join(homedir(), ".config", "opencode", "maestra", "instructions", "catalog"),
+    join(homedir(), ".config", "mimocode", "maestra", "instructions", "catalog"),
     join(dirname(fileURLToPath(import.meta.url)), "..", "catalog", "agency-agents"),
   ].filter((c): c is string => typeof c === "string" && c.length > 0)
 

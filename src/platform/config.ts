@@ -3,7 +3,7 @@ import { join } from "node:path"
 import type { PlatformKind } from "./types.js"
 
 /**
- * ADR-014: `.fluxo/config.md` — platform config versioned in the repo
+ * ADR-014: `.maestra/config.md` — platform config versioned in the repo
  * (respects "no state outside the repository"). Created at first triage.
  */
 
@@ -14,7 +14,7 @@ export interface FluxoConfig {
   board?: string
 }
 
-const CONFIG_PATH = join(".fluxo", "config.md")
+const CONFIG_PATH = join(".maestra", "config.md")
 const ENTRY = /^-?\s*(\w+):\s*(.+?)\s*$/gm
 
 export async function readFluxoConfig(directory: string): Promise<FluxoConfig | null> {
@@ -50,6 +50,6 @@ export async function writeFluxoConfig(directory: string, config: FluxoConfig): 
   if (config.board) lines.push(`- board: ${config.board}`)
   lines.push("")
 
-  await fs.mkdir(join(directory, ".fluxo"), { recursive: true })
+  await fs.mkdir(join(directory, ".maestra"), { recursive: true })
   await fs.writeFile(join(directory, CONFIG_PATH), lines.join("\n"), "utf-8")
 }

@@ -23,7 +23,7 @@ const DIALECT: Record<HostId, string> = {
 }
 
 /**
- * Generates the `fluxo` primary agent markdown for a given host.
+ * Generates the `maestra` primary agent markdown for a given host.
  * The external_directory permission grants read access to the instructions
  * directory (outside the workspace) without interactive prompts — VERIFY in
  * the dual-host smoke test (T12).
@@ -41,7 +41,7 @@ export function buildAgentMarkdown(host: HostId, ctx: AgentRenderContext): strin
     "",
     "# Facilitador de Fluxo (kernel L0 — placeholder, T8)",
     "",
-    `Kernel completo: ${ctx.instructionsDir}/kernel/fluxo-kernel.md`,
+    `Kernel completo: ${ctx.instructionsDir}/kernel/maestra-kernel.md`,
     "",
     "## Portas de entrada",
     "",

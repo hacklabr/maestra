@@ -2,7 +2,7 @@
 
 > Source: docs/referencia/jornadas.md §7, v2.3 · Module version: 2 — 2026-07-28
 > Anti-drift: templates verbatim com slots tipados; ajuste pós-dogfood AQUI, nunca em código. Divergência entre este módulo e a fonte é finding, nunca ajuste silencioso.
-> Changelog: v0 scaffold (T6) → v1 (T10): transcrição integral de §7.1–§7.11 com slots tipados; bloco do hook desvios.md preservado verbatim; comentário de override substituído por referência ao contrato da tool (`fluxo_emit_event`); adaptações de plataforma-neutro marcadas explicitamente. v2 (jornadas v2.3, decisão humana) — bloco §7.9 W-04 ("especialista fora do catálogo instalado") DELETADO: arquitetura shell-specialist torna o catálogo inteiro invocável; não existe mais subconjunto instalado nem especialista "mais próximo".
+> Changelog: v0 scaffold (T6) → v1 (T10): transcrição integral de §7.1–§7.11 com slots tipados; bloco do hook desvios.md preservado verbatim; comentário de override substituído por referência ao contrato da tool (`maestra_emit_event`); adaptações de plataforma-neutro marcadas explicitamente. v2 (jornadas v2.3, decisão humana) — bloco §7.9 W-04 ("especialista fora do catálogo instalado") DELETADO: arquitetura shell-specialist torna o catálogo inteiro invocável; não existe mais subconjunto instalado nem especialista "mais próximo".
 
 ## Convenções de uso
 
@@ -81,7 +81,7 @@ Avanço?
 | `{ITENS}` | lista curta | Ex.: "X e Y". |
 | `{AVISO_RISCO}` | frase | **Defesa escalonada (P3):** obrigatório quando os itens incluem critérios de aceite, fora de escopo ou reconciliação — "Um aviso honesto: critérios de aceite é o item que eu não recomendo deixar pra depois — sem ele, a Etapa 3 não tem como validar a entrega. Os outros, você conhece o risco melhor que eu." Override de reconciliação → defesa máxima (§7.4). Para outros itens → omitir o item 2. |
 
-O registro é emitido ANTES da ação (register-then-act, P3) via `fluxo_emit_event` (type=override) — nunca à mão. Formato: `referencia/instrumentacao.md`.
+O registro é emitido ANTES da ação (register-then-act, P3) via `maestra_emit_event` (type=override) — nunca à mão. Formato: `referencia/instrumentacao.md`.
 
 ---
 
@@ -246,7 +246,7 @@ Confirma a {VARIANTE_DECIDIDA}?
 | `{VARIANTE_DECIDIDA}` | variante | A decidida pelo humano. |
 | `{DATA}` | YYYY-MM-DD | Data da decisão. |
 
-**Comentário de registro:** emitido via `fluxo_emit_event` (`type=override`) ANTES de trocar label/metadados (register-then-act, atomicidade P3: label + metadados + comentário no mesmo ato + label `override-registrado`). **Nunca escrito à mão** — formato exato do comentário: `referencia/instrumentacao.md`.
+**Comentário de registro:** emitido via `maestra_emit_event` (`type=override`) ANTES de trocar label/metadados (register-then-act, atomicidade P3: label + metadados + comentário no mesmo ato + label `override-registrado`). **Nunca escrito à mão** — formato exato do comentário: `referencia/instrumentacao.md`.
 
 ### Override de gate
 
@@ -275,7 +275,7 @@ plataforma de issues dá acesso a {N_PESSOAS} pessoas. Minha proposta:
 Confirma ou corrige? Responda numa mensagem só, tipo:
 "{EXEMPLO_RESPOSTA}".
 
-Isso fica gravado em .fluxo/team.md no repositório — visível pra quem
+Isso fica gravado em .maestra/team.md no repositório — visível pra quem
 tem acesso ao projeto. A partir de agora, toda tarefa já nasce
 atribuída. Para mudar depois, é só dizer "fulano agora é Engenharia".
 ```

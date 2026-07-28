@@ -2,7 +2,7 @@
 
 > Source: docs/referencia/jornadas.md §4–§5, v2.2 · Module version: 2 — 2026-07-28
 > Anti-drift: módulo derivado da fonte; divergência é finding, nunca ajuste silencioso.
-> Changelog: v0 scaffold (T6) → v1 (T10): P1–P7 + P1.1 completos em formato de consulta rápida. v2 (jornadas v2.2, decisão humana) — protocolo P2 (arquivo de estado espelho) eliminado: risco de virar fonte paralela de verdade e gerador de conflitos de merge; estado é sempre derivado da plataforma (digest + docs), a cada sessão. `.fluxo/team.md` e `.fluxo/config.md` permanecem (configuração, não cache).
+> Changelog: v0 scaffold (T6) → v1 (T10): P1–P7 + P1.1 completos em formato de consulta rápida. v2 (jornadas v2.2, decisão humana) — protocolo P2 (arquivo de estado espelho) eliminado: risco de virar fonte paralela de verdade e gerador de conflitos de merge; estado é sempre derivado da plataforma (digest + docs), a cada sessão. `.maestra/team.md` e `.maestra/config.md` permanecem (configuração, não cache).
 
 Formato de leitura: cada protocolo = regra-mestra + regras operacionais. Templates de artefato em `templates/`; wordings em `referencia/microcopy.md`.
 
@@ -58,7 +58,7 @@ O campo `**Subestado:**` usa **apenas** os valores abaixo — a derivação J2 n
 
 **Override = decisão (no momento, contra critério/estado); desvio = resultado (planejado × implementado).** Relação bidirecional, sem duplicação.
 
-- **Override** vive em **comentário parseável no épico**, emitido **somente** via `fluxo_emit_event` (`type=override`) — a tool constrói o formato e assina "— facilitador" (formato exato: `referencia/instrumentacao.md`). Nunca escrito à mão.
+- **Override** vive em **comentário parseável no épico**, emitido **somente** via `maestra_emit_event` (`type=override`) — a tool constrói o formato e assina "— facilitador" (formato exato: `referencia/instrumentacao.md`). Nunca escrito à mão.
 - **Desvio** vive em **`desvios.md` da rodada** (template `templates/desvios.md`): planejado X → implementado Y → motivo Z (nas palavras do humano) → decisão registrada em → documento de referência atualizado.
 - **Encontro bidirecional:** override que resulta em divergência também aparece em `desvios.md` linkando o comentário (o desvio indexa, o comentário evidencia); todo desvio por decisão humana linka o registro P3. A reconciliação verifica a bidirecionalidade.
 - **Timing:** desvios declarados **quando ocorrem** (touchpoint de execução, J5 Etapa 2) — a reconciliação verifica completude, não é o momento de escrever.
@@ -103,7 +103,7 @@ Carregada na assunção de persona (kernel). Checada **antes de cada mensagem** 
 
 ---
 
-## P5 — Mapa de equipe (`.fluxo/team.md`)
+## P5 — Mapa de equipe (`.maestra/team.md`)
 
 - **Conteúdo por pessoa:** nome, username na plataforma, papel no fluxo (Produto/Engenharia/Entrega — pode ser múltiplo) + **senioridade grossa** (júnior/pleno/sênior) + especialidade.
 - **Nascimento:** conversacional, **ao fim da primeira triagem, antes de criar qualquer issue**; papéis **propostos** pelo agente (sinais de histórico; sem histórico, palpite marcado) — o humano **corrige, não constrói**, em uma única rodada de coleta (microcopy §7.5).

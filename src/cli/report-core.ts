@@ -3,7 +3,7 @@ import { classifyLabels } from "../tools/digest-parse.js"
 import { parseEventComments, type ParsedEvent } from "./report-parse.js"
 
 /**
- * fluxo-report audit core — pure, I/O-free. Every check compares EVENT × STATE
+ * maestra-report audit core — pure, I/O-free. Every check compares EVENT × STATE
  * (never event × event): each presence check has an independently observable
  * state leg (label applied, rodada closed, demand issue exists).
  *
@@ -231,7 +231,7 @@ const SEVERITY_MARK: Record<Severity, string> = { gap: "✗ GAP", threshold: "�
 /** Renders the PT-BR report. Pure. */
 export function renderReport(result: ReportResult, plataforma: string): string {
   const lines: string[] = [
-    `fluxo-report — auditoria de instrumentação A–F (${plataforma})`,
+    `maestra-report — auditoria de instrumentação A–F (${plataforma})`,
     `Leitor provisório dos sinais (G-15): instrumentação sem leitor definido é decorativa.`,
     "",
   ]

@@ -1,6 +1,6 @@
 {
   "id": "repo-sem-team",
-  "descricao": "Repo sem .fluxo/team.md (primeira triagem do repositório) — dispara o mapeamento de equipe da J1 Etapa 4 (palco do FM-04) e garante que nada da conversa anterior persistiu (palco do FM-06).",
+  "descricao": "Repo sem .maestra/team.md (primeira triagem do repositório) — dispara o mapeamento de equipe da J1 Etapa 4 (palco do FM-04) e garante que nada da conversa anterior persistiu (palco do FM-06).",
   "files": {
     "docs/referencia/prd.md": "# PRD vivo\n\n## RF-01 — Listagem de pedidos\n\nO usuário vê seus pedidos ordenados por data.\n"
   }

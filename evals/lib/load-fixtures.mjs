@@ -4,7 +4,7 @@ import { join } from "node:path"
 
 /** evals/ root — all fixture/scenario paths resolve relative to this. */
 export const EVALS_ROOT = fileURLToPath(new URL("..", import.meta.url))
-/** package root (fluxo-facilitador/) — instructions live here. */
+/** package root (maestra/) — instructions live here. */
 export const PACKAGE_ROOT = join(EVALS_ROOT, "..")
 
 export async function loadJson(relativePath) {
@@ -33,7 +33,7 @@ export async function loadRepoFixture(relativePath) {
 
 /** Loads the kernel + requested journey modules as the system prompt. */
 export async function buildSystemPrompt(modules = []) {
-  const kernel = await readFile(join(PACKAGE_ROOT, "src/instructions/kernel/fluxo-kernel.md"), "utf8")
+  const kernel = await readFile(join(PACKAGE_ROOT, "src/instructions/kernel/maestra-kernel.md"), "utf8")
   const parts = [kernel]
   for (const mod of modules) {
     const content = await readFile(join(PACKAGE_ROOT, "src/instructions", mod), "utf8")

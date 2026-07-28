@@ -26,7 +26,7 @@ export default class FluxoAgentProvider {
   }
 
   id() {
-    return "fluxo-agent"
+    return "maestra-agent"
   }
 
   async callApi(_prompt, context) {
@@ -35,7 +35,7 @@ export default class FluxoAgentProvider {
       const transcript = await runScenario(vars)
       return { output: JSON.stringify(transcript), cached: false }
     } catch (error) {
-      return { error: `fluxo-agent provider: ${error instanceof Error ? error.message : String(error)}` }
+      return { error: `maestra-agent provider: ${error instanceof Error ? error.message : String(error)}` }
     }
   }
 }
@@ -55,7 +55,7 @@ export async function runScenario(vars) {
   const system = await buildSystemPrompt(asArray(vars.modules))
   const stub = createStubExecutor({ fixture, repoFiles: repo.files })
 
-  const mock = process.env.FLUXO_EVAL_MOCK === "1" || vars.mock === true
+  const mock = process.env.MAESTRA_EVAL_MOCK === "1" || vars.mock === true
   const modelConfig = liveModelConfig()
   const mockChat = mock ? createMockModel(asArray(vars.mockSteps)) : null
 

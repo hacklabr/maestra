@@ -1,5 +1,5 @@
 {
-  "name": "fluxo-facilitador",
+  "name": "maestra",
   "version": "0.1.0",
   "description": "Plugin facilitador do fluxo de desenvolvimento (triagem → três etapas → reconciliação) para OpenCode e Mimo Code",
   "type": "module",
@@ -12,8 +12,8 @@
     }
   },
   "bin": {
-    "fluxo-facilitador": "./dist/installer/install.js",
-    "fluxo-report": "./dist/cli/report.js"
+    "maestra": "./dist/installer/install.js",
+    "maestra-report": "./dist/cli/report.js"
   },
   "files": [
     "dist"
@@ -27,7 +27,7 @@
     "test": "vitest run --passWithNoTests",
     "eval": "promptfoo eval -c evals/promptfooconfig.yaml",
     "eval:nightly": "promptfoo eval -c evals/promptfooconfig.nightly.yaml --no-cache",
-    "eval:dry": "FLUXO_EVAL_MOCK=1 promptfoo eval -c evals/promptfooconfig.dry.yaml --no-cache",
+    "eval:dry": "MAESTRA_EVAL_MOCK=1 promptfoo eval -c evals/promptfooconfig.dry.yaml --no-cache",
     "eval:golden": "node evals/scripts/golden.mjs",
     "check:vocab": "bash scripts/check-neutral-vocab.sh",
     "check:dist": "bash scripts/check-dist-hygiene.sh",

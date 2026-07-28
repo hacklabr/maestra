@@ -4,7 +4,7 @@
 description: "Fluxo evals — nightly (matriz completa + judge tier-2)"
 
 providers:
-  - id: file://providers/fluxo-agent.mjs
+  - id: file://providers/maestra-agent.mjs
 
 tests:
   - file://scenarios/anti-bypass.yaml

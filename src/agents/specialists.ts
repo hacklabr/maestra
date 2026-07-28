@@ -1,4 +1,4 @@
-import type { HostId } from "./fluxo-agent.js"
+import type { HostId } from "./maestra-agent.js"
 
 /**
  * The shell specialist subagent (human-approved design A): ONE nearly-empty

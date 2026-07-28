@@ -3,7 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { afterEach, describe, expect, it } from "vitest"
-import { fluxoStatusTool } from "../status.js"
+import { maestraStatusTool } from "../status.js"
 import { defaultExec } from "../../platform/exec.js"
 import { setExec, setFetch, setHostDetect, setMcpScan } from "../../platform/runtime.js"
 import { makeExecStub } from "../../platform/__tests__/helpers.js"
@@ -18,12 +18,12 @@ afterEach(() => {
 })
 
 async function makeRepo(platform: "github" | "gitlab"): Promise<string> {
-  const dir = mkdtempSync(join(tmpdir(), `fluxo-status-${platform}-`))
-  await mkdir(join(dir, ".fluxo"), { recursive: true })
+  const dir = mkdtempSync(join(tmpdir(), `maestra-status-${platform}-`))
+  await mkdir(join(dir, ".maestra"), { recursive: true })
   await mkdir(join(dir, "docs", "referencia"), { recursive: true })
   await mkdir(join(dir, "docs", "rodadas"), { recursive: true })
   await writeFile(
-    join(dir, ".fluxo", "config.md"),
+    join(dir, ".maestra", "config.md"),
     `- plataforma: ${platform}\n- host: ${platform === "github" ? "github.com" : "gitlab.com"}\n- projeto: ${platform === "github" ? "acme/loja" : "grupo/loja"}\n`,
   )
   return dir
@@ -33,7 +33,7 @@ function parse(result: unknown) {
   return JSON.parse((result as { output: string }).output)
 }
 
-describe("fluxo_status", () => {
+describe("maestra_status", () => {
   it("GitHub: full probe with gh authed, board read, reachability ok", async () => {
     const dir = await makeRepo("github")
     const { exec } = makeExecStub([
@@ -47,7 +47,7 @@ describe("fluxo_status", () => {
     setHostDetect(() => ({ id: "opencode", evidence: ["dir /home/x/.config/opencode"] }))
     setMcpScan(async () => ({ github: "configured", gitlab: "not-found" }))
 
-    const report = parse(await fluxoStatusTool.execute({}, ctx(dir)))
+    const report = parse(await maestraStatusTool.execute({}, ctx(dir)))
 
     expect(report.host.id).toBe("opencode")
     expect(report.plataforma).toEqual({ kind: "github", host: "github.com", projeto: "acme/loja" })
@@ -63,15 +63,15 @@ describe("fluxo_status", () => {
       board: "read",
       hierarchy: "sub-issues",
     })
-    expect(report.repo).toEqual({ referenciaDocs: true, rodadas: true, teamMd: false, fluxoConfig: true })
+    expect(report.repo).toEqual({ referenciaDocs: true, rodadas: true, teamMd: false, maestraConfig: true })
     expect(report.notes.join(" ")).toContain("ESCRITA")
   })
 
   it("GitLab self-hosted: glab authed with --hostname, Developer → read-write board", async () => {
-    const dir = mkdtempSync(join(tmpdir(), "fluxo-status-gls-"))
-    await mkdir(join(dir, ".fluxo"), { recursive: true })
+    const dir = mkdtempSync(join(tmpdir(), "maestra-status-gls-"))
+    await mkdir(join(dir, ".maestra"), { recursive: true })
     await writeFile(
-      join(dir, ".fluxo", "config.md"),
+      join(dir, ".maestra", "config.md"),
       "- plataforma: gitlab\n- host: gitlab.acme.com\n- projeto: grupo/loja\n",
     )
     const { exec, calls } = makeExecStub([
@@ -83,7 +83,7 @@ describe("fluxo_status", () => {
     setExec(exec)
     setFetch(async (url) => ({ status: url.includes("/api/v4/version") ? 401 : 404 }))
 
-    const report = parse(await fluxoStatusTool.execute({}, ctx(dir)))
+    const report = parse(await maestraStatusTool.execute({}, ctx(dir)))
 
     expect(report.plataforma).toEqual({ kind: "gitlab", host: "gitlab.acme.com", projeto: "grupo/loja" })
     expect(report.cli.glab).toEqual({ present: true, authenticated: true, version: "glab version 1.46.1" })
@@ -95,7 +95,7 @@ describe("fluxo_status", () => {
   })
 
   it("no platform detected: notes instruct the one-time question", async () => {
-    const dir = mkdtempSync(join(tmpdir(), "fluxo-status-none-"))
+    const dir = mkdtempSync(join(tmpdir(), "maestra-status-none-"))
     const { exec } = makeExecStub([
       [/remote get-url origin/, { stderr: "not a git repo", code: 128 }],
       [/^gh --version/, { stdout: "gh version 2.96.0\n" }],
@@ -104,7 +104,7 @@ describe("fluxo_status", () => {
     ])
     setExec(exec)
 
-    const report = parse(await fluxoStatusTool.execute({}, ctx(dir)))
+    const report = parse(await maestraStatusTool.execute({}, ctx(dir)))
     expect(report.plataforma).toBeNull()
     expect(report.capabilities.platform).toBeNull()
     expect(report.capabilities.hierarchy).toBe("none")
@@ -122,7 +122,7 @@ describe("fluxo_status", () => {
     ])
     setExec(exec)
 
-    const report = parse(await fluxoStatusTool.execute({}, ctx(dir)))
+    const report = parse(await maestraStatusTool.execute({}, ctx(dir)))
     expect(report.cli.gh.authenticated).toBe(false)
     expect(report.capabilities.cli).toBe(false)
     expect(report.notes.join(" ")).toContain("NÃO autenticado")

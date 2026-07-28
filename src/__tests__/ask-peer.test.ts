@@ -41,7 +41,7 @@ function makeClient(opts: {
 }
 
 function ctx(sessionID: string): ToolContext {
-  return { sessionID, directory: "/tmp/fluxo-test" }
+  return { sessionID, directory: "/tmp/maestra-test" }
 }
 
 const M1 = "mesa-01"
@@ -234,7 +234,7 @@ describe("ask_peer — error paths", () => {
 
     expect(result).toMatch(/^Error: peer "ux-researcher" has no session/)
     expect(result).toContain("persona::ux-researcher@<mesaId>")
-    expect(result).toContain("fluxo/especialista")
+    expect(result).toContain("maestra/especialista")
     expect(promptCalls).toHaveLength(0)
   })
 
@@ -293,7 +293,7 @@ describe("resolvePeerSession — scope rules", () => {
 })
 
 describe("peer-tracker hook (marker-based identity, dual-host metadata)", () => {
-  const SHELL = "fluxo/especialista"
+  const SHELL = "maestra/especialista"
 
   it("records OpenCode task spawns: persona from marker, session from metadata.sessionId", async () => {
     const tracker = createPeerTrackerHook()

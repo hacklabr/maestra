@@ -15,7 +15,7 @@
 ## ETAPA 1 — Avaliação e decisão
 
 - Apresente os **critérios objetivos que mudaram** (ex.: "a estimativa passou de 5 dias e agora toca o que outros consomem — os critérios apontam Condensada").
-- **Decisão humana explícita.** Contra os critérios → override P3 via `fluxo_emit_event type=override` (direção + critério contestado registrados — evento D na mesma emissão), com aviso de risco em 1 frase quando a reclassificação é para BAIXO contra critério presente. Nunca bloqueio: a decisão é soberana.
+- **Decisão humana explícita.** Contra os critérios → override P3 via `maestra_emit_event type=override` (direção + critério contestado registrados — evento D na mesma emissão), com aviso de risco em 1 frase quando a reclassificação é para BAIXO contra critério presente. Nunca bloqueio: a decisão é soberana.
 - Critério de sucesso: decisão explícita; nunca demanda grande com artefatos de demanda pequena.
 
 ## ETAPA 2 — Execução atômica

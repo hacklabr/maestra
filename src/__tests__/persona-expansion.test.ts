@@ -9,7 +9,7 @@ import {
 } from "../hooks/persona-expansion.js"
 import { loadPersonaById } from "../catalog/loader.js"
 
-const SHELL = "fluxo/especialista"
+const SHELL = "maestra/especialista"
 
 let tmp: string
 
@@ -115,7 +115,7 @@ describe("persona-expansion hook", () => {
   })
 
   it("STRICT scope: other subagent types pass through untouched", async () => {
-    const { hook, output } = call("persona::backend-architect@mesa-01", "fluxo/something-else")
+    const { hook, output } = call("persona::backend-architect@mesa-01", "maestra/something-else")
     const before = output.args.prompt as string
     await hook({ tool: "task", sessionID: "s", callID: "c6" }, output)
 
@@ -145,12 +145,12 @@ describe("resolveCatalogRoot", () => {
     expect(root).toContain("catalog")
   })
 
-  it("honors FLUXO_CATALOG_DIR when set and existing", () => {
-    process.env.FLUXO_CATALOG_DIR = tmp
+  it("honors MAESTRA_CATALOG_DIR when set and existing", () => {
+    process.env.MAESTRA_CATALOG_DIR = tmp
     try {
       expect(resolveCatalogRoot("/tmp/nonexistent-project")).toBe(tmp)
     } finally {
-      delete process.env.FLUXO_CATALOG_DIR
+      delete process.env.MAESTRA_CATALOG_DIR
     }
   })
 })

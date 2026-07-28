@@ -8,8 +8,8 @@
 
 ## ETAPA 1 — Fatos e derivação
 
-1. **`fluxo_issue_digest(N)` primeiro.** Fatos enumerados: labels ∩ vocabulário do fluxo, linha de metadados, filhas UMA A UMA (estado, assignee, labels), comentários de gate/override/evento, aritmética de gate por etapa, existência do artefato declarado nas tarefas de artefato fechadas, coluna no board, campo reconciliação, pai (se filha). O digest enumera fatos; **a derivação é sua** — verificada, nunca inferida (gatilho #6 do kernel).
-2. **Leituras do repo, nesta ordem:** pasta da rodada referenciada nos metadados (`escopo.md`, `desvios.md` existem? rodada fechada?) → `docs/referencia/` (como o produto é HOJE) → status dos registros de decisão técnica citados → `.fluxo/team.md` (papel do interlocutor → persona). **Não existe cache de estado: a derivação é sempre digest + docs, a cada sessão** — sessões são efêmeras e a plataforma é a única fonte de verdade.
+1. **`maestra_issue_digest(N)` primeiro.** Fatos enumerados: labels ∩ vocabulário do fluxo, linha de metadados, filhas UMA A UMA (estado, assignee, labels), comentários de gate/override/evento, aritmética de gate por etapa, existência do artefato declarado nas tarefas de artefato fechadas, coluna no board, campo reconciliação, pai (se filha). O digest enumera fatos; **a derivação é sua** — verificada, nunca inferida (gatilho #6 do kernel).
+2. **Leituras do repo, nesta ordem:** pasta da rodada referenciada nos metadados (`escopo.md`, `desvios.md` existem? rodada fechada?) → `docs/referencia/` (como o produto é HOJE) → status dos registros de decisão técnica citados → `.maestra/team.md` (papel do interlocutor → persona). **Não existe cache de estado: a derivação é sempre digest + docs, a cada sessão** — sessões são efêmeras e a plataforma é a única fonte de verdade.
 3. **Derive a tupla de estado:**
    - **Variante** ← label do épico.
    - **Rodada** ← metadados + presença da pasta (número + tema).
@@ -48,7 +48,7 @@
 
 Resumo de 3–5 linhas (**máx. ~8**), na linguagem da persona derivada (P4 — leia `referencia/protocolos.md` §P4 ao assumir a persona): variante, **rodada com número + tema — âncora única da sessão** (depois, sempre "nesta rodada"), etapa, subestado (se `pausada`: sempre COM o desbloqueio pendente), gate, o que falta, persona assumida, **próxima ação concreta** — terminando em confirmação embutida (afirmação falseável: "correto?"). Microcopy §7.2 tem os modelos de reconstituição de estado.
 
-Se `.fluxo/team.md` estiver ausente: **apresente o estado PRIMEIRO**; colete o mapa depois (protocolo P5, uma única vez por repositório) — nunca bloqueie a derivação por causa do mapa.
+Se `.maestra/team.md` estiver ausente: **apresente o estado PRIMEIRO**; colete o mapa depois (protocolo P5, uma única vez por repositório) — nunca bloqueie a derivação por causa do mapa.
 
 Critério de sucesso: confirmação ou correção em 1 rodada; próxima ação sempre presente.
 

@@ -1,4 +1,4 @@
-# Template — Configuração do Fluxo (`.fluxo/config.md`)
+# Template — Configuração do Fluxo (`.maestra/config.md`)
 
 > Source: src/platform/config.ts (ADR-014 — formato real escrito/lido pelo código) · Module version: 1 — 2026-07-28
 > Anti-drift: este arquivo documenta o formato EXATO que `writeFluxoConfig` persiste e `readFluxoConfig` parseia. Chaves e valores fora do padrão são ignorados silenciosamente pelo parser — drift aqui = configuração invisível.

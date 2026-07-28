@@ -7,7 +7,7 @@ export type FetchProbe = (url: string) => Promise<{ status: number }>
 export interface DetectOptions {
   exec?: ExecFn
   fetchFn?: FetchProbe
-  /** Persist successful detections to .fluxo/config.md (default: true). */
+  /** Persist successful detections to .maestra/config.md (default: true). */
   persist?: boolean
 }
 
@@ -83,7 +83,7 @@ export async function probeHost(fetchFn: FetchProbe, host: string): Promise<Plat
 
 /**
  * ADR-010 detection hierarchy (first win):
- *  1. explicit `.fluxo/config.md`
+ *  1. explicit `.maestra/config.md`
  *  2. `git remote get-url origin` (github.com × gitlab.com)
  *  3. unknown host → single probe, persisted
  *  4. ambiguous → null (the agent asks the human ONCE, then persists)

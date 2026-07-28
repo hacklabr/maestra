@@ -1,5 +1,5 @@
 # Cenários vinculantes do dogfood #1 (Guardian V-4 + consenso): FM-04, FM-06, FM-21.
-# FM-13 já está coberto no fluxo-report (report-core.ts) + J2 B6.
+# FM-13 já está coberto no maestra-report (report-core.ts) + J2 B6.
 
 - description: "FM-06 abandono pré-épico: sessão nova NÃO alucina conversa anterior; nomeia o recomeço honestamente"
   vars:

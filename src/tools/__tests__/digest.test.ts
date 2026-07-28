@@ -3,7 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { afterEach, describe, expect, it } from "vitest"
-import { fluxoIssueDigestTool } from "../digest.js"
+import { maestraIssueDigestTool } from "../digest.js"
 import { setExec } from "../../platform/runtime.js"
 import { defaultExec } from "../../platform/exec.js"
 import { makeExecStub } from "../../platform/__tests__/helpers.js"
@@ -13,13 +13,13 @@ const readFixture = (platform: string, name: string) =>
   JSON.parse(readFileSync(join(FIXTURES, platform, name), "utf-8"))
 
 async function makeRepo(platform: "github" | "gitlab"): Promise<string> {
-  const dir = mkdtempSync(join(tmpdir(), `fluxo-digest-${platform}-`))
-  await mkdir(join(dir, ".fluxo"), { recursive: true })
+  const dir = mkdtempSync(join(tmpdir(), `maestra-digest-${platform}-`))
+  await mkdir(join(dir, ".maestra"), { recursive: true })
   await mkdir(join(dir, "docs", "referencia"), { recursive: true })
   // Only prd.md exists — the declared mini-briefing.md is intentionally missing (G-05)
   await writeFile(join(dir, "docs", "referencia", "prd.md"), "# PRD vivo\n")
   await writeFile(
-    join(dir, ".fluxo", "config.md"),
+    join(dir, ".maestra", "config.md"),
     `- plataforma: ${platform}\n- host: ${platform === "github" ? "github.com" : "gitlab.com"}\n- projeto: ${platform === "github" ? "acme/loja" : "grupo/loja"}\n`,
   )
   return dir
@@ -29,7 +29,7 @@ const ctx = (directory: string) => ({ sessionID: "test", directory }) as never
 
 afterEach(() => setExec(defaultExec))
 
-describe("fluxo_issue_digest — golden: GitHub", () => {
+describe("maestra_issue_digest — golden: GitHub", () => {
   it("produces the exact golden digest from API fixtures", async () => {
     const dir = await makeRepo("github")
     const { exec } = makeExecStub([
@@ -43,14 +43,14 @@ describe("fluxo_issue_digest — golden: GitHub", () => {
     ])
     setExec(exec)
 
-    const result = await fluxoIssueDigestTool.execute({ issue: 42 }, ctx(dir))
+    const result = await maestraIssueDigestTool.execute({ issue: 42 }, ctx(dir))
     const digest = JSON.parse((result as { output: string }).output)
     const golden = readFixture("github", "digest.golden.json")
     expect(digest).toEqual(golden)
   })
 })
 
-describe("fluxo_issue_digest — golden: GitLab", () => {
+describe("maestra_issue_digest — golden: GitLab", () => {
   it("produces the exact golden digest from API fixtures (links+tasklist, P1 parent, system notes out)", async () => {
     const dir = await makeRepo("gitlab")
     const { exec } = makeExecStub([
@@ -61,22 +61,22 @@ describe("fluxo_issue_digest — golden: GitLab", () => {
     ])
     setExec(exec)
 
-    const result = await fluxoIssueDigestTool.execute({ issue: 42 }, ctx(dir))
+    const result = await maestraIssueDigestTool.execute({ issue: 42 }, ctx(dir))
     const digest = JSON.parse((result as { output: string }).output)
     const golden = readFixture("gitlab", "digest.golden.json")
     expect(digest).toEqual(golden)
   })
 })
 
-describe("fluxo_issue_digest — degradation", () => {
+describe("maestra_issue_digest — degradation", () => {
   it("returns an actionable error when the platform is not detected", async () => {
-    const dir = mkdtempSync(join(tmpdir(), "fluxo-digest-noplatform-"))
+    const dir = mkdtempSync(join(tmpdir(), "maestra-digest-noplatform-"))
     const { exec } = makeExecStub([[/remote get-url origin/, { stderr: "no remote", code: 128 }]])
     setExec(exec)
 
-    const result = await fluxoIssueDigestTool.execute({ issue: 1 }, ctx(dir))
+    const result = await maestraIssueDigestTool.execute({ issue: 1 }, ctx(dir))
     expect(String(result)).toContain("platform not detected")
-    expect(String(result)).toContain(".fluxo/config.md")
+    expect(String(result)).toContain(".maestra/config.md")
   })
 
   it("degrades per-primitive: board failure becomes null column + entry in erros[]", async () => {
@@ -92,7 +92,7 @@ describe("fluxo_issue_digest — degradation", () => {
     ])
     setExec(exec)
 
-    const result = await fluxoIssueDigestTool.execute({ issue: 42 }, ctx(dir))
+    const result = await maestraIssueDigestTool.execute({ issue: 42 }, ctx(dir))
     const digest = JSON.parse((result as { output: string }).output)
     expect(digest.board.coluna).toBeNull()
     expect(digest.erros).toEqual([

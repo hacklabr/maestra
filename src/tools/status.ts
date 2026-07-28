@@ -8,7 +8,7 @@ import type { FetchProbe } from "../platform/detect.js"
 import { PLUGIN_VERSION } from "../version.js"
 
 /**
- * fluxo_status — deterministic environment probe (D1 contract, D-01, G-01).
+ * maestra_status — deterministic environment probe (D1 contract, D-01, G-01).
  * Runs BEFORE any mutation promise ("nunca épico pela metade").
  * Reports capabilities; MCP is reported as "configured", never "available".
  */
@@ -74,7 +74,7 @@ async function probeBoard(exec: ExecFn, forge: { kind: "github" | "gitlab"; host
   }
 }
 
-export const fluxoStatusTool = tool({
+export const maestraStatusTool = tool({
   description:
     "Environment probe for the Fluxo workflow: detected host (OpenCode/Mimo), issue platform + host (GitHub/GitLab/self-hosted), CLI presence and auth (gh/glab), API reachability, capability matrix {platform, cli, mcp, board, hierarchy}, board access, MCP configured (never 'available'), repo layout, plugin version. Run BEFORE any mutation (precondition of J1/J2).",
   args: {},
@@ -88,7 +88,7 @@ export const fluxoStatusTool = tool({
     const forge = resolved?.forge ?? null
     if (!forge) {
       notes.push(
-        "Plataforma de issues não detectada: pergunte UMA vez (GitHub ou GitLab? qual host?) e persista em .fluxo/config.md (ADR-010).",
+        "Plataforma de issues não detectada: pergunte UMA vez (GitHub ou GitLab? qual host?) e persista em .maestra/config.md (ADR-010).",
       )
     }
 
@@ -136,8 +136,8 @@ export const fluxoStatusTool = tool({
       repo: {
         referenciaDocs: existsSync(join(context.directory, "docs", "referencia")),
         rodadas: existsSync(join(context.directory, "docs", "rodadas")),
-        teamMd: existsSync(join(context.directory, ".fluxo", "team.md")),
-        fluxoConfig: existsSync(join(context.directory, ".fluxo", "config.md")),
+        teamMd: existsSync(join(context.directory, ".maestra", "team.md")),
+        maestraConfig: existsSync(join(context.directory, ".maestra", "config.md")),
       },
       notes,
     }

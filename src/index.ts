@@ -1,14 +1,14 @@
 import type { Hooks, Plugin } from "./host-types.js"
-import { fluxoStatusTool } from "./tools/status.js"
-import { fluxoIssueDigestTool } from "./tools/digest.js"
+import { maestraStatusTool } from "./tools/status.js"
+import { maestraIssueDigestTool } from "./tools/digest.js"
 import { askPeerTool, setSdkClient } from "./tools/ask-peer.js"
-import { fluxoEmitEventTool } from "./tools/emit-event.js"
+import { maestraEmitEventTool } from "./tools/emit-event.js"
 import { createDesviosHook } from "./hooks/desvios.js"
 import { createPeerTrackerHook } from "./hooks/peer-tracker.js"
 import { createPersonaExpansionHook, resolveCatalogRoot } from "./hooks/persona-expansion.js"
 import { PLUGIN_VERSION } from "./version.js"
 
-export const fluxoFacilitador: Plugin = async (input): Promise<Hooks> => {
+export const maestra: Plugin = async (input): Promise<Hooks> => {
   setSdkClient(input.client)
 
   const personaExpansion = createPersonaExpansionHook({
@@ -19,10 +19,10 @@ export const fluxoFacilitador: Plugin = async (input): Promise<Hooks> => {
 
   return {
     tool: {
-      fluxo_status: fluxoStatusTool,
-      fluxo_issue_digest: fluxoIssueDigestTool,
+      maestra_status: maestraStatusTool,
+      maestra_issue_digest: maestraIssueDigestTool,
       ask_peer: askPeerTool,
-      fluxo_emit_event: fluxoEmitEventTool,
+      maestra_emit_event: maestraEmitEventTool,
     },
 
     "tool.execute.before": async (hookInput, output) => {
@@ -42,15 +42,15 @@ export const fluxoFacilitador: Plugin = async (input): Promise<Hooks> => {
     "experimental.chat.system.transform": async (_hookInput, output) => {
       output.system.push(
         [
-          "<fluxo-plugin>",
-          `Fluxo facilitator plugin v${PLUGIN_VERSION} is installed.`,
-          "The `fluxo` primary agent facilitates the development workflow",
-          "(triage → three etapas → reconciliation). Switch with /agent fluxo.",
-          "</fluxo-plugin>",
+          "<maestra-plugin>",
+          `Maestra plugin v${PLUGIN_VERSION} is installed.`,
+          "The `maestra` primary agent facilitates the development workflow",
+          "(triage → three etapas → reconciliation). Switch with /agent maestra.",
+          "</maestra-plugin>",
         ].join("\n"),
       )
     },
   }
 }
 
-export default fluxoFacilitador
+export default maestra

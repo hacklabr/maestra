@@ -1,4 +1,4 @@
-# Template — Mapa de equipe (`.fluxo/team.md`)
+# Template — Mapa de equipe (`.maestra/team.md`)
 
 > Source: docs/referencia/jornadas.md §5 P5 (v2.1) · Module version: 1 — 2026-07-28
 > Anti-drift: estrutura fixa para leitura por agente (roteamento e distribuição P7). Contém DADOS PESSOAIS — escrever com o horizonte de que, se o repositório se tornar público, o conteúdo se torna público.

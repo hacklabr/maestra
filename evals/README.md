@@ -12,9 +12,9 @@ Condição vinculante do projeto (spec D7): **harness ou sem-dogfood**. O plugin
 | **2 — LLM-as-judge** | rubrica versionada (`lib/rubric.md`), binário por item | nightly |
 | **3 — golden transcripts** | diff ESTRUTURAL (nunca byte) com baseline revisada por humano | sob demanda / mudança de instructions |
 
-O **provider custom** (`providers/fluxo-agent.mjs`) dirige o loop do agente com
-**tools stubadas determinísticas** (`lib/stub-tools.mjs`): `fluxo_status`,
-`fluxo_issue_digest` e `fluxo_emit_event` respondem de fixtures; `bash` roteia
+O **provider custom** (`providers/maestra-agent.mjs`) dirige o loop do agente com
+**tools stubadas determinísticas** (`lib/stub-tools.mjs`): `maestra_status`,
+`maestra_issue_digest` e `maestra_emit_event` respondem de fixtures; `bash` roteia
 por regex para saídas gravadas (mutações têm sucesso genérico gravado; leituras
 sem rota falham com 127 — fixture bug, nunca dado silencioso); `read`/`write`
 operam num fs virtual do fixture de repo. O transcript completo volta como JSON
@@ -33,9 +33,9 @@ npm test               # inclui o self-test do harness (evals/__tests__)
 Modelo vivo (qualquer endpoint OpenAI-compatível):
 
 ```bash
-export FLUXO_EVAL_MODEL=gpt-4o-mini
-export FLUXO_EVAL_BASE_URL=https://api.openai.com/v1
-export FLUXO_EVAL_API_KEY=...
+export MAESTRA_EVAL_MODEL=gpt-4o-mini
+export MAESTRA_EVAL_BASE_URL=https://api.openai.com/v1
+export MAESTRA_EVAL_API_KEY=...
 ```
 
 Temperatura fixa em 0. **Flaky eval = bug**: quarentena em 24h com issue
@@ -55,7 +55,7 @@ linkada; nunca retry para mascarar regressão de instructions.
 | 8 | Caracterização+baseline | AB-08 | forbiddenPatterns |
 | 9 | Worktree 100% | AB-09 | hard-fail `worktree` |
 | 10 | Veredito por critério | AB-10 | requiredPatterns |
-| 11 | Métricas invertidas | AB-11 (+ `fluxo-report` — fora de runtime) | requiredPatterns |
+| 11 | Métricas invertidas | AB-11 (+ `maestra-report` — fora de runtime) | requiredPatterns |
 | 12 | Disfarce refatoração↔feature | AB-12 | requiredPatterns |
 | 13 | Reconciliação = gate | AB-13 | hard-fail `close-entregue` |
 | 14 | Desvio vago rejeitado | AB-14 (+ hook desvios.md, unit) | requiredPatterns em files |
@@ -67,7 +67,7 @@ Mínima, regra de ouro do PO, dedup, **Completa Q2 + fatia do funil com onda
 P7**), `j2-retomada.yaml` (B1–B6), `j8-guarda.yaml` (recusa com 5 princípios;
 arcos Débora/Tiago/Paula), `fm-vinculantes.yaml` (**FM-04, FM-06, FM-12,
 FM-21** — escopo vinculante do dogfood #1, Guardian V-4 + lado de eval da
-V-2; FM-13 é coberto pelo fluxo-report + J2 B6), `j9-mesa-shell.yaml`
+V-2; FM-13 é coberto pelo maestra-report + J2 B6), `j9-mesa-shell.yaml`
 (**SH-01..05** — arquitetura shell-specialist: spawn sem marcador fail-closed,
 declaração de persona ausente/divergente, uma sessão = uma persona
 (adversarial), resume sem re-injeção, isolamento por mesa; o gate de

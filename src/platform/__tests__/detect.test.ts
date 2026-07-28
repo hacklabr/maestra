@@ -8,7 +8,7 @@ import { readFluxoConfig, writeFluxoConfig } from "../config.js"
 import { makeExecStub } from "./helpers.js"
 
 function tmpDir(): string {
-  return mkdtempSync(join(tmpdir(), "fluxo-detect-"))
+  return mkdtempSync(join(tmpdir(), "maestra-detect-"))
 }
 
 describe("remote parsing", () => {
@@ -46,7 +46,7 @@ describe("host probing", () => {
   })
 })
 
-describe(".fluxo/config.md", () => {
+describe(".maestra/config.md", () => {
   it("round-trips all keys", async () => {
     const dir = tmpDir()
     await writeFluxoConfig(dir, {
@@ -71,9 +71,9 @@ describe(".fluxo/config.md", () => {
 describe("detectForge hierarchy", () => {
   it("explicit config wins and never touches git/network", async () => {
     const dir = tmpDir()
-    await mkdir(join(dir, ".fluxo"), { recursive: true })
+    await mkdir(join(dir, ".maestra"), { recursive: true })
     await writeFile(
-      join(dir, ".fluxo", "config.md"),
+      join(dir, ".maestra", "config.md"),
       "# Config\n\n- plataforma: gitlab\n- host: gitlab.acme.com\n- projeto: grupo/loja\n",
     )
     const { exec, calls } = makeExecStub([])
@@ -93,7 +93,7 @@ describe("detectForge hierarchy", () => {
     const forge = await detectForge(dir, { exec })
     expect(forge).toEqual({ kind: "github", host: "github.com", project: "acme/loja" })
 
-    const persisted = readFileSync(join(dir, ".fluxo", "config.md"), "utf-8")
+    const persisted = readFileSync(join(dir, ".maestra", "config.md"), "utf-8")
     expect(persisted).toContain("- plataforma: github")
     expect(persisted).toContain("- projeto: acme/loja")
   })
@@ -121,7 +121,7 @@ describe("detectForge hierarchy", () => {
     const forge = await detectForge(dir, { exec, fetchFn })
     expect(forge).toEqual({ kind: "gitlab", host: "gitlab.acme.com", project: "grupo/loja" })
     expect(probed).toEqual(["https://gitlab.acme.com/api/v4/metadata"])
-    expect(existsSync(join(dir, ".fluxo", "config.md"))).toBe(true)
+    expect(existsSync(join(dir, ".maestra", "config.md"))).toBe(true)
   })
 
   it("returns null without a remote and writes nothing", async () => {
@@ -129,7 +129,7 @@ describe("detectForge hierarchy", () => {
     const { exec } = makeExecStub([[/remote get-url origin/, { stderr: "not a git repository", code: 128 }]])
 
     expect(await detectForge(dir, { exec })).toBeNull()
-    expect(existsSync(join(dir, ".fluxo", "config.md"))).toBe(false)
+    expect(existsSync(join(dir, ".maestra", "config.md"))).toBe(false)
   })
 
   it("returns null when the unknown host answers neither probe", async () => {
@@ -138,6 +138,6 @@ describe("detectForge hierarchy", () => {
     const fetchFn = async () => ({ status: 404 })
 
     expect(await detectForge(dir, { exec, fetchFn })).toBeNull()
-    expect(existsSync(join(dir, ".fluxo", "config.md"))).toBe(false)
+    expect(existsSync(join(dir, ".maestra", "config.md"))).toBe(false)
   })
 })

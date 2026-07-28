@@ -21,7 +21,7 @@ function makeIssue(overrides: Partial<IssueFacts> = {}): IssueFacts {
   }
 }
 
-const comment = (body: string): CommentFacts => ({ author: "fluxo[bot]", body, createdAt: "2026-07-28T10:00:00Z" })
+const comment = (body: string): CommentFacts => ({ author: "maestra[bot]", body, createdAt: "2026-07-28T10:00:00Z" })
 
 const EVENT_A_OK = "**Evento A** — triagem: 2 perguntas de elicitação; deriváveis perguntadas: 0 — facilitador"
 const EVENT_A_DERIVAVEL = "**Evento A** — triagem: 4 perguntas de elicitação; deriváveis perguntadas: 2 — facilitador"
@@ -77,7 +77,7 @@ describe("report-parse: event comment parsers (mirror of emit-event.ts)", () => 
 
 // --- Core audit ---------------------------------------------------------------
 
-describe("fluxo-report core audit (planted fixtures)", () => {
+describe("maestra-report core audit (planted fixtures)", () => {
   it("clean epic: no findings, exit 0", () => {
     const result = buildReport([auditEpic(makeSnapshot())])
     expect(result.resumo.gaps).toBe(0)
@@ -213,7 +213,7 @@ describe("fluxo-report core audit (planted fixtures)", () => {
   it("renders the PT-BR report with per-epic sections and a loud failure footer", () => {
     const result = buildReport([auditEpic(makeSnapshot({ comments: [] }))])
     const text = renderReport(result, "github · github.com · acme/loja")
-    expect(text).toContain("fluxo-report — auditoria de instrumentação A–F")
+    expect(text).toContain("maestra-report — auditoria de instrumentação A–F")
     expect(text).toContain("ÉPICO #12")
     expect(text).toContain("PRESENCA-A")
     expect(text).toContain("Resultado: FALHOU")
@@ -238,7 +238,7 @@ function fakeAdapter(overrides: Partial<ForgeAdapter>): ForgeAdapter {
 
 const FORGE = { kind: "github" as const, host: "github.com", project: "acme/loja" }
 
-describe("fluxo-report CLI (stubbed resolveForge)", () => {
+describe("maestra-report CLI (stubbed resolveForge)", () => {
   it("sweep: detects planted FM-13 and exits 1 with the PT-BR report", async () => {
     const lines: string[] = []
     const adapter = fakeAdapter({

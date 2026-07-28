@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest"
-import { buildEventBody, fluxoEmitEventTool, setForgeResolver } from "../tools/emit-event.js"
+import { buildEventBody, maestraEmitEventTool, setForgeResolver } from "../tools/emit-event.js"
 import type { ForgeAdapter, ForgeContext } from "../platform/types.js"
 import type { ToolContext } from "../host-types.js"
 
@@ -30,7 +30,7 @@ function makeForge(kind: "github" | "gitlab" = "github") {
 }
 
 function ctx(): ToolContext {
-  return { sessionID: "sess-test", directory: "/tmp/fluxo-test" }
+  return { sessionID: "sess-test", directory: "/tmp/maestra-test" }
 }
 
 beforeEach(() => {
@@ -175,7 +175,7 @@ describe("buildEventBody — required fields enforced", () => {
 describe("signature — impossible to omit or duplicate from the model side", () => {
   it("payload containing the signature marker is rejected (prevents duplication)", async () => {
     makeForge()
-    const result = await fluxoEmitEventTool.execute(
+    const result = await maestraEmitEventTool.execute(
       {
         epic: 12,
         type: "override",
@@ -222,7 +222,7 @@ describe("signature — impossible to omit or duplicate from the model side", ()
 describe("tool execution — posts via platform adapter (GitHub × GitLab)", () => {
   it("posts the built body to the epic via postComment (GitHub)", async () => {
     const posted = makeForge("github")
-    const result = await fluxoEmitEventTool.execute(
+    const result = await maestraEmitEventTool.execute(
       { epic: 12, type: "F", payload: { rodada: "R02", durante: 2, na_reconciliacao: 0 } },
       ctx(),
     )
@@ -235,7 +235,7 @@ describe("tool execution — posts via platform adapter (GitHub × GitLab)", () 
 
   it("posts via the GitLab adapter identically (note = comment)", async () => {
     const posted = makeForge("gitlab")
-    await fluxoEmitEventTool.execute(
+    await maestraEmitEventTool.execute(
       { epic: 34, type: "E", payload: { demanda_criada: 51 } },
       ctx(),
     )
@@ -245,17 +245,17 @@ describe("tool execution — posts via platform adapter (GitHub × GitLab)", () 
   })
 
   it("returns a clean error when the platform cannot be detected", async () => {
-    const result = await fluxoEmitEventTool.execute(
+    const result = await maestraEmitEventTool.execute(
       { epic: 12, type: "B", payload: { rodadas_correcao: 0 } },
       ctx(),
     )
     expect(result).toMatch(/^Error: issue platform not detected/)
-    expect(result).toContain("fluxo_status")
+    expect(result).toContain("maestra_status")
   })
 
   it("returns a clean error on invalid payload without posting", async () => {
     const posted = makeForge()
-    const result = await fluxoEmitEventTool.execute({ epic: 12, type: "C", payload: { criterio: "x" } }, ctx())
+    const result = await maestraEmitEventTool.execute({ epic: 12, type: "C", payload: { criterio: "x" } }, ctx())
     expect(result).toMatch(/^Error: Invalid payload/)
     expect(posted).toHaveLength(0)
   })

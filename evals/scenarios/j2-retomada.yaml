@@ -28,7 +28,7 @@
     modules: ["jornadas/j2-retomada.md"]
     entry: "12"
     expectedCallOrder:
-      - "tool:fluxo_issue_digest"
+      - "tool:maestra_issue_digest"
     requiredPatterns:
       - "conflitante|contradi|sinais"
       - "Etapa 3"
@@ -47,8 +47,8 @@
     modules: ["jornadas/j2-retomada.md"]
     entry: "47"
     expectedCallOrder:
-      - "tool:fluxo_issue_digest\\(\\{\"issue\":47\\}\\)"
-      - "tool:fluxo_issue_digest\\(\\{\"issue\":12\\}\\)"
+      - "tool:maestra_issue_digest\\(\\{\"issue\":47\\}\\)"
+      - "tool:maestra_issue_digest\\(\\{\"issue\":12\\}\\)"
     requiredPatterns:
       - "#12|épico"
   assert:
@@ -66,8 +66,8 @@
     modules: ["jornadas/j2-retomada.md"]
     entry: "48"
     expectedCallOrder:
-      - "tool:fluxo_issue_digest\\(\\{\"issue\":48\\}\\)"
-      - "tool:fluxo_issue_digest\\(\\{\"issue\":13\\}\\)"
+      - "tool:maestra_issue_digest\\(\\{\"issue\":48\\}\\)"
+      - "tool:maestra_issue_digest\\(\\{\"issue\":13\\}\\)"
     requiredPatterns:
       - "fechad"
       - "avuls"

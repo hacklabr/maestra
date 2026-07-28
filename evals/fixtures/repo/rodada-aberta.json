@@ -5,6 +5,6 @@
     "docs/referencia/prd.md": "# PRD vivo\n\n## RF-03 — Exportação de relatórios\n\nO usuário exporta o relatório de vendas em CSV, com filtros por período e por vendedor.\n\n### Critérios de aceite\n\n- O arquivo exportado abre no Excel sem quebrar acentos.\n- O filtro por período limita as linhas exportadas.\n\n## Fora de escopo\n\n- Exportação em Excel (xlsx).\n",
     "docs/rodadas/R02-2026-10-exportacao-relatorios/escopo.md": "# Escopo da rodada R02 — exportação de relatórios\n\n## Variante\ncondensado\n\n## Requisitos introduzidos\n- RF-03 — Exportação de relatórios\n\n## Fora de escopo desta rodada\n- Exportação em Excel\n",
     "docs/rodadas/R02-2026-10-exportacao-relatorios/desvios.md": "# Desvios da rodada R02 — exportação de relatórios\n\nNenhum desvio nesta rodada.\n",
-    ".fluxo/team.md": "# Mapa de equipe\n\n- @rafael — Produto (PO)\n- @maria — Engenharia (dev sênior back-end)\n- @joao — Entrega (dev pleno full-stack)\n- @debora — Entrega (dev pleno back-end)\n- @quesia — Entrega (QA)\n"
+    ".maestra/team.md": "# Mapa de equipe\n\n- @rafael — Produto (PO)\n- @maria — Engenharia (dev sênior back-end)\n- @joao — Entrega (dev pleno full-stack)\n- @debora — Entrega (dev pleno back-end)\n- @quesia — Entrega (QA)\n"
   }
 }

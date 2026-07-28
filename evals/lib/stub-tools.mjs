@@ -10,7 +10,7 @@ export const TOOL_SURFACE = [
   {
     type: "function",
     function: {
-      name: "fluxo_status",
+      name: "maestra_status",
       description: "Environment probe: host, issue platform, CLI auth, board access, MCP configured.",
       parameters: { type: "object", properties: {} },
     },
@@ -18,7 +18,7 @@ export const TOOL_SURFACE = [
   {
     type: "function",
     function: {
-      name: "fluxo_issue_digest",
+      name: "maestra_issue_digest",
       description: "Factual parser of Fluxo conventions for an issue (labels, children one by one, gate arithmetic, comments, board, reconciliation).",
       parameters: {
         type: "object",
@@ -30,7 +30,7 @@ export const TOOL_SURFACE = [
   {
     type: "function",
     function: {
-      name: "fluxo_emit_event",
+      name: "maestra_emit_event",
       description: "Emit an instrumentation event (A–F) or override register (type=override) as a structured comment, signed by construction.",
       parameters: {
         type: "object",
@@ -71,7 +71,7 @@ export const TOOL_SURFACE = [
     type: "function",
     function: {
       name: "task",
-      description: "Spawn a subagent (OpenCode dialect). Shell-specialist architecture: subagent_type 'fluxo/especialista' + marker persona::<id>@<mesaId> on the prompt's first line.",
+      description: "Spawn a subagent (OpenCode dialect). Shell-specialist architecture: subagent_type 'maestra/especialista' + marker persona::<id>@<mesaId> on the prompt's first line.",
       parameters: {
         type: "object",
         properties: {
@@ -100,12 +100,12 @@ export const TOOL_SURFACE = [
 
 const MUTATION = /(issue\s+(create|edit|close|comment)|issue\s+comment|label|item-edit|item-add|project\s|milestone|api\s+[^\n]*-X\s*(POST|PATCH|PUT|DELETE)|api\s+[^\n]*-f\s|git\s+(worktree\s+add|commit|checkout|switch|add))/i
 
-const SHELL_AGENT = "fluxo/especialista"
+const SHELL_AGENT = "maestra/especialista"
 const MARKER_PATTERN = /persona::([a-z0-9][a-z0-9-]*)(?:@([\w.-]+))?/
 
 const NO_MARKER_WARNING = [
   "",
-  "[fluxo] Shell spawnado SEM marker persona:: — esta sessão NÃO poderá usar ask_peer",
+  "[maestra] Shell spawnado SEM marker persona:: — esta sessão NÃO poderá usar ask_peer",
   "(caller-identity falha fechada) e não será encontrada por peers.",
   "Respawne com `persona::<id>@<mesaId>` na primeira linha do prompt.",
 ].join("\n")
@@ -154,7 +154,7 @@ export function createStubExecutor({ fixture, repoFiles = {} }) {
   }
 
   function execute(name, args = {}) {
-    if (name === "fluxo_status") {
+    if (name === "maestra_status") {
       record({ kind: "tool", name, args })
       return JSON.stringify(
         fixture.status ?? {
@@ -165,14 +165,14 @@ export function createStubExecutor({ fixture, repoFiles = {} }) {
       )
     }
 
-    if (name === "fluxo_issue_digest") {
+    if (name === "maestra_issue_digest") {
       record({ kind: "tool", name, args })
       const digest = digests[String(args.issue)] ?? digests["*"]
       if (!digest) return `Error: no digest fixture for issue #${args.issue}`
       return JSON.stringify(digest)
     }
 
-    if (name === "fluxo_emit_event") {
+    if (name === "maestra_emit_event") {
       record({ kind: "tool", name, args })
       return `Evento ${args.type} registrado em #${args.epic} (github):\n**Evento ${args.type}** — facilitador`
     }

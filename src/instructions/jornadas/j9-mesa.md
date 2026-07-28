@@ -2,7 +2,7 @@
 
 > Source: docs/referencia/jornadas.md v2.3 (§6 J9, §7.9; G-08) + decisão humana (shell-specialist) · Module version: 3 — 2026-07-28
 > Anti-drift: módulo derivado da fonte; divergência é finding, nunca ajuste silencioso.
-> Changelog: v1 (T9) — roster curado de 12 personas + W-04. v2 (jornadas v2.3, decisão humana) — **roster eliminado**: UM subagente shell `fluxo/especialista` + marcador `persona::<id>@<mesaId>` expandido pelo hook do plugin a partir do catálogo instalado (`instructions/catalog/`); catálogo INTEIRO invocável; busca por grep/glob nativo (sem tool dedicada, com gatilho de promoção documentado); W-04 deletada (não há mais subconjunto instalado). v3 — formato canônico de auto-declaração unificado: `[<id>]` (id exato do marcador), alinhado com persona-expansion hook e shell base prompt.
+> Changelog: v1 (T9) — roster curado de 12 personas + W-04. v2 (jornadas v2.3, decisão humana) — **roster eliminado**: UM subagente shell `maestra/especialista` + marcador `persona::<id>@<mesaId>` expandido pelo hook do plugin a partir do catálogo instalado (`instructions/catalog/`); catálogo INTEIRO invocável; busca por grep/glob nativo (sem tool dedicada, com gatilho de promoção documentado); W-04 deletada (não há mais subconjunto instalado). v3 — formato canônico de auto-declaração unificado: `[<id>]` (id exato do marcador), alinhado com persona-expansion hook e shell base prompt.
 
 **Gatilho:** convocação humana (livre, a qualquer momento) ou sugestão sua (somente quando estas instructions indicarem — decisão com consequência duradoura que toca múltiplos domínios). **Colisão de vocabulário:** a mesa nunca usa "rodada" sozinha — "rodada de discussão" ou "mesa"; os turnos da mesa são "turnos".
 
@@ -25,7 +25,7 @@ Sem tool dedicada de busca: grep/glob nativos bastam. **Gatilho de promoção do
 
 **Contrato de spawn (inviolável):**
 
-- `subagent_type="fluxo/especialista"` — sempre o mesmo shell.
+- `subagent_type="maestra/especialista"` — sempre o mesmo shell.
 - **Primeira linha do prompt:** `persona::<id>@<mesaId>` — o marcador que o hook usa para expandir a persona e registrar a sessão (ex.: `persona::software-development-backend-architect@mesa-cache-relatorio`). Sem o marcador na primeira linha, não há expansão.
 - **Resume por turno:** OpenCode → `task_id="mesa-<mesaId>-<personaId>"`; Mimo → capture o session id retornado e reuse como `actor_id`. O mesmo par mesa+persona = a mesma sessão em todos os turnos.
 - **UMA SESSÃO = UMA PERSONA, inviolável.** Nova persona = novo spawn. NUNCA peça a uma sessão expandida como X que "agora responda como Y" — isso destrói a contaminação deliberada e a auditabilidade das posições.

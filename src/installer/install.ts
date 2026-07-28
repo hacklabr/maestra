@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, cpSync, readFileSync, writeFileSync, rmSync } fr
 import { homedir } from "node:os"
 import { join, dirname, resolve } from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
-import { buildAgentMarkdown, type HostId } from "../agents/fluxo-agent.js"
+import { buildAgentMarkdown, type HostId } from "../agents/maestra-agent.js"
 import { buildShellAgentMarkdown, SHELL_AGENT_FILENAME } from "../agents/specialists.js"
 
 interface HostSpec {
@@ -29,8 +29,8 @@ const PKG_DIST = dirname(fileURLToPath(import.meta.url)) // <pkg>/dist/installer
 const INSTRUCTIONS_SRC = join(PKG_DIST, "..", "instructions")
 const CATALOG_SRC = join(PKG_DIST, "..", "catalog", "agency-agents")
 
-/** Subdirectory namespacing (Mesa pattern): agents/fluxo/<id>.md → spawnable as "fluxo/<id>". */
-const AGENTS_SUBDIR = "fluxo"
+/** Subdirectory namespacing (Mesa pattern): agents/maestra/<id>.md → spawnable as "maestra/<id>". */
+const AGENTS_SUBDIR = "maestra"
 
 function parseHostFlag(argv: string[]): HostId | "both" | null {
   const idx = argv.indexOf("--host")
@@ -54,7 +54,7 @@ function detectHosts(flag: HostId | "both" | null): HostSpec[] {
 }
 
 function installForHost(host: HostSpec): void {
-  const instructionsDir = join(host.configDir, "fluxo", "instructions")
+  const instructionsDir = join(host.configDir, "maestra", "instructions")
   mkdirSync(instructionsDir, { recursive: true })
   cpSync(INSTRUCTIONS_SRC, instructionsDir, { recursive: true })
 
@@ -69,11 +69,11 @@ function installForHost(host: HostSpec): void {
 
   const agentsDir = join(host.configDir, "agents")
   mkdirSync(agentsDir, { recursive: true })
-  const agentPath = join(agentsDir, "fluxo.md")
+  const agentPath = join(agentsDir, "maestra.md")
   writeFileSync(agentPath, buildAgentMarkdown(host.id, { instructionsDir }), "utf-8")
 
-  // ONE shell specialist subagent (design A): agents/fluxo/especialista.md →
-  // spawnable as "fluxo/especialista"; persona injected in the task/actor
+  // ONE shell specialist subagent (design A): agents/maestra/especialista.md →
+  // spawnable as "maestra/especialista"; persona injected in the task/actor
   // prompt from the greppable catalog. Replaces the 12 curated agents.
   const subagentsDir = join(agentsDir, AGENTS_SUBDIR)
   rmSync(subagentsDir, { recursive: true, force: true })
@@ -81,10 +81,10 @@ function installForHost(host: HostSpec): void {
   const shellPath = join(subagentsDir, SHELL_AGENT_FILENAME)
   writeFileSync(shellPath, buildShellAgentMarkdown(host.id), "utf-8")
 
-  console.log(`[fluxo] ${host.id}: instructions → ${instructionsDir}`)
-  console.log(`[fluxo] ${host.id}: catálogo    → ${catalogDir} (grepável)`)
-  console.log(`[fluxo] ${host.id}: agent        → ${agentPath}`)
-  console.log(`[fluxo] ${host.id}: shell        → ${shellPath} (persona sob demanda)`)
+  console.log(`[maestra] ${host.id}: instructions → ${instructionsDir}`)
+  console.log(`[maestra] ${host.id}: catálogo    → ${catalogDir} (grepável)`)
+  console.log(`[maestra] ${host.id}: agent        → ${agentPath}`)
+  console.log(`[maestra] ${host.id}: shell        → ${shellPath} (persona sob demanda)`)
 
   registerPlugin(host)
 }
@@ -93,7 +93,7 @@ function registerPlugin(host: HostSpec): void {
   const pkgRoot = resolve(PKG_DIST, "..")
   // npm-installed package → registry spec; local dev checkout → absolute file URL
   const pluginSpec = pkgRoot.includes("node_modules")
-    ? "fluxo-facilitador"
+    ? "maestra"
     : pathToFileURL(join(pkgRoot, "index.js")).href
 
   const configPath = join(host.configDir, host.configFile)
@@ -102,7 +102,7 @@ function registerPlugin(host: HostSpec): void {
     try {
       config = JSON.parse(readFileSync(configPath, "utf-8")) as Record<string, unknown>
     } catch {
-      console.warn(`[fluxo] ${host.id}: could not parse ${configPath} (JSONC?). Add manually:`)
+      console.warn(`[maestra] ${host.id}: could not parse ${configPath} (JSONC?). Add manually:`)
       console.warn(`  "plugin": ["${pluginSpec}"]`)
       return
     }
@@ -111,14 +111,14 @@ function registerPlugin(host: HostSpec): void {
   const plugins = Array.isArray(config.plugin) ? [...(config.plugin as unknown[])] : []
   const alreadyRegistered = plugins.some((p) => {
     const spec = Array.isArray(p) ? p[0] : p
-    return typeof spec === "string" && (spec === pluginSpec || spec.includes("fluxo-facilitador"))
+    return typeof spec === "string" && (spec === pluginSpec || spec.includes("maestra"))
   })
   if (!alreadyRegistered) plugins.push(pluginSpec)
   config.plugin = plugins
 
   mkdirSync(host.configDir, { recursive: true })
   writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n", "utf-8")
-  console.log(`[fluxo] ${host.id}: plugin       → ${configPath} (${pluginSpec})`)
+  console.log(`[maestra] ${host.id}: plugin       → ${configPath} (${pluginSpec})`)
 }
 
 function main(): void {
@@ -132,7 +132,7 @@ function main(): void {
     process.exit(1)
   }
   for (const host of hosts) installForHost(host)
-  console.log("[fluxo] Done. Restart the host to load the plugin and the fluxo agent.")
+  console.log("[maestra] Done. Restart the host to load the plugin and the maestra agent.")
 }
 
 main()

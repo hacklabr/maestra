@@ -154,7 +154,7 @@ gh project item-add <NUM_PROJETO> --owner <ORG-ou-@me> \
   --url https://github.com/<O>/<R>/issues/<N> --format json --jq .id
 ```
 
-### descobrir-ids (1× por projeto; cachear em `.fluxo/config.md` → `board:`)
+### descobrir-ids (1× por projeto; cachear em `.maestra/config.md` → `board:`)
 ```bash
 # project id (PVT_…)
 gh project view <NUM_PROJETO> --owner <ORG> --format json --jq .id
@@ -203,7 +203,7 @@ da API documentada — confirmar no primeiro uso com repo real.
 | `ler-colaboradores` | 403 | Mapa parcial de equipe (P5 mínimo para a onda); nunca bloqueia épico |
 | tudo (gh ausente/sem auth) | `gh auth status` falha | MCP GitHub (se configurado) ou comandos prontos para o humano; **nunca épico pela metade** |
 
-## 8. Paridade MCP (fallback declarativo — só se `fluxo_status` reportar MCP GitHub "configured")
+## 8. Paridade MCP (fallback declarativo — só se `maestra_status` reportar MCP GitHub "configured")
 
 | Operação | gh | MCP (nomes típicos*) |
 |---|---|---|
