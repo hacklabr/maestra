@@ -70,12 +70,29 @@ export const TOOL_SURFACE = [
   {
     type: "function",
     function: {
-      name: "write",
-      description: "Write a file in the repository.",
+      name: "task",
+      description: "Spawn a subagent (OpenCode dialect). Shell-specialist architecture: subagent_type 'fluxo/especialista' + marker persona::<id>@<mesaId> on the prompt's first line.",
       parameters: {
         type: "object",
-        properties: { filePath: { type: "string" }, content: { type: "string" } },
-        required: ["filePath", "content"],
+        properties: {
+          subagent_type: { type: "string" },
+          prompt: { type: "string" },
+          description: { type: "string" },
+          task_id: { type: "string" },
+        },
+        required: ["subagent_type", "prompt"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "read",
+      description: "Read a file from the repository.",
+      parameters: {
+        type: "object",
+        properties: { filePath: { type: "string" } },
+        required: ["filePath"],
       },
     },
   },
@@ -83,13 +100,57 @@ export const TOOL_SURFACE = [
 
 const MUTATION = /(issue\s+(create|edit|close|comment)|issue\s+comment|label|item-edit|item-add|project\s|milestone|api\s+[^\n]*-X\s*(POST|PATCH|PUT|DELETE)|api\s+[^\n]*-f\s|git\s+(worktree\s+add|commit|checkout|switch|add))/i
 
+const SHELL_AGENT = "fluxo/especialista"
+const MARKER_PATTERN = /persona::([a-z0-9][a-z0-9-]*)(?:@([\w.-]+))?/
+
+const NO_MARKER_WARNING = [
+  "",
+  "[fluxo] Shell spawnado SEM marker persona:: — esta sessão NÃO poderá usar ask_peer",
+  "(caller-identity falha fechada) e não será encontrada por peers.",
+  "Respawne com `persona::<id>@<mesaId>` na primeira linha do prompt.",
+].join("\n")
+
 export function createStubExecutor({ fixture, repoFiles = {} }) {
   const files = { ...repoFiles }
   const calls = []
   const digests = fixture.digests ?? (fixture.digest ? { "*": fixture.digest } : {})
+  /** Shell-specialist emulation: registered persona sessions (the peer-tracker's map). */
+  const mesa = { sessions: [] }
 
   function record(call) {
     calls.push({ ...call, afterTurn: record.turnCount ?? 0 })
+    return calls[calls.length - 1]
+  }
+
+  /**
+   * Emulates persona-expansion + peer-tracker around a shell spawn:
+   * marker on the first line → session registered; no marker → fail-closed
+   * warning, NOT registered. Response text is fixture-configurable per persona
+   * (persona-declaration mismatch scenarios).
+   */
+  function executeShellSpawn(args) {
+    const prompt = String(args.prompt ?? "")
+    const firstLine = prompt.split("\n")[0] ?? ""
+    const marker = MARKER_PATTERN.exec(firstLine)
+
+    if (!marker) {
+      return `Subagente finalizado.\n${NO_MARKER_WARNING}`
+    }
+
+    const personaId = marker[1]
+    const mesaId = marker[2]
+    const taskId = args.task_id ?? args.actor_id
+    const existing = taskId ? mesa.sessions.find((s) => s.taskId === taskId) : null
+    const sessionId = existing?.sessionId ?? `sess-${taskId ?? `${personaId}@${mesaId ?? "avulsa"}-${mesa.sessions.length + 1}`}`
+    if (!existing) {
+      mesa.sessions.push({ personaId, mesaId, sessionId, taskId: taskId ?? null })
+    }
+
+    const perPersona = fixture.specialists?.[personaId] ?? {}
+    if (perPersona.response) return perPersona.response
+    // Full id is always a coherent declaration (division-agnostic; the
+    // persona-declarations assert accepts id or hyphen-boundary tail).
+    return `[${personaId}] Posição simulada do especialista (turno).`
   }
 
   function execute(name, args = {}) {
@@ -114,6 +175,16 @@ export function createStubExecutor({ fixture, repoFiles = {} }) {
     if (name === "fluxo_emit_event") {
       record({ kind: "tool", name, args })
       return `Evento ${args.type} registrado em #${args.epic} (github):\n**Evento ${args.type}** — facilitador`
+    }
+
+    if (name === "task" || name === "actor") {
+      const call = record({ kind: "tool", name, args })
+      const result =
+        args.subagent_type === SHELL_AGENT
+          ? executeShellSpawn(args)
+          : `Subagente ${args.subagent_type} finalizado (stub genérico).`
+      call.result = result.slice(0, 400)
+      return result
     }
 
     if (name === "bash") {
@@ -154,6 +225,7 @@ export function createStubExecutor({ fixture, repoFiles = {} }) {
     execute,
     calls,
     files,
+    mesa,
     /** Marks the global position of a call within a turn (used by hard-fail rules). */
     markTurn(turnIdx) {
       record.turnCount = turnIdx

@@ -91,5 +91,6 @@ export async function runScenario(vars) {
   // Preserve global call order across turns: the stub records in execution order.
   transcript.calls = stub.calls
   transcript.files = stub.files
+  transcript.mesa = stub.mesa
   return transcript
 }

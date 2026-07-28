@@ -1,4 +1,4 @@
-# Eval harness — plugin fluxo-facilitador
+# Eval harness — plugin fluxo
 
 Condição vinculante do projeto (spec D7): **harness ou sem-dogfood**. O plugin
 é ~20% código determinístico e ~80% comportamento em instructions — esta é a
@@ -67,7 +67,11 @@ Mínima, regra de ouro do PO, dedup, **Completa Q2 + fatia do funil com onda
 P7**), `j2-retomada.yaml` (B1–B6), `j8-guarda.yaml` (recusa com 5 princípios;
 arcos Débora/Tiago/Paula), `fm-vinculantes.yaml` (**FM-04, FM-06, FM-12,
 FM-21** — escopo vinculante do dogfood #1, Guardian V-4 + lado de eval da
-V-2; FM-13 é coberto pelo fluxo-report + J2 B6).
+V-2; FM-13 é coberto pelo fluxo-report + J2 B6), `j9-mesa-shell.yaml`
+(**SH-01..05** — arquitetura shell-specialist: spawn sem marcador fail-closed,
+declaração de persona ausente/divergente, uma sessão = uma persona
+(adversarial), resume sem re-injeção, isolamento por mesa; o gate de
+roteamento do ask_peer em si é unit test em `src/__tests__/ask-peer.test.ts`).
 
 Asserts estruturais além da bateria: `two-layer-issues.mjs` (corpos de issue
 em duas camadas P1 — critério de aceite #8) e a regra hard-fail

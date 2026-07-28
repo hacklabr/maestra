@@ -27,7 +27,7 @@ describe("buildShellAgentMarkdown (design A: ONE shell subagent)", () => {
     const md = buildShellAgentMarkdown("opencode")
 
     expect(md).toContain("persona é definida integralmente pelo prompt de delegação")
-    expect(md).toContain("declare seu nome de persona")
+    expect(md).toContain("declare sua persona na primeira linha")
     expect(md).toContain("ask_peer")
   })
 

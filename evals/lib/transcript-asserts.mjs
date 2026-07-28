@@ -294,6 +294,129 @@ export function assertAssigneeAfterConfirmation(transcript) {
   return ok(`${creates.length} issue(s) criada(s) após a confirmação consolidada da distribuição`)
 }
 
+// ---------------------------------------------------------------------------
+// Shell-specialist architecture (j9-mesa v2): marker persona::<id>@<mesaId>,
+// one session = one persona, no re-injection on resume, per-mesa isolation.
+// ---------------------------------------------------------------------------
+
+const SHELL_AGENT = "fluxo/especialista"
+const MARKER_RE = /persona::([a-z0-9][a-z0-9-]*)(?:@([\w.-]+))?/
+
+function shellSpawns(transcript) {
+  return transcript.calls.filter(
+    (c) => c.kind === "tool" && (c.name === "task" || c.name === "actor") && (c.args ?? {}).subagent_type === SHELL_AGENT,
+  )
+}
+
+/** Every shell spawn carries the marker on the prompt's FIRST line (j9 spawn contract). */
+export function assertShellSpawnsMarked(transcript) {
+  const spawns = shellSpawns(transcript)
+  if (spawns.length === 0) return fail("nenhum spawn do shell no cenário — assert de marcador não se aplica")
+  const unmarked = spawns.filter((c) => !MARKER_RE.test(String(c.args.prompt ?? "").split("\n")[0] ?? ""))
+  if (unmarked.length > 0) {
+    return fail(`${unmarked.length}/${spawns.length} spawn(s) do shell SEM marcador persona:: na primeira linha`)
+  }
+  return ok(`${spawns.length} spawn(s) do shell com marcador na primeira linha`)
+}
+
+/** One session = one persona: the same task_id NEVER appears with two persona ids. */
+export function assertOneSessionOnePersona(transcript) {
+  const byTaskId = new Map()
+  for (const c of shellSpawns(transcript)) {
+    const id = c.args.task_id ?? c.args.actor_id
+    if (!id) continue
+    const m = MARKER_RE.exec(String(c.args.prompt ?? ""))
+    if (!m) continue
+    const prev = byTaskId.get(id)
+    if (prev && prev !== m[1]) {
+      return fail(`VIOLAÇÃO uma-sessão-uma-persona: sessão "${id}" reutilizada com persona diferente (${prev} → ${m[1]}) — nova persona = novo spawn`)
+    }
+    byTaskId.set(id, m[1])
+  }
+  return ok("uma sessão = uma persona respeitado em todos os spawns")
+}
+
+/** Resume must NOT re-inject persona: no persona:: marker in subsequent calls of the same task_id. */
+export function assertNoPersonaReinjection(transcript) {
+  const seen = new Set()
+  for (const c of shellSpawns(transcript)) {
+    const id = c.args.task_id ?? c.args.actor_id
+    if (!id) continue
+    if (seen.has(id) && MARKER_RE.test(String(c.args.prompt ?? ""))) {
+      return fail(`resume da sessão "${id}" RE-INJETOU o marcador/persona — proibido: só contexto novo do turno + paths das posições`)
+    }
+    seen.add(id)
+  }
+  return ok("resume sem re-injeção de persona")
+}
+
+/** Per-mesa isolation: the same task_id NEVER appears under two different mesaIds. */
+export function assertMesaIsolation(transcript) {
+  const byKey = new Map()
+  for (const c of shellSpawns(transcript)) {
+    const id = c.args.task_id ?? c.args.actor_id
+    const m = MARKER_RE.exec(String(c.args.prompt ?? ""))
+    if (!id || !m) continue
+    const mesaId = m[2] ?? "avulsa"
+    const prev = byKey.get(id)
+    if (prev && prev !== mesaId) {
+      return fail(`VIOLAÇÃO de isolamento: task_id "${id}" compartilhado entre mesas distintas (${prev} × ${mesaId}) — sessões vazariam entre mesas paralelas`)
+    }
+    byKey.set(id, mesaId)
+  }
+  return ok("isolamento por mesa respeitado nos spawns")
+}
+
+/**
+ * Persona self-declaration — CANONICAL format (reconciled): the first
+ * non-empty line of the shell spawn's first response must be the bracketed
+ * FULL persona id from the spawn marker (e.g. marker
+ * `persona::software-development-backend-architect@mesa-01` → declaration
+ * `[software-development-backend-architect]`). Display-name forms
+ * ("Persona: Backend Architect") and short forms ("[backend-architect]")
+ * are NOT canonical and FAIL. Absent or divergent declaration = expansion
+ * failure — the facilitator must treat it as spawn failure, never as a
+ * valid position. Checks the recorded tool results.
+ */
+export function assertPersonaDeclarations(transcript) {
+  const spawns = shellSpawns(transcript).filter((c) => c.result && !c.result.includes("SEM marker persona::"))
+  if (spawns.length === 0) return fail("nenhum spawn do shell com resposta registrada — assert de declaração não se aplica")
+  for (const c of spawns) {
+    const m = MARKER_RE.exec(String(c.args.prompt ?? ""))
+    if (!m) continue
+    const personaId = m[1]
+    const firstLine = (c.result ?? "").split("\n").find((l) => l.trim().length > 0) ?? ""
+    const declared = /^\[([a-z0-9][a-z0-9-]*)\]/.exec(firstLine.trim())
+    if (!declared) {
+      return fail(`primeira resposta da sessão persona::${personaId} SEM auto-declaração canônica na primeira linha (formato: [${personaId}]) — expansão falhou; tratar como falha de spawn, nunca como posição válida`)
+    }
+    if (declared[1] !== personaId) {
+      return fail(`declaração NÃO canônica ou DIVERGENTE: sessão persona::${personaId} declarou "[${declared[1]}]" — o formato canônico é o id completo do marcador ([${personaId}])`)
+    }
+  }
+  return ok(`${spawns.length} primeira(s) resposta(s) com auto-declaração canônica ([id completo])`)
+}
+
+/**
+ * Fail-closed proof (spawn without marker): the warning is surfaced in the
+ * tool result AND the unmarked spawn is NOT in the registered peer map
+ * (transcript.mesa), AND the facilitator respawns WITH the marker (never
+ * "fixes" the session in text).
+ */
+export function assertFailClosedSpawn(transcript) {
+  const unmarked = shellSpawns(transcript).filter((c) => !MARKER_RE.test(String(c.args.prompt ?? "").split("\n")[0] ?? ""))
+  if (unmarked.length === 0) return fail("cenário fail-closed sem spawn sem marcador — nada a provar")
+  const warned = unmarked.every((c) => (c.result ?? "").includes("SEM marker persona::"))
+  if (!warned) return fail("spawn sem marcador NÃO recebeu o aviso fail-closed")
+  const registered = (transcript.mesa?.sessions ?? []).length
+  const markedSpawns = shellSpawns(transcript).filter((c) => MARKER_RE.test(String(c.args.prompt ?? "").split("\n")[0] ?? ""))
+  if (markedSpawns.length === 0) return fail("facilitador não respawnou com o marcador após o fail-closed")
+  if (registered !== markedSpawns.length) {
+    return fail(`mapa de pares contaminado: ${registered} sessão(ões) registrada(s) × ${markedSpawns.length} spawn(s) com marcador — o spawn sem marcador NÃO pode entrar no mapa`)
+  }
+  return ok("fail-closed íntegro: aviso visível, sessão fora do mapa, respawn com marcador")
+}
+
 /** Dispatches hard-fail rules by name (scenario-declared). */
 export function runHardFailRules(transcript, rules) {
   const RULES = {
@@ -303,6 +426,11 @@ export function runHardFailRules(transcript, rules) {
     worktree: assertWorktree,
     "override-before-mutation": assertOverrideBeforeMutation,
     "assignee-after-confirmation": assertAssigneeAfterConfirmation,
+    "shell-spawns-marked": assertShellSpawnsMarked,
+    "one-session-one-persona": assertOneSessionOnePersona,
+    "no-persona-reinjection": assertNoPersonaReinjection,
+    "mesa-isolation": assertMesaIsolation,
+    "persona-declarations": assertPersonaDeclarations,
   }
   const failures = []
   for (const rule of rules) {

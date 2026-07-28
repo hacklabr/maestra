@@ -1,0 +1,32 @@
+{
+  "id": "mesa-cache",
+  "descricao": "Palco da J9 shell-specialist: épico em etapa-2 com decisão de cache na mesa. 'specialists' configura as respostas do shell por persona — o security-engineer responde SEM auto-declaração (palco do cenário de mismatch, SH-02).",
+  "digests": {
+    "12": {
+      "plataforma": { "kind": "github", "host": "github.com", "projeto": "acme/loja" },
+      "issue": { "numero": 12, "id": 9002, "titulo": "Implementar exportação de relatórios", "estado": "open", "url": "https://github.com/acme/loja/issues/12" },
+      "labels": { "variante": "variante-condensado", "etapas": [], "marcadores": [] },
+      "metadados": { "variante": "condensado", "etapaAtual": "etapa-2", "epico": null, "rodada": "R02", "subestado": "em-artefatos" },
+      "pai": null,
+      "filhos": [
+        { "numero": 16, "titulo": "Registro da decisão de cache", "estado": "open", "variante": null, "etapas": ["etapa-2"], "assignees": ["maria"] }
+      ],
+      "comentarios": [],
+      "board": { "coluna": "Em andamento" },
+      "gate": { "porEtapa": { "etapa-2": { "fechadas": 0, "total": 1 } }, "semEtapa": 0, "reconciliacao": { "existe": false, "estado": null, "numero": null } },
+      "artefatos": [],
+      "hierarquia": { "tipo": "sub-issues", "taskCompletion": null, "dessincronia": [] },
+      "paginacao": { "filhosTruncados": false, "comentariosTruncados": false },
+      "erros": []
+    }
+  },
+  "specialists": {
+    "software-development-security-engineer": {
+      "response": "Cache com invalidação por evento, TTL máximo de 15 minutos por causa das permissões. Diverjo do TTL infinito."
+    }
+  },
+  "execRoutes": [
+    { "match": "glob|ls instructions/catalog", "stdout": "instructions/catalog/software-development-backend-architect.md\ninstructions/catalog/software-development-security-engineer.md" },
+    { "match": "grep -ril", "stdout": "instructions/catalog/software-development-backend-architect.md\ninstructions/catalog/software-development-security-engineer.md" }
+  ]
+}

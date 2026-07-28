@@ -11,3 +11,4 @@ tests:
   - file://scenarios/j1-triagem.yaml
   - file://scenarios/j2-retomada.yaml
   - file://scenarios/fm-vinculantes.yaml
+  - file://scenarios/j9-mesa-shell.yaml

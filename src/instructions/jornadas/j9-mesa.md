@@ -1,8 +1,8 @@
 # J9 — Mesa de Discussão Ad-hoc (arquitetura shell-specialist)
 
-> Source: docs/referencia/jornadas.md v2.3 (§6 J9, §7.9; G-08) + decisão humana (shell-specialist) · Module version: 2 — 2026-07-28
+> Source: docs/referencia/jornadas.md v2.3 (§6 J9, §7.9; G-08) + decisão humana (shell-specialist) · Module version: 3 — 2026-07-28
 > Anti-drift: módulo derivado da fonte; divergência é finding, nunca ajuste silencioso.
-> Changelog: v1 (T9) — roster curado de 12 personas + W-04. v2 (jornadas v2.3, decisão humana) — **roster eliminado**: UM subagente shell `fluxo/especialista` + marcador `persona::<id>@<mesaId>` expandido pelo hook do plugin a partir do catálogo instalado (`instructions/catalog/`); catálogo INTEIRO invocável; busca por grep/glob nativo (sem tool dedicada, com gatilho de promoção documentado); W-04 deletada (não há mais subconjunto instalado).
+> Changelog: v1 (T9) — roster curado de 12 personas + W-04. v2 (jornadas v2.3, decisão humana) — **roster eliminado**: UM subagente shell `fluxo/especialista` + marcador `persona::<id>@<mesaId>` expandido pelo hook do plugin a partir do catálogo instalado (`instructions/catalog/`); catálogo INTEIRO invocável; busca por grep/glob nativo (sem tool dedicada, com gatilho de promoção documentado); W-04 deletada (não há mais subconjunto instalado). v3 — formato canônico de auto-declaração unificado: `[<id>]` (id exato do marcador), alinhado com persona-expansion hook e shell base prompt.
 
 **Gatilho:** convocação humana (livre, a qualquer momento) ou sugestão sua (somente quando estas instructions indicarem — decisão com consequência duradoura que toca múltiplos domínios). **Colisão de vocabulário:** a mesa nunca usa "rodada" sozinha — "rodada de discussão" ou "mesa"; os turnos da mesa são "turnos".
 
@@ -33,7 +33,7 @@ Sem tool dedicada de busca: grep/glob nativos bastam. **Gatilho de promoção do
 
 **Conteúdo do primeiro turno de cada especialista:** marcador (linha 1) + pauta + contexto da decisão + paths das posições já registradas nesta mesa (se houver).
 
-**Auto-checagem barata:** a primeira resposta de cada especialista começa com a auto-declaração da persona expandida (ex.: "[backend-architect]"). Declaração ausente ou divergente do marcador = expansão falhou — trate como falha de spawn (abaixo).
+**Auto-checagem barata:** a primeira resposta de cada especialista começa com a auto-declaração no formato canônico **`[<id>]` — exatamente o id do marcador** (marcador `persona::software-development-backend-architect@mesa-01` → primeira linha `[software-development-backend-architect]`). Declaração ausente ou divergente do id do marcador = expansão falhou — trate como falha de spawn (abaixo). O formato é checável mecanicamente: compare a primeira linha com o id, não interprete.
 
 **Falhas de spawn:**
 - **Spawn sem marcador** (ou marcador malformado) → o hook não expande, a sessão NÃO entra no mapa de pares e o `ask_peer` **nega consultas** com aviso (fail-closed: mesa sem expansão registrada não delibera). Respawn corrigindo o marcador — nunca tente "consertar" a sessão em texto.

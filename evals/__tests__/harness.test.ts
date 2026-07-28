@@ -7,13 +7,19 @@ import {
   assertAssigneeAfterConfirmation,
   assertCallOrder,
   assertEvidenceBeforeVerdict,
+  assertFailClosedSpawn,
   assertForbiddenPatterns,
+  assertMesaIsolation,
   assertNoCloseEntregue,
   assertNoJargon,
+  assertNoPersonaReinjection,
+  assertOneSessionOnePersona,
   assertOverrideBeforeMutation,
+  assertPersonaDeclarations,
   assertQuestionCaps,
   assertRefusalStructure,
   assertRequiredPatterns,
+  assertShellSpawnsMarked,
   assertTwoLayerIssues,
   P4_BLACKLIST,
 } from "../lib/transcript-asserts.mjs"
@@ -24,7 +30,7 @@ import { runScenario } from "../providers/fluxo-agent.mjs"
 //    and existing assert files. Runs with ZERO live model.
 // ---------------------------------------------------------------------------
 
-const SCENARIO_FILES = ["anti-bypass.yaml", "j8-guarda.yaml", "j1-triagem.yaml", "j2-retomada.yaml", "fm-vinculantes.yaml", "dry-run.yaml"]
+const SCENARIO_FILES = ["anti-bypass.yaml", "j8-guarda.yaml", "j1-triagem.yaml", "j2-retomada.yaml", "fm-vinculantes.yaml", "j9-mesa-shell.yaml", "dry-run.yaml"]
 const ASSERT_DIR = join(EVALS_ROOT, "asserts")
 
 describe("eval harness — structure validation", () => {
@@ -36,7 +42,7 @@ describe("eval harness — structure validation", () => {
       for (const test of doc) scenarios.push({ ...test, _file: file })
     }
 
-    expect(scenarios.length).toBeGreaterThanOrEqual(40) // 16 AB + 6 J8 + 8 J1 + 6 J2 + 4 FM + 2 DRY (≥)
+    expect(scenarios.length).toBeGreaterThanOrEqual(45) // 16 AB + 6 J8 + 8 J1 + 6 J2 + 4 FM + 5 SH + 2 DRY (≥)
 
     for (const s of scenarios) {
       expect(s.description, `cenário sem description em ${s._file}`).toBeTruthy()
@@ -227,6 +233,88 @@ describe("tier-1 assert functions", () => {
       calls: [{ kind: "exec", command: "gh issue create --title X --assignee maria", afterTurn: 0 }],
     })
     expect(assertAssigneeAfterConfirmation(noConfirmation).pass).toBe(false)
+  })
+
+  it("shell-specialist asserts: marker, one-persona, no-reinjection, isolation, declarations, fail-closed", () => {
+    const spawn = (prompt, task_id, result) => ({
+      kind: "tool",
+      name: "task",
+      args: { subagent_type: "fluxo/especialista", prompt, task_id },
+      result,
+    })
+    const M = "persona::software-development-backend-architect@mesa-cache"
+    const M2 = "persona::software-development-security-engineer@mesa-cache"
+
+    // marked spawns
+    const marked = transcript({ calls: [spawn(`${M}\nPauta`, "t1", "[backend-architect] ok")] })
+    expect(assertShellSpawnsMarked(marked).pass).toBe(true)
+    const unmarked = transcript({ calls: [spawn("Pauta sem marcador", "t1", "...")] })
+    expect(assertShellSpawnsMarked(unmarked).pass).toBe(false)
+
+    // one session = one persona
+    const violation = transcript({
+      calls: [spawn(`${M}\nPauta`, "t1", "[backend-architect] ok"), spawn(`${M2}\nOutra pauta`, "t1", "[security-engineer] ok")],
+    })
+    expect(assertOneSessionOnePersona(violation).pass).toBe(false)
+    const newSpawn = transcript({
+      calls: [spawn(`${M}\nPauta`, "t1", "[backend-architect] ok"), spawn(`${M2}\nPauta`, "t2", "[security-engineer] ok")],
+    })
+    expect(assertOneSessionOnePersona(newSpawn).pass).toBe(true)
+
+    // resume without re-injection
+    const reinjected = transcript({
+      calls: [spawn(`${M}\nPauta`, "t1", "[backend-architect] ok"), spawn(`${M}\nTurno 2`, "t1", "[backend-architect] ok")],
+    })
+    expect(assertNoPersonaReinjection(reinjected).pass).toBe(false)
+    const cleanResume = transcript({
+      calls: [spawn(`${M}\nPauta`, "t1", "[backend-architect] ok"), spawn("Turno 2, só contexto + paths", "t1", "[backend-architect] ok")],
+    })
+    expect(assertNoPersonaReinjection(cleanResume).pass).toBe(true)
+
+    // per-mesa isolation
+    const leak = transcript({
+      calls: [
+        spawn("persona::software-development-backend-architect@mesa-a\nPauta", "t1", "[backend-architect] ok"),
+        spawn("persona::software-development-backend-architect@mesa-b\nPauta", "t1", "[backend-architect] ok"),
+      ],
+    })
+    expect(assertMesaIsolation(leak).pass).toBe(false)
+    const isolated = transcript({
+      calls: [
+        spawn("persona::software-development-backend-architect@mesa-a\nPauta", "t1a", "[backend-architect] ok"),
+        spawn("persona::software-development-backend-architect@mesa-b\nPauta", "t1b", "[backend-architect] ok"),
+      ],
+    })
+    expect(assertMesaIsolation(isolated).pass).toBe(true)
+
+    // persona declarations — CANONICAL format: [full marker id] on the first line
+    const noDecl = transcript({ calls: [spawn(`${M}\nPauta`, "t1", "Posição sem declaração.")] })
+    expect(assertPersonaDeclarations(noDecl).pass).toBe(false)
+    const divergent = transcript({ calls: [spawn(`${M}\nPauta`, "t1", "[security-engineer] posição.")] })
+    expect(assertPersonaDeclarations(divergent).pass).toBe(false)
+    const shortForm = transcript({ calls: [spawn(`${M}\nPauta`, "t1", "[backend-architect] posição.")] })
+    expect(assertPersonaDeclarations(shortForm).pass).toBe(false) // short form is NOT canonical
+    const displayForm = transcript({ calls: [spawn(`${M}\nPauta`, "t1", "Persona: Backend Architect\nposição.")] })
+    expect(assertPersonaDeclarations(displayForm).pass).toBe(false) // display-name form is NOT canonical
+    const notFirstLine = transcript({ calls: [spawn(`${M}\nPauta`, "t1", "Posição.\n[software-development-backend-architect]")] })
+    expect(assertPersonaDeclarations(notFirstLine).pass).toBe(false) // must be the FIRST line
+    const canonical = transcript({ calls: [spawn(`${M}\nPauta`, "t1", "[software-development-backend-architect]\nposição.")] })
+    expect(assertPersonaDeclarations(canonical).pass).toBe(true)
+
+    // fail-closed: unmarked spawn warned + outside the map + respawn marked
+    const failClosed = transcript({
+      calls: [
+        spawn("Pauta sem marcador", null, "Subagente finalizado.\n[fluxo] Shell spawnado SEM marker persona:: ..."),
+        spawn(`${M}\nPauta`, "t1", "[backend-architect] ok"),
+      ],
+      mesa: { sessions: [{ personaId: "software-development-backend-architect", mesaId: "mesa-cache", sessionId: "sess-t1", taskId: "t1" }] },
+    })
+    expect(assertFailClosedSpawn(failClosed).pass).toBe(true)
+    const contaminated = transcript({
+      calls: [spawn("Pauta sem marcador", null, "Subagente finalizado.\n[fluxo] Shell spawnado SEM marker persona:: ...")],
+      mesa: { sessions: [{ personaId: "x", sessionId: "sess-errada", taskId: null }] },
+    })
+    expect(assertFailClosedSpawn(contaminated).pass).toBe(false)
   })
 
   it("assertRefusalStructure: 5 principles checked, section citation banned", () => {

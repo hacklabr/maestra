@@ -5,11 +5,15 @@ import { askPeerTool, setSdkClient } from "./tools/ask-peer.js"
 import { fluxoEmitEventTool } from "./tools/emit-event.js"
 import { createDesviosHook } from "./hooks/desvios.js"
 import { createPeerTrackerHook } from "./hooks/peer-tracker.js"
+import { createPersonaExpansionHook, resolveCatalogRoot } from "./hooks/persona-expansion.js"
 import { PLUGIN_VERSION } from "./version.js"
 
 export const fluxoFacilitador: Plugin = async (input): Promise<Hooks> => {
   setSdkClient(input.client)
 
+  const personaExpansion = createPersonaExpansionHook({
+    catalogRoot: resolveCatalogRoot(input.directory),
+  })
   const peerTracker = createPeerTrackerHook()
   const desviosHook = createDesviosHook()
 
@@ -19,6 +23,12 @@ export const fluxoFacilitador: Plugin = async (input): Promise<Hooks> => {
       fluxo_issue_digest: fluxoIssueDigestTool,
       ask_peer: askPeerTool,
       fluxo_emit_event: fluxoEmitEventTool,
+    },
+
+    "tool.execute.before": async (hookInput, output) => {
+      // Persona expansion FIRST: rewrites shell-spawn prompts before execution
+      // (any future before-hook sees the expanded args).
+      await personaExpansion(hookInput, output)
     },
 
     "tool.execute.after": async (hookInput, output) => {
