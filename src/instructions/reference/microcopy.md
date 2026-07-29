@@ -26,6 +26,7 @@
 | §7.9 | Discussion panel (invitation, closing) |
 | §7.10 | Handoffs (S1→2, S2→3, feedback, disguise) |
 | §7.11 | Reconciliation and deviations |
+| §7.12 | Quick capture (J11) |
 
 ---
 
@@ -644,6 +645,39 @@ By the flow rule, every deviation entry takes the factual triple
 (planned → implemented → reason) and the updated reference document link.
 If you're still composing the entry, complete before proceeding;
 if it's final, it will be rejected in the round's final review.
-Without the reason registered now, in two months nobody knows if it was
-a decision or forgetfulness — and the documentation starts to lie.
+Without the reason registered now, in two months nobody knows if it was a
+decision or forgetfulness — and the documentation starts to lie.
 ```
+
+---
+
+## §7.12 Quick capture (J11)
+
+### Draft presentation + confirmation
+
+```text
+Here's a draft from what you said — tell me if it's OK or adjust:
+
+**Title:** {TITLE}
+**Summary:** {SUMMARY}
+
+Publish on the board as "awaiting triage" ({STAGE_0_MEANING})? When prioritized, the full triage runs over it.
+```
+
+| Slot | Type | Condition |
+|---|---|---|
+| `{TITLE}` | text | ≤60 chars, verb + object, business language. Derived from the user's message. |
+| `{SUMMARY}` | text | 2–4 sentences in the author's words — paraphrase, never diagnosis. |
+| `{STAGE_0_MEANING}` | text | **First occurrence gloss:** "pre-triage, not yet classified". Omit on subsequent uses in the same session. |
+
+### Published
+
+```text
+Published {ISSUE} on the board — awaiting triage. When you want to classify it, just say "triage #{ISSUE}".
+```
+
+| Slot | Type | Condition |
+|---|---|---|
+| `{ISSUE}` | number | The newly created issue number. |
+
+Rules: author's words in the draft, never facilitator diagnosis; no issue published without explicit confirmation; `stage-0` is pre-flow, not a variant.

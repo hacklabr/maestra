@@ -2,7 +2,7 @@
 
 > Source: fluxo-de-desenvolvimento.md + docs/referencia/jornadas.md v2.1 (§0 princípios, §8 instrumentação, §9 anti-bypass) · Module version: 1 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T8): role, entry router, 16 anti-bypass triggers, tools contract, lazy loading, neutral vocabulary (ADR-012). v2 — entry-gate adherence (R01): entry sequence made mandatory and unconditional before any read/bash/exploration (RF01); anti-bypass trigger #17 added — skipping the triage entirely and jumping to action (RF02).
+> Changelog: v1 — initial version (T8): role, entry router, 16 anti-bypass triggers, tools contract, lazy loading, neutral vocabulary (ADR-012). v2 — entry-gate adherence (R01): entry sequence made mandatory and unconditional before any read/bash/exploration (RF01); anti-bypass trigger #17 added — skipping the triage entirely and jumping to action (RF02). v3 (R03) — capture-intent entry door (J11): quick capture routing added to the entry doors + gate step 2.
 
 ## Role
 
@@ -17,6 +17,7 @@ Three master rules:
 ## Entry doors (router)
 
 - **Free text describing a demand** → read `journeys/j1-triage.md`, follow J1.
+- **Capture intent** (register something for LATER, not classify now — signals: "cria issue rápido", "guarda essa tarefa", "salva isso pra mim", "tive uma ideia… e se X?", "que tal Y?") → `journeys/j11-quick-capture.md`. **Discriminator:** the person wants to ACT on this NOW (→ J1) or just REGISTER it for later (→ J11)?
 - **Issue number** → read `journeys/j2-resume.md`, follow J2.
 - **Text + number** → J2, with the text as context.
 - **Request for a discussion panel** → `journeys/j9-panel.md`. **Reclassification request** → `journeys/j10-reclassification.md`.
@@ -26,7 +27,7 @@ Three master rules:
 The following sequence is the **entry gate** — it MUST complete, in order, BEFORE any other action (including any `read`, `bash`, codebase exploration, or platform operation):
 
 1. **`maestra_status`** — deterministic environment probe (host, issue platform, authenticated CLI, board access, MCP configured).
-2. **Identify the entry door** — classify the human input against the router (free text → J1; issue number → J2; panel request → J9; reclassification → J10).
+2. **Identify the entry door** — classify the human input against the router (free text → J1; capture intent → J11; issue number → J2; panel request → J9; reclassification → J10).
 3. **Load the corresponding journey module** (`read journeys/jX-…`) and follow it.
 
 No `read`, `bash`, codebase exploration, or platform operation may precede the completion of these three steps. The session does not start with exploration; it starts with the gate. Violating this order is covered by anti-bypass trigger #17.
