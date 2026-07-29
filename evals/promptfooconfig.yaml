@@ -12,3 +12,4 @@ tests:
   - file://scenarios/j2-resume.yaml
   - file://scenarios/fm-vinculantes.yaml
   - file://scenarios/j9-panel-shell.yaml
+  - file://scenarios/r02-welcoming-language.yaml

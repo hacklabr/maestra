@@ -1,0 +1,81 @@
+{
+  "id": "r02-paused",
+  "description": "Epic #12 — Condensed, R03 (report export): Stage 1 paused, decision on feedback to #15 pending (cut/pay/defer). Substate paused, PO persona. Stage for R02 T2 (unblock condition spoken).",
+  "digests": {
+    "12": {
+      "platform": {
+        "kind": "github",
+        "host": "github.com",
+        "project": "acme/loja"
+      },
+      "issue": {
+        "number": 12,
+        "id": 9102,
+        "title": "Implement report export",
+        "state": "open",
+        "url": "https://github.com/acme/loja/issues/12"
+      },
+      "labels": {
+        "variant": "variant-condensed",
+        "stages": [],
+        "markers": []
+      },
+      "metadata": {
+        "variant": "condensed",
+        "currentStage": "stage-1",
+        "epic": null,
+        "round": "R03",
+        "substate": "paused"
+      },
+      "parent": null,
+      "children": [
+        {
+          "number": 14,
+          "title": "Discovery and scope",
+          "state": "closed",
+          "variant": null,
+          "stages": ["stage-1"],
+          "assignees": ["rafael"]
+        },
+        {
+          "number": 15,
+          "title": "Feedback formalization",
+          "state": "open",
+          "variant": null,
+          "stages": ["stage-1"],
+          "assignees": ["rafael"]
+        }
+      ],
+      "comments": [
+        {
+          "type": "facilitator",
+          "author": "rafael",
+          "date": "2026-07-25T10:00:00Z",
+          "body": "Objection raised on #15: the cost estimate doubled. Awaiting Stage 1's decision: cut, pay, or defer. — facilitator"
+        }
+      ],
+      "board": {
+        "column": "In progress"
+      },
+      "gate": {
+        "perStage": {
+          "stage-1": { "closed_": 1, "total": 2 }
+        },
+        "noStage": 0,
+        "reconciliation": { "exists": false, "state": null, "number": null }
+      },
+      "artifacts": [],
+      "hierarchy": {
+        "type": "sub-issues",
+        "taskCompletion": null,
+        "desync": []
+      },
+      "pagination": {
+        "childrenTruncated": false,
+        "commentsTruncated": false
+      },
+      "errors": []
+    }
+  },
+  "execRoutes": []
+}

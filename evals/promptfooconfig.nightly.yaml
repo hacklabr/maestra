@@ -13,6 +13,7 @@ tests:
   - file://scenarios/j2-resume.yaml
   - file://scenarios/fm-vinculantes.yaml
   - file://scenarios/j9-panel-shell.yaml
+  - file://scenarios/r02-welcoming-language.yaml
 
 # Tier-2: versioned rubric applied to ALL scenarios (binary per item).
 # The judge is promptfoo's default provider — configure via env

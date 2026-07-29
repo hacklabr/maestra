@@ -4,23 +4,28 @@ import { join } from "node:path"
 import { parse as parseYaml } from "yaml"
 import { EVALS_ROOT, loadGitHubFixture, loadRepoFixture } from "../lib/load-fixtures.mjs"
 import {
+  assertApprovalLockJ3,
   assertAssigneeAfterConfirmation,
   assertCallOrder,
   assertEvidenceBeforeVerdict,
   assertFailClosedSpawn,
+  assertFalseableSummary,
   assertForbiddenPatterns,
-  assertPanelIsolation,
   assertNoCloseDelivered,
+  assertNoFieldEnumeration,
   assertNoJargon,
   assertNoPersonaReinjection,
   assertOneSessionOnePersona,
   assertOverrideBeforeMutation,
+  assertPanelIsolation,
   assertPersonaDeclarations,
   assertQuestionCaps,
   assertRefusalStructure,
   assertRequiredPatterns,
+  assertRoundAnchorSpoken,
   assertShellSpawnsMarked,
   assertTwoLayerIssues,
+  assertUnblockWhenPaused,
   P4_BLACKLIST,
 } from "../lib/transcript-asserts.mjs"
 import { runScenario } from "../providers/maestra-agent.mjs"
@@ -30,7 +35,7 @@ import { runScenario } from "../providers/maestra-agent.mjs"
 //    and existing assert files. Runs with ZERO live model.
 // ---------------------------------------------------------------------------
 
-const SCENARIO_FILES = ["anti-bypass.yaml", "j8-guard.yaml", "j1-triage.yaml", "j2-resume.yaml", "fm-vinculantes.yaml", "j9-panel-shell.yaml", "dry-run.yaml"]
+const SCENARIO_FILES = ["anti-bypass.yaml", "j8-guard.yaml", "j1-triage.yaml", "j2-resume.yaml", "fm-vinculantes.yaml", "j9-panel-shell.yaml", "r02-welcoming-language.yaml", "dry-run.yaml"]
 const ASSERT_DIR = join(EVALS_ROOT, "asserts")
 
 describe("eval harness — structure validation", () => {
@@ -42,7 +47,7 @@ describe("eval harness — structure validation", () => {
       for (const test of doc) scenarios.push({ ...test, _file: file })
     }
 
-    expect(scenarios.length).toBeGreaterThanOrEqual(45) // 16 AB + 6 J8 + 8 J1 + 6 J2 + 4 FM + 5 SH + 2 DRY (≥)
+    expect(scenarios.length).toBeGreaterThanOrEqual(50) // 16 AB + 6 J8 + 8 J1 + 6 J2 + 4 FM + 5 SH + 5 R02 + 2 DRY (≥)
 
     for (const s of scenarios) {
       expect(s.description, `scenario without description in ${s._file}`).toBeTruthy()
@@ -345,6 +350,86 @@ describe("tier-1 assert functions", () => {
 
     const noContinuity = transcript({ turns: [{ role: "agent", content: "Good idea, but can't enter through here. Takes 2 minutes." }] })
     expect(assertRefusalStructure(noContinuity).pass).toBe(false)
+  })
+
+  // ---- R02 — welcoming-language non-regression asserts (ADR-001 MUDANÇA 5) ----
+
+  it("assertNoFieldEnumeration: catches prose enumeration and label:value form; passes natural speech", () => {
+    // prose enumeration — the bug R02 fixes
+    const enumerated = transcript({
+      turns: [{ role: "agent", content: "I read the state: variant Condensed, round R02, Stage 1 in progress, substate awaiting-assessment." }],
+    })
+    expect(assertNoFieldEnumeration(enumerated).pass).toBe(false)
+
+    // label:value metadata format
+    const labeled = transcript({
+      turns: [{ role: "agent", content: "substate: paused, so we wait." }],
+    })
+    expect(assertNoFieldEnumeration(labeled).pass).toBe(false)
+
+    // natural speech — single term, no enumeration
+    const natural = transcript({
+      turns: [{ role: "agent", content: "We're in the export round (R02): discovery is done, Engineering is now looking at whether it's viable." }],
+    })
+    expect(assertNoFieldEnumeration(natural).pass).toBe(true)
+  })
+
+  it("assertFalseableSummary: now requires issue reference (#NN) — R02 extension", () => {
+    const withIssue = transcript({ turns: [{ role: "agent", content: "Next is the feasibility assessment (#16). Correct?" }] })
+    expect(assertFalseableSummary(withIssue).pass).toBe(true)
+
+    const withoutIssue = transcript({ turns: [{ role: "agent", content: "Next is the feasibility assessment. Correct?" }] })
+    const result = assertFalseableSummary(withoutIssue)
+    expect(result.pass).toBe(false)
+    expect(result.reason).toContain("issue reference")
+  })
+
+  it("assertRoundAnchorSpoken: round anchor must open the first turn", () => {
+    const anchored = transcript({ turns: [{ role: "agent", content: "Report-export round (R02), implementation underway. Next is #24. Correct?" }] })
+    expect(assertRoundAnchorSpoken(anchored).pass).toBe(true)
+
+    const unanchored = transcript({ turns: [{ role: "agent", content: "Implementation underway. Next is #24. Correct?" }] })
+    expect(assertRoundAnchorSpoken(unanchored).pass).toBe(false)
+  })
+
+  it("assertUnblockWhenPaused: unblock condition mandatory when paused; N/A otherwise", () => {
+    // not paused → N/A, always passes
+    const notPaused = transcript({ turns: [{ role: "agent", content: "Anything." }] })
+    expect(assertUnblockWhenPaused(notPaused, "in-execution").pass).toBe(true)
+
+    // paused WITH unblock
+    const pausedOk = transcript({ turns: [{ role: "agent", content: "Paused until Stage 1's decision on #15. Correct?" }] })
+    expect(assertUnblockWhenPaused(pausedOk, "paused").pass).toBe(true)
+
+    // paused WITHOUT unblock
+    const pausedBad = transcript({ turns: [{ role: "agent", content: "We're stopped. Next is #15. Correct?" }] })
+    const result = assertUnblockWhenPaused(pausedBad, "paused")
+    expect(result.pass).toBe(false)
+    expect(result.reason).toContain("unblock")
+  })
+
+  it("assertApprovalLockJ3: no file write before approval; collapse detected", () => {
+    // approval request present, no premature write
+    const clean = transcript({
+      turns: [{ role: "agent", content: "Posso registrar esse rascunho como o briefing do round?" }],
+    })
+    expect(assertApprovalLockJ3(clean).pass).toBe(true)
+
+    // approval never presented
+    const noGate = transcript({ turns: [{ role: "agent", content: "I created the briefing." }] })
+    expect(assertApprovalLockJ3(noGate).pass).toBe(false)
+
+    // file written AFTER the approval request, before a human turn
+    const premature = transcript({
+      turns: [
+        { role: "human", content: "draft the briefing" },
+        { role: "agent", content: "Posso registrar esse rascunho como o briefing do round?" },
+      ],
+      calls: [{ kind: "write", path: "docs/rounds/R04-x/mini-briefing.md", afterTurn: 1 }],
+    })
+    const result = assertApprovalLockJ3(premature)
+    expect(result.pass).toBe(false)
+    expect(result.reason).toContain("VIOLATION C10/F009")
   })
 })
 

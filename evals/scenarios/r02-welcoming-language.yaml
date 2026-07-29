@@ -1,0 +1,138 @@
+# R02 — welcoming-language non-regression (ADR-001 MUDANÇA 5).
+# Golden inputs T1–T5 pin the post-refactor behaviour: natural speech that
+# preserves the load-bearing contract (next-action+issue, unblock, round anchor,
+# approval gate) WITHOUT enumerating the flow's internal field names.
+#
+# These are mock-driven (vars.mock) so the PR gate stays GREEN regardless of
+# whether task #7 (the instruction refactor) has landed — the golden speech is
+# what the model must produce AFTER the refactor. Live-model verification of
+# #7 is a separate concern (npm run eval, once #7 merges).
+
+# T1 — J2 resume, awaiting-assessment, PO persona.
+- description: "R02 T1: J2 awaiting-assessment — natural speech, round anchor, next action with issue, no field enumeration"
+  vars:
+    fixture: fixtures/github/r02-awaiting-assessment.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j2-resume.md"]
+    entry: "12"
+    mock: true
+    substate: "awaiting-assessment"
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "maestra_issue_digest", args: { issue: 12 } }
+      - text: "We're in the report-export round (R02): discovery and scope are done — two of two closed — and Engineering is now looking at whether it's viable. Next is the feasibility assessment (#16). Correct?"
+    forbiddenPatterns:
+      - "variant.*stage.*substate"
+      - "substate\\s*[:=]"
+  assert:
+    - type: javascript
+      value: file://asserts/no-field-enumeration.mjs
+    - type: javascript
+      value: file://asserts/falseable-summary.mjs
+    - type: javascript
+      value: file://asserts/round-anchor-spoken.mjs
+    - type: javascript
+      value: file://asserts/unblock-when-paused.mjs
+
+# T2 — J2 resume, paused, PO persona (unblock condition mandatory).
+- description: "R02 T2: J2 paused — unblock condition spoken, round anchor, no field enumeration"
+  vars:
+    fixture: fixtures/github/r02-paused.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j2-resume.md"]
+    entry: "12"
+    mock: true
+    substate: "paused"
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "maestra_issue_digest", args: { issue: 12 } }
+      - text: "We're in the report-export round (R03), paused until Stage 1's decision on the feedback to #15 — when you decide cut, pay, or defer, we unblock. Next is that decision (#15). Correct?"
+    forbiddenPatterns:
+      - "variant.*stage.*substate"
+      - "substate\\s*[:=]"
+  assert:
+    - type: javascript
+      value: file://asserts/no-field-enumeration.mjs
+    - type: javascript
+      value: file://asserts/falseable-summary.mjs
+    - type: javascript
+      value: file://asserts/round-anchor-spoken.mjs
+    - type: javascript
+      value: file://asserts/unblock-when-paused.mjs
+
+# T3 — J2 resume, in-execution Stage 3, Tech Lead persona.
+- description: "R02 T3: J2 in-execution Stage 3 (Tech Lead) — progress spoken naturally, next action with issue"
+  vars:
+    fixture: fixtures/github/epic-etapa3-execucao.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j2-resume.md"]
+    entry: "12"
+    mock: true
+    substate: "in-execution"
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "maestra_issue_digest", args: { issue: 12 } }
+      - text: "Report-export round (R02), implementation underway — one of three done. Next is the CSV export (#24). Correct?"
+    forbiddenPatterns:
+      - "variant.*stage.*substate"
+      - "substate\\s*[:=]"
+  assert:
+    - type: javascript
+      value: file://asserts/no-field-enumeration.mjs
+    - type: javascript
+      value: file://asserts/falseable-summary.mjs
+    - type: javascript
+      value: file://asserts/round-anchor-spoken.mjs
+    - type: javascript
+      value: file://asserts/unblock-when-paused.mjs
+
+# T4 — J2 resume, contradiction (B2), PO persona (contradiction named, not glossed).
+- description: "R02 T4: J2 contradiction (B2) — conflict named falsifiably, round anchor, next action with issue"
+  vars:
+    fixture: fixtures/github/epic-labels-contraditorias.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j2-resume.md"]
+    entry: "12"
+    mock: true
+    substate: "in-artifacts"
+    requiredPatterns:
+      - "[Cc]onflict|[Cc]ontradict|signals"
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "maestra_issue_digest", args: { issue: 12 } }
+      - text: "The signals conflict here — the metadata reads Stage 1, but all Stage 1 and Stage 2 tasks are closed. By structure we're in Stage 3 of the report-export round (R02). The final review is still pending (#27). Correct me if I'm wrong."
+    forbiddenPatterns:
+      - "variant.*stage.*substate"
+      - "substate\\s*[:=]"
+  assert:
+    - type: javascript
+      value: file://asserts/no-field-enumeration.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/falseable-summary.mjs
+    - type: javascript
+      value: file://asserts/round-anchor-spoken.mjs
+    - type: javascript
+      value: file://asserts/unblock-when-paused.mjs
+
+# T5 — J3 Stage 1 discovery, PO persona (questions before draft, approval gate, no file before "yes").
+- description: "R02 T5: J3 Stage 1 discovery — draft in chat, approval request, no file before explicit yes (F009 guard)"
+  vars:
+    fixture: fixtures/github/r02-stage1-discovery.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j3-stage1.md"]
+    entry: "32"
+    mock: true
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "maestra_issue_digest", args: { issue: 32 } }
+      - text: "Here's the draft I'm proposing for the notification-center round (R04), based on what we discussed: problem — operators miss SLA breaches; success metric — median acknowledgement under 2h; constraint — must work on mobile; out of scope — SMS for now. Posso registrar esse rascunho como o briefing do round?"
+    forbiddenPatterns:
+      - "variant.*stage.*substate"
+      - "substate\\s*[:=]"
+  assert:
+    - type: javascript
+      value: file://asserts/no-field-enumeration.mjs
+    - type: javascript
+      value: file://asserts/approval-lock-j3.mjs

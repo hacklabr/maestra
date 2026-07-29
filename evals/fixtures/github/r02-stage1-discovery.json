@@ -1,0 +1,74 @@
+{
+  "id": "r02-stage1-discovery",
+  "description": "Epic #31 — Condensed, R04 (notification center): freshly triaged, Stage 1 discovery NOT started. Two open stage-1 children (#32 discovery, #33 PRD). Stage for R02 T5 (J3 discovery conversation + approval gate, no file before 'yes').",
+  "digests": {
+    "31": {
+      "platform": {
+        "kind": "github",
+        "host": "github.com",
+        "project": "acme/loja"
+      },
+      "issue": {
+        "number": 31,
+        "id": 9103,
+        "title": "Notification center",
+        "state": "open",
+        "url": "https://github.com/acme/loja/issues/31"
+      },
+      "labels": {
+        "variant": "variant-condensed",
+        "stages": [],
+        "markers": []
+      },
+      "metadata": {
+        "variant": "condensed",
+        "currentStage": "stage-1",
+        "epic": null,
+        "round": "R04",
+        "substate": "in-artifacts"
+      },
+      "parent": null,
+      "children": [
+        {
+          "number": 32,
+          "title": "Discovery and scope",
+          "state": "open",
+          "variant": null,
+          "stages": ["stage-1"],
+          "assignees": ["rafael"]
+        },
+        {
+          "number": 33,
+          "title": "Living PRD update",
+          "state": "open",
+          "variant": null,
+          "stages": ["stage-1"],
+          "assignees": ["rafael"]
+        }
+      ],
+      "comments": [],
+      "board": {
+        "column": "In progress"
+      },
+      "gate": {
+        "perStage": {
+          "stage-1": { "closed_": 0, "total": 2 }
+        },
+        "noStage": 0,
+        "reconciliation": { "exists": false, "state": null, "number": null }
+      },
+      "artifacts": [],
+      "hierarchy": {
+        "type": "sub-issues",
+        "taskCompletion": null,
+        "desync": []
+      },
+      "pagination": {
+        "childrenTruncated": false,
+        "commentsTruncated": false
+      },
+      "errors": []
+    }
+  },
+  "execRoutes": []
+}

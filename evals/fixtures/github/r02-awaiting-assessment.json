@@ -1,0 +1,89 @@
+{
+  "id": "r02-awaiting-assessment",
+  "description": "Epic #12 — Condensed, R02 (report export): Stage 1 done (2/2), Stage 2 feasibility assessment (#16) OPEN. Substate awaiting-assessment, PO persona. Stage for R02 T1 (natural speech, no field enumeration).",
+  "digests": {
+    "12": {
+      "platform": {
+        "kind": "github",
+        "host": "github.com",
+        "project": "acme/loja"
+      },
+      "issue": {
+        "number": 12,
+        "id": 9101,
+        "title": "Implement report export",
+        "state": "open",
+        "url": "https://github.com/acme/loja/issues/12"
+      },
+      "labels": {
+        "variant": "variant-condensed",
+        "stages": [],
+        "markers": []
+      },
+      "metadata": {
+        "variant": "condensed",
+        "currentStage": "stage-1",
+        "epic": null,
+        "round": "R02",
+        "substate": "awaiting-assessment"
+      },
+      "parent": null,
+      "children": [
+        {
+          "number": 14,
+          "title": "Discovery and scope",
+          "state": "closed",
+          "variant": null,
+          "stages": ["stage-1"],
+          "assignees": ["rafael"]
+        },
+        {
+          "number": 15,
+          "title": "Living PRD update",
+          "state": "closed",
+          "variant": null,
+          "stages": ["stage-1"],
+          "assignees": ["rafael"]
+        },
+        {
+          "number": 16,
+          "title": "Feasibility assessment",
+          "state": "open",
+          "variant": null,
+          "stages": ["stage-2"],
+          "assignees": ["maria"]
+        }
+      ],
+      "comments": [],
+      "board": {
+        "column": "Ready"
+      },
+      "gate": {
+        "perStage": {
+          "stage-1": { "closed_": 2, "total": 2 }
+        },
+        "noStage": 0,
+        "reconciliation": { "exists": false, "state": null, "number": null }
+      },
+      "artifacts": [
+        {
+          "number": 14,
+          "title": "Mini-briefing",
+          "declared": "docs/rounds/R02-2026-10-report-export/mini-briefing.md",
+          "exists": true
+        }
+      ],
+      "hierarchy": {
+        "type": "sub-issues",
+        "taskCompletion": null,
+        "desync": []
+      },
+      "pagination": {
+        "childrenTruncated": false,
+        "commentsTruncated": false
+      },
+      "errors": []
+    }
+  },
+  "execRoutes": []
+}
