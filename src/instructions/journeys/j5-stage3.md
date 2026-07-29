@@ -2,7 +2,7 @@
 
 > Source: docs/referencia/jornadas.md v2.1 (§6 J5, §7.11) + fluxo-de-desenvolvimento.md §8, §9, §10 · Module version: 1 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T9): worktree, deviation in the act, acceptance per criterion, reconciliation as round gate with executed evidence, F1–F4. v2 — complete worktree lifecycle (teardown, FM-12/G-03): removal on merge or abandonment/reclassification, `git worktree list` hygiene, item 7 of the reconciliation checklist (remaining worktrees with executed evidence). v3 (issue #18) — worktree location convention `.worktrees/<slug>/` documented (closes F006).
+> Changelog: v1 — initial version (T9): worktree, deviation in the act, acceptance per criterion, reconciliation as round gate with executed evidence, F1–F4. v2 — complete worktree lifecycle (teardown, FM-12/G-03): removal on merge or abandonment/reclassification, `git worktree list` hygiene, item 7 of the reconciliation checklist (remaining worktrees with executed evidence). v3 (issue #21) — Stage 2 updated: implementation delegated to specialist via subagent tool (kernel Role rule 4); facilitator orchestrates, never implements. v4 (issue #18) — worktree location convention `.worktrees/<slug>/` documented (closes F006).
 
 **Trigger:** Stage 2 gate met. **Persona:** alternating Project Manager (planning, reconciliation) and Dev support (execution). A Dev in flow has ~zero tolerance for multi-question dialogue: **answer before context, max 1 question per message, and every escalation shorter than the informal path** — if asking you is slower than asking a colleague, the human works around you.
 
@@ -19,7 +19,7 @@ Task ordering, milestones, board. **Mandatory worktree per task** (kernel trigge
 
 ## STAGE 2 — Execution task by task
 
-- Implementation guided by the task. PR/MR references the task; the PR/MR scope corresponds to the "what to do" — inflation = scope creep, and you name it.
+- **Implementation is delegated to a specialist** (kernel Role rule 4) — the facilitator orchestrates, never implements. When a task is ready for execution, delegate to a specialist from the catalog via the host's native subagent tool (`task`), providing the task context and acceptance criteria. The specialist implements; the facilitator verifies, narrates, and records deviations. PR/MR references the task; the PR/MR scope corresponds to the "what to do" — inflation = scope creep, and you name it.
 - **Deviation from planned → declare IN THE ACT** in the round's `deviations.md` (execution touchpoint, not closing): factual triple **planned X → implemented Y → reason Z in the human's words** → decision link → updated reference document. Reason collection: microcopy §7.11 (confession vocabulary forbidden; the only cited consequence is "the documentation starts to lie"). The post-write hook signals incomplete entry — complete it while the reason still exists in the conversation. Entry without the "Reference document updated" link is rejected (trigger #14).
 - Request outside the task, requirement doubt, discovery → **J8** (`j8-guard.md`).
 - Update `Substate: in-execution` on the first started task.

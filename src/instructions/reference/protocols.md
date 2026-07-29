@@ -2,7 +2,7 @@
 
 > Source: docs/referencia/jornadas.md §4–§5, v2.2 · Module version: 3 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v0 scaffold (T6) → v1 (T10): P1–P7 + P1.1 complete in quick-reference format. v2 (journeys v2.2, human decision) — protocol P2 (mirror state file) eliminated: risk of becoming a parallel source of truth and a merge-conflict generator; state is always derived from the platform (digest + docs), every session. `.maestra/team.md` and `.maestra/config.md` remain (configuration, not cache). v3 (R02, ADR-001) — P4: short imperative added at the use point — flow state field names never enumerated to a Stage 1 persona; spoken as consequences. v4 (issue #18) — P1: daughter task naming convention `{demand name} — {subtitle}` added (closes F015).
+> Changelog: v0 scaffold (T6) → v1 (T10): P1–P7 + P1.1 complete in quick-reference format. v2 (journeys v2.2, human decision) — protocol P2 (mirror state file) eliminated: risk of becoming a parallel source of truth and a merge-conflict generator; state is always derived from the platform (digest + docs), every session. `.maestra/team.md` and `.maestra/config.md` remain (configuration, not cache). v3 (R02, ADR-001) — P4: short imperative added at the use point — flow state field names never enumerated to a Stage 1 persona; spoken as consequences. v4 (issues #14, #19) — P6 rewritten: substate→column mapping table added (closes F011); "AFTER confirmed derivation" replaced with explicit transition rules (closes F008, F010); PR/MR-open → In review rule (closes F019); baton-pass → Ready rule (closes F016); execution≠narration rule (closes F018); config.md declared NOT source of truth about board (closes F012). P1: metadata atomicity rule strengthened — three touchpoints, one act (closes F004). v5 (issue #18) — P1: daughter task naming convention `{demand name} — {subtitle}` added (closes F015).
 
 Reading format: each protocol = master rule + operational rules. Artifact templates in `templates/`; wordings in `reference/microcopy.md`.
 
@@ -21,7 +21,7 @@ Reading format: each protocol = master rule + operational rules. Artifact templa
 **Variant:** {VARIANT} · **Current stage:** {1|2|3} · **Substate:** {SUBSTATE} · **Epic:** #{N} · **Round:** {Rnn}
 ```
 
-Updated on every transition. Human- and agent-readable redundancy (labels fail, disappear, are misread).
+Updated **in the same act** as any transition (board move, label change, substate change). The metadata line, the label, and the board column move together — three touchpoints, one act (P6 §Atomicity). A label change without a metadata update is an incomplete transition: the next session derives state from the digest, which reads all three. Human- and agent-readable redundancy (labels fail, disappear, are misread).
 - **`---` + `## Details for execution`:** audience boundary, **always with the same name** (agent parser and human eye use the same marker). Agent layer: context, requirements met (RF/RNF), references, what to do, task out of scope, acceptance criteria.
 - **Acceptance criteria:** live in the execution layer, written in human-testable language ("the exported report opens in Excel without breaking accents", not "validate UTF-8 encoding on the stream") — bridge of the two layers.
 - **Later comments** (decisions, feedback, overrides): same rule — human sentence first, detail later.
@@ -125,10 +125,43 @@ Template: `templates/team.md`.
 
 ## P6 — Board movement
 
-- **Session start** (issue received): `Not started` → `In progress` **AFTER confirmed derivation** — never before (moving a card of a poorly-derived issue pollutes the board with false state). Movement **narrated** ("moved #47 to In progress") — physical extension of the proof that there is no local state.
-- **Conclusion:** `In review`/`Delivered` **accompanying the acceptance register** — never before. **The epic only goes to `Delivered` after reconciliation closes** (round gate, J5 Stage 5).
-- **`paused`:** card stays in `In progress`; substate in the metadata + comment naming the unblock (P1.1).
-- **Board permission failure:** graceful degradation — inform ("couldn't move the card; move it manually or adjust the permission") and **proceed without blocking**. Board is a touchpoint, not a gate.
+**Master rule:** the board reflects the real state of work at every moment. Every movement is **executed** in the same act it is **narrated** — narration ("I'll move the card") is never a substitute for execution (the API call must happen in the same turn). If you catch yourself saying "I'll move it after your OK", that is the bug — move it when the OK comes.
+
+**`.maestra/config.md` is configuration (detected platform/host), NEVER source of truth about board columns.** When you need to know what columns exist or their option IDs, query the real board via the platform's API (the command is in the platform cookbook). Config can be stale; the API is always current.
+
+### Substate → column mapping
+
+Every `Substate:` value (P1.1) maps to exactly one column. The facilitator never chooses a column by intuition — the substate determines it, and the column is the physical proof of the substate:
+
+| Substate | Column | Rationale |
+|---|---|---|
+| `triage` | **Todo** | Classified, not yet started |
+| `in-artifacts` | **In progress** | Active artifact work |
+| `awaiting-assessment` | **Ready** | DoR done, waiting for next stage to pick up |
+| `awaiting-s1-approval` | **Ready** | Motivation presented, waiting for S1 decision |
+| `awaiting-feedback-decision` | **Ready** | Objection formalized, waiting for cut/pay/defer |
+| `in-execution` | **In progress** | Implementation underway |
+| `paused` | **In progress** (stays) | Does not go back, does not advance; comment names the unblock (P1.1) |
+| `awaiting-reconciliation` | **In review** | Implementation accepted, final review pending |
+| `closed-reconciled` | **Done** | Round closed with reconciliation |
+| `closed-without-reconciliation` | **Done** | (anomalous — derived in J2, never written) |
+
+### Explicit transitions (when to move)
+
+1. **Task born in triage** → card goes to **Todo**. The card stays in Todo until actual work begins — confirmed derivation is NOT work start. Moving during triage pollutes the board with false state.
+2. **Task born in baton-pass / gate wave** (parent epic already `In progress`) → card goes to **Ready** (ready for the next stage to pick up), not Todo.
+3. **Work starts in the session** → **Todo/Ready → In progress**, narrated, in the same act. Worktree creation (kernel #9) is the canonical trigger — if a worktree was created, the card should already be `In progress`.
+4. **Handoff for assessment** (end of asynchronous turn: `awaiting-assessment`, `awaiting-s1-approval`, `awaiting-feedback-decision`) → **In progress → Ready**, narrated, with comment naming what unblocks.
+5. **PR/MR opened** → **In progress → In review**, in the **same act** as the PR/MR creation command. The board transition is part of the PR command, not a separate step. Opening a PR without moving the card leaves the board saying "executing" when the reality is "awaiting review".
+6. **Reconciliation closes** (J5 Stage 5) → **In review → Done** (epic), narrated. The epic only goes to `Done` after reconciliation concludes — never before (round gate, J5 Stage 5).
+
+### Atomicity (three touchpoints, one act)
+
+Every transition touches three places in the **same act**: the board column, the label, and the `Substate:` field in the metadata line (P1). A board move without a metadata update is an incomplete transition — the next session derives state from the digest, which reads all three. See P1.
+
+### Board permission failure
+
+Graceful degradation — inform ("couldn't move the card; move it manually or adjust the permission") and **proceed without blocking**. Board is a touchpoint, not a gate.
 
 ---
 
