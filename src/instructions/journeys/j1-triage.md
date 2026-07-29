@@ -2,7 +2,7 @@
 
 > Source: docs/referencia/jornadas.md v2.1 (§2 calibração, §3 tabela de perguntas, §6 J1) + fluxo-de-desenvolvimento.md §3 · Module version: 1 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T8): tree 3.2, hierarchy derive>confirm>ask, limits, disguise, dedup (G-10), team.md + config.md, P7, first wave.
+> Changelog: v1 — initial version (T8): tree 3.2, hierarchy derive>confirm>ask, limits, disguise, dedup (G-10), team.md + config.md, P7, first wave. v2 (issue #16) — Stage 5: structural parent-child link made mandatory (not just textual metadata); wave completeness rule added ("born complete, never incremental") (closes F014, F020).
 
 **Trigger:** free text describing a demand. **Target:** 5 minutes. **Outcome:** variant classified by objective criteria + epic registered — triage without a register did not happen.
 
@@ -63,7 +63,9 @@ Confirmation in one message. Contestation → kernel trigger #1: **evidence re-p
 
 **Distribution (P7):** read microcopy §7.6. Suggest with visible justification per task: specialty/seniority from team.md + scope/boundaries of the task + **current load of open tasks per person** (consult before suggesting — operation in the cookbook). The human confirms or reassigns in **ONE consolidated message**. **No issue is created before confirmation.**
 
-**Creation, in the mandatory order:** epic (variant label + two P1 layers with `Substate: triage` — format in `reference/protocols.md` §P1) → daughter tasks of the first wave with confirmed assignees → bidirectional cross-reference → board. Each artifact task declares the **artifact class** (REFERENCE or RECORD + delivery location).
+**Creation, in the mandatory order:** epic (variant label + two P1 layers with `Substate: triage` — format in `reference/protocols.md` §P1) → daughter tasks of the first wave with confirmed assignees → **structural parent-child link** (the platform's native hierarchy relationship — the operation is in the cookbook; NEVER rely on textual metadata like `epic: #N` in the body alone — the gate arithmetic and the digest enumerate daughters via the structural link, not via body parsing) → board. Each artifact task declares the **artifact class** (REFERENCE or RECORD + delivery location).
+
+**The wave is born complete:** all daughter tasks of the wave are created in the same act — never incrementally ("one more task appeared as we went"). If the wave includes discovery + scope + feasibility assessment (Stage 1) or implementation + evals + reconciliation (Stage 3), ALL are created together. Incremental creation is the F014 violation: it delays board visibility and breaks gate arithmetic (the gate checks for daughters that don't exist yet).
 
 **Wave per variant:** Full/Condensed → Stage 1 artifact tasks. Technical → Stage 2 tasks (motivation, baseline, characterization, obtaining Stage 1 approval). Minimal → **single issue** (it is artifact and task at the same time; empty wave by design).
 

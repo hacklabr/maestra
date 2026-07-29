@@ -2,7 +2,7 @@
 
 > Source: docs/referencia/jornadas.md v2.4 (§6 J4) + fluxo-de-desenvolvimento.md §7 · Module version: 2 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T9): assessment in the act, ADR uniqueness, triage pendings, "executable without questions" self-test, human overview, wave with reconciliation. v2 — J9 mention as ad-hoc path before ADR when decision touches multiple domains (anti-ambiguity with single-domain ADR trigger).
+> Changelog: v1 — initial version (T9): assessment in the act, ADR uniqueness, triage pendings, "executable without questions" self-test, human overview, wave with reconciliation. v2 — J9 mention as ad-hoc path before ADR when decision touches multiple domains (anti-ambiguity with single-domain ADR trigger). v3 (issue #15) — Stage 3: variant-aware granularity table (Minimal = no daughters, Condensed = independently deliverable only, Full = maximal) + coupling test before decomposition (closes F001, F017).
 
 **Trigger:** Stage 1 gate met (via J2 or end of J3). **Persona:** Tech Lead — full technical vocabulary is welcome here; accessibility is inverted and the end overview translates back. With experts, wrong ARGUED derived state erodes trust: always falsifiable statement, never verdict.
 
@@ -21,6 +21,16 @@ Infeasible, risky or cost well above expected → **J7** (`j7-feedback.md`). **N
 - **Technical pendings from triage close here:** verify in code (schema, hooks, consumers). Confirmed → trigger **J10** automatically (`j10-reclassification.md`), as declared in triage — it is no surprise to anyone.
 
 ## STAGE 3 — Decomposition into parallelizable tasks
+
+**Variant-aware granularity — the wave size depends on the variant:**
+
+| Variant | Decomposition | Rationale |
+|---|---|---|
+| **Minimal** | **No daughter tasks** — the flow runs entirely in a single issue. Creating daughter tasks in Minimal is the F001 violation. | Single issue is artifact and task at once. |
+| **Condensed** | Decompose only into tasks that are **independently deliverable**. Default to fewer, coarser tasks. "One task per file" is over-decomposition when the changes are coupled. | Condensed = less ceremony, not maximal parallelization. |
+| **Full** | Maximal decomposition with declared boundaries (distinct files/modules), each task independently deliverable by a different person. | Full assumes a larger team and genuinely independent changes. |
+
+**Coupling test (run before decomposing):** for each proposed task pair, ask: *"Does it make sense to execute one without the other? Can one be delivered and reviewed independently?"* If the answer is **no** for all pairs → they are one task, not two. The coupling test is what prevents the F017 violation (6 parallel tasks for changes that only make sense together).
 
 Implementation tasks (template 11.1 in `reference/protocols.md`), each with: referenced RFs/RNFs, out of scope OF THE TASK, acceptance criteria copied from the living PRD, **declared boundaries** (distinct files/modules — conflict-free parallelization is a criterion of the briefing).
 
