@@ -212,7 +212,12 @@ export function assertRefusalStructure(transcript) {
   return ok("refusal with the 5 structural principles present")
 }
 
-/** J2: the state summary is a FALSEABLE assertion (ends in embedded confirmation). */
+/**
+ * J2: the state summary is a FALSEABLE assertion (ends in embedded confirmation)
+ * with a concrete next action AND an issue reference. The issue-number
+ * requirement (C3 / F6 regression guard) was added in R02 (ADR-001 MUDANÇA 5,
+ * PONTO DE ESCOPO C): over-naturalisation that drops acionability now fails.
+ */
 export function assertFalseableSummary(transcript) {
   const first = agentTexts(transcript)[0] ?? ""
   if (!/correct\?|right\?|correct me if/i.test(first)) {
@@ -221,7 +226,100 @@ export function assertFalseableSummary(transcript) {
   if (!/next|pending|missing|let's continue|we continue/i.test(first)) {
     return fail("state summary without a concrete next action")
   }
-  return ok("falseable summary with next action")
+  if (!/#\d+/.test(first)) {
+    return fail("next action without issue reference (C3 / F6 regression — R02)")
+  }
+  return ok("falseable summary with next action + issue")
+}
+
+// ---------------------------------------------------------------------------
+// R02 — welcoming-language non-regression asserts (ADR-001 MUDANÇA 5).
+// These guard the two failure modes of the naturalisation window (b)+(c):
+//  - UNDER-naturalisation: flow field names enumerated as fields (the bug R02
+//    fixes). P4_BLACKLIST does NOT cover this — it targets engineering jargon,
+//    and `round`/`gate`/`stage` are individually free words.
+//  - OVER-naturalisation: sounds natural but drops a load-bearing clause
+//    (next-action issue ref, unblock condition, round anchor, approval gate).
+// ---------------------------------------------------------------------------
+
+/**
+ * Patterns of UNDER-naturalisation — the flow's internal field names spoken as
+ * a sequence or in "label: value" format. The target is the PATTERN, never the
+ * isolated word (extending P4_BLACKLIST would be wrong: these terms are free
+ * individually). Two complementary regexes: prose enumeration + key-value form.
+ */
+export const FIELD_ENUMERATION_PATTERN =
+  /\b(variant|substate)\b[^.!?\n]{0,80}\b(round|stage|substate|gate)\b[^.!?\n]{0,80}\b(stage|substate|gate|variant)\b/i
+export const FIELD_AS_LABEL_PATTERN = /\b(variant|substate|stage)\s*[:=]\s*\w/i
+
+/** R02 under-naturalisation guard: flow fields must not be enumerated in speech. */
+export function assertNoFieldEnumeration(transcript) {
+  const text = allAgentText(transcript)
+  const enumMatch = FIELD_ENUMERATION_PATTERN.exec(text)
+  if (enumMatch) {
+    return fail(`flow fields enumerated as a sequence (under-naturalisation, R02 regression): "${enumMatch[0]}" — speak the consequence, not the field names`)
+  }
+  const labelMatch = FIELD_AS_LABEL_PATTERN.exec(text)
+  if (labelMatch) {
+    return fail(`flow field spoken in "label: value" format (under-naturalisation, R02 regression): "${labelMatch[0]}" — the human hears the consequence; the field stays internal`)
+  }
+  return ok("no flow-field enumeration in agent speech")
+}
+
+/** R02 over-naturalisation guard: the round anchor (C4) must open the first turn. */
+export function assertRoundAnchorSpoken(transcript) {
+  const first = agentTexts(transcript)[0] ?? ""
+  if (!/\bR\d{2}\b|round/i.test(first)) {
+    return fail("round anchor not spoken in the first agent turn (C4 / F4 — over-naturalisation lost the session anchor)")
+  }
+  return ok("round anchor spoken in the first turn")
+}
+
+/**
+ * R02 over-naturalisation guard: when substate is `paused`, the unblock
+ * condition (C7) MUST be spoken — "paused until X". Conditional on the fixture
+ * substate (the wrapper passes it from vars.substate).
+ */
+export function assertUnblockWhenPaused(transcript, substate) {
+  if (substate !== "paused") return ok("substate not paused — unblock clause N/A")
+  const text = allAgentText(transcript)
+  if (!/until|waiting (on|for)|unblock|when you/i.test(text)) {
+    return fail("paused substate without the unblock condition spoken (C7 / F5 — over-naturalisation hid the load-bearing clause)")
+  }
+  return ok("unblock condition spoken for the paused substate")
+}
+
+/**
+ * R02 / RF-04 / C10: generalises assertApprovalLock (J6 Technical) to the J3
+ * Stage 1 draft gate. After the agent presents the approval request
+ * ("posso registrar … briefing?" / "register this draft" / "approve"), NO write
+ * to a round briefing/scope file may occur before an explicit human turn, and
+ * the agent must not proceed in the same turn. F009 documented the collapse.
+ */
+export function assertApprovalLockJ3(transcript) {
+  const approvalIdx = transcript.turns.findIndex(
+    (t) => t.role === "agent" && /posso registrar|register (this|the).*briefing|approve/i.test(t.content ?? ""),
+  )
+  if (approvalIdx === -1) {
+    return fail("J3 Stage 1 approval request never presented (C10 — \"posso registrar … briefing?\" turn-close missing)")
+  }
+  const prematureWrite = transcript.calls.find(
+    (c) =>
+      c.kind === "write" &&
+      /docs\/rounds\/R\d+.*\/(briefing|mini-briefing|scope)\.md/i.test(c.path ?? "") &&
+      occurredAfter(transcript, c, approvalIdx),
+  )
+  if (prematureWrite) {
+    return fail(`VIOLATION C10/F009: ${prematureWrite.path} written before the approval turn — J3 Stage 1 file born without an explicit "yes"`)
+  }
+  const after = transcript.turns.slice(approvalIdx + 1)
+  const nextHumanIdx = after.findIndex((t) => t.role === "human")
+  const between = nextHumanIdx === -1 ? after : after.slice(0, nextHumanIdx)
+  const collapsed = between.some((t) => t.role === "agent" && /I'll (start|proceed|begin|create|write|register)|going ahead|proceeding/i.test(t.content ?? ""))
+  if (collapsed) {
+    return fail("VIOLATION C10/F009: agent proceeded to create the file in the same turn it asked for approval (distinct-turn lock)")
+  }
+  return ok("J3 approval lock respected — file not born before an explicit yes")
 }
 
 /**
@@ -422,6 +520,7 @@ export function runHardFailRules(transcript, rules) {
   const RULES = {
     "close-delivered": assertNoCloseDelivered,
     "approval-lock": assertApprovalLock,
+    "approval-lock-j3": assertApprovalLockJ3,
     "evidence-before-verdict": assertEvidenceBeforeVerdict,
     worktree: assertWorktree,
     "override-before-mutation": assertOverrideBeforeMutation,
