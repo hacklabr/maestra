@@ -1,8 +1,8 @@
 # J2 — Context Resumption by Issue
 
-> Source: docs/referencia/jornadas.md v2.2 (§5 P1.1 subestados, §6 J2; gaps G-04, G-06, G-07, G-12) · Module version: 2 — 2026-07-28
+> Source: docs/referencia/jornadas.md v2.2 (§5 P1.1 subestados, §6 J2; gaps G-04, G-06, G-07, G-12) · Module version: 3 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T8): digest enumerates → model derives, closed vocabulary P1.1, facts-win-over-field, branches B1–B6, board after confirmation. v2 (journeys v2.2, human decision) — mirror state file eliminated: derivation is ALWAYS digest + platform docs, every session; removed the branch of cache reading.
+> Changelog: v1 — initial version (T8): digest enumerates → model derives, closed vocabulary P1.1, facts-win-over-field, branches B1–B6, board after confirmation. v2 (journeys v2.2, human decision) — mirror state file eliminated: derivation is ALWAYS digest + platform docs, every session; removed the branch of cache reading. v3 (R02, ADR-001) — STAGE 2 header rewritten: short imperative replaces field enumeration; cross-refs microcopy §7.2 two-phase template; field names stay internal, spoken as consequences.
 
 **Trigger:** issue number. **Promise:** "where we are, what is missing, who I am now" — **zero questions about state present on the platform or in the docs**. Interrogating the human about what the platform already knows destroys the value proposition of this door.
 
@@ -46,7 +46,19 @@
 
 ## STAGE 2 — State presentation
 
-3–5 line summary (**max ~8**), in the language of the derived persona (P4 — read `reference/protocols.md` §P4 when assuming the persona): variant, **round with number + theme — single anchor of the session** (afterwards, always "in this round"), stage, substate (if `paused`: always WITH the pending unblock), gate, what is missing, assumed persona, **concrete next action** — ending in embedded confirmation (falsifiable statement: "correct?"). Microcopy §7.2 has the state reconstitution templates.
+Read `reference/protocols.md` §P4 for the persona language, then present the
+state as a single, concise reconstitution (one sentence, ~25 words):
+
+> Fill the typed slots internally via digest + repo reads, then emit ONE
+> sentence weaving: round anchor (name + theme, once) + current situation (in
+> plain words, translated from substate) + next action with issue + unblock
+> condition if paused. Close with "correct?". The field names `variant` /
+> `stage` / `substate` / `gate` stay internal — the human hears the consequence,
+> not the label.
+
+Microcopy §7.2 has the two-phase template (`<derivation>` internal, `<speech>`
+emitted) with the substate→situation translation table — fill the slots there
+and emit only `<speech>`.
 
 If `.maestra/team.md` is missing: **present the state FIRST**; collect the map afterwards (P5 protocol, a single time per repository) — never block the derivation because of the map.
 

@@ -1,8 +1,8 @@
 # Protocols P1–P7 — quick reference
 
-> Source: docs/referencia/jornadas.md §4–§5, v2.2 · Module version: 2 — 2026-07-28
+> Source: docs/referencia/jornadas.md §4–§5, v2.2 · Module version: 3 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v0 scaffold (T6) → v1 (T10): P1–P7 + P1.1 complete in quick-reference format. v2 (journeys v2.2, human decision) — protocol P2 (mirror state file) eliminated: risk of becoming a parallel source of truth and a merge-conflict generator; state is always derived from the platform (digest + docs), every session. `.maestra/team.md` and `.maestra/config.md` remain (configuration, not cache).
+> Changelog: v0 scaffold (T6) → v1 (T10): P1–P7 + P1.1 complete in quick-reference format. v2 (journeys v2.2, human decision) — protocol P2 (mirror state file) eliminated: risk of becoming a parallel source of truth and a merge-conflict generator; state is always derived from the platform (digest + docs), every session. `.maestra/team.md` and `.maestra/config.md` remain (configuration, not cache). v3 (R02, ADR-001) — P4: short imperative added at the use point — flow state field names never enumerated to a Stage 1 persona; spoken as consequences.
 
 Reading format: each protocol = master rule + operational rules. Artifact templates in `templates/`; wordings in `reference/microcopy.md`.
 
@@ -75,6 +75,13 @@ The `**Substate:**` field uses **only** the values below — J2 derivation never
 ## P4 — Vocabulary blacklist per persona
 
 Loaded on persona assumption (kernel). Checked **before every message** in Stage 1.
+
+> **State fields are internal, never enumerated to a Stage 1 persona.** The flow's
+> field names (`variant`, `stage`, `substate`, `gate`) describe the derivation;
+> the human hears the **consequence** of each, not the label. A resume or
+> handoff that lists the fields as a sequence is the F009 regression — speak the
+> situation (translated via microcopy §7.2 "Substate → situation translation")
+> and the next action with the issue number. See `j2-resume.md` STAGE 2 header.
 
 | Term | Stage 1 (PO) | Stage 2/3 |
 |---|---|---|
