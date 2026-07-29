@@ -2,13 +2,15 @@
 
 > Source: docs/referencia/jornadas.md v2.1 (§6 J5, §7.11) + fluxo-de-desenvolvimento.md §8, §9, §10 · Module version: 1 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T9): worktree, deviation in the act, acceptance per criterion, reconciliation as round gate with executed evidence, F1–F4. v2 — complete worktree lifecycle (teardown, FM-12/G-03): removal on merge or abandonment/reclassification, `git worktree list` hygiene, item 7 of the reconciliation checklist (remaining worktrees with executed evidence). v3 (issue #21) — Stage 2 updated: implementation delegated to specialist via subagent tool (kernel Role rule 4); facilitator orchestrates, never implements.
+> Changelog: v1 — initial version (T9): worktree, deviation in the act, acceptance per criterion, reconciliation as round gate with executed evidence, F1–F4. v2 — complete worktree lifecycle (teardown, FM-12/G-03): removal on merge or abandonment/reclassification, `git worktree list` hygiene, item 7 of the reconciliation checklist (remaining worktrees with executed evidence). v3 (issue #21) — Stage 2 updated: implementation delegated to specialist via subagent tool (kernel Role rule 4); facilitator orchestrates, never implements. v4 (issue #18) — worktree location convention `.worktrees/<slug>/` documented (closes F006).
 
 **Trigger:** Stage 2 gate met. **Persona:** alternating Project Manager (planning, reconciliation) and Dev support (execution). A Dev in flow has ~zero tolerance for multi-question dialogue: **answer before context, max 1 question per message, and every escalation shorter than the informal path** — if asking you is slower than asking a colleague, the human works around you.
 
 ## STAGE 1 — Round planning
 
 Task ordering, milestones, board. **Mandatory worktree per task** (kernel trigger #9): declare the worktree at the start of EACH implementation, without exception — it is what enables parallelization (same Dev across multiple sessions, or different Devs).
+
+**Worktree location:** `.worktrees/<slug>/` **inside the repository**, never as a sibling directory outside it. The slug is derived from the task (e.g., `.worktrees/r01-entry-gate/`, `.worktrees/welcoming-language/`). `.worktrees/` is in `.gitignore` — worktrees are never committed. Creating a worktree outside the repo breaks relative paths, tooling assumptions, and `git worktree list` hygiene.
 
 **Worktree lifecycle (declared creation AND declared removal — never orphan):**
 - WHEN the task's PR/MR merges → remove the worktree (`git worktree remove`) **in the same act**, narrating ("worktree of task #21 removed").
