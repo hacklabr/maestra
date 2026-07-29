@@ -1,8 +1,8 @@
 # J3 — Stage 1 Conduction: Discovery and PRD
 
-> Source: docs/referencia/jornadas.md v2.4 (§6 J3) + fluxo-de-desenvolvimento.md §6, §9.1 · Module version: 2 — 2026-07-28
+> Source: docs/referencia/jornadas.md v2.4 (§6 J3) + fluxo-de-desenvolvimento.md §6, §9.1 · Module version: 3 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T9): zero order, birth of the round folder, living documents, gate with artifact existence, asynchronous handoff. v2 — J9 mention as ad-hoc path when discovery reveals multi-domain decision (anti-ambiguity with J4 ADR trigger).
+> Changelog: v1 — initial version (T9): zero order, birth of the round folder, living documents, gate with artifact existence, asynchronous handoff. v2 — J9 mention as ad-hoc path when discovery reveals multi-domain decision (anti-ambiguity with J4 ADR trigger). v3 (R02, ADR-001) — STAGE 1 split into three phases with turn-boundaries (discovery conversation → draft in chat → approval gate, default NOT approved); round folder born only after the explicit "yes".
 
 **Trigger:** J1 concluded or J2 deriving Stage 1. **Persona:** PM/PO talking with a non-technical peer. **Before any message:** read `reference/protocols.md` §P4 (blacklist) — every message is an accessibility checkpoint. The PO is never asked about what they cannot observe.
 
@@ -10,19 +10,59 @@
 
 Read `docs/reference/` BEFORE any proposal — Stage 1 starts from how the product is TODAY, never from old briefings. Every proposal references the documented current state ("today the report works like this — section X of the living PRD"), never the void.
 
-## STAGE 1 — Proposal-guided discovery + birth of the round folder
+## STAGE 1 — Discovery as conversation, then draft in chat, then approval gate
 
-You PROPOSE the draft (problem, success metric, constraints) from the triage; the human **edits**, does not fill from scratch. Total rewrite by the human = your proposal failed (process signal).
+Discovery is a CONVERSATION, not a file. Three phases, each a distinct turn.
+Collapsing them into one turn is the F009 failure mode — do not.
 
-**The folder `docs/rounds/Rnn-yyyy-mm-name/` is born here** (first artifact commit), in ALL variants:
+### Phase 1 — Discovery conversation (C8)
+
+Ask the questions you need to draft the briefing (problem, success metric,
+constraints, out of scope). Ground every question in the documented current
+state read in STAGE 0 — "today the report does X (PRD §Y); do you want to
+change that, or add something new?". One question per turn when possible;
+never more than three in a single message (P4 elicitation cap). The round
+folder is NOT created here. No file is written.
+
+**Panel available (J9, ad-hoc):** if the discovery reveals a decision with
+lasting consequence touching multiple domains (e.g., security + UX + data
+model), you MAY suggest a discussion panel (`journeys/j9-panel.md`) before
+detailing the briefing — "proceed without" is always a visible option. Never
+mandatory; zero panels at fixed points remains the rule.
+
+### Phase 2 — Draft in chat (C9)
+
+When discovery gives you enough, present the briefing draft IN THE CHAT — not
+as a file. Structure: problem · success metric · constraints · out of scope
+(≥1 explicit item). Frame it as a proposal the human edits (from the triage;
+the human **edits**, does not fill from scratch), not a form to fill. Reference
+the current PRD state where the proposal changes it.
+
+### Phase 3 — Approval gate — turn-close, default NOT approved (C10)
+
+End the draft turn with an EXPLICIT approval request as a distinct turn-close:
+
+> "Posso registrar esse rascunho como o briefing do round?"
+
+Then **STOP**. Do not create the file. Do not proceed to STAGE 2. The default
+is NOT approved — silence, or the human editing the chat draft inline, is
+NEVER approval. Only an explicit "yes" / "pode" / "approved" in a distinct
+human turn authorizes file creation.
+
+**Failure signal (preserved):** if the human totally rewrites the chat draft,
+your discovery failed — re-engage with better questions; do not blame the human
+and do not create the file anyway.
+
+### Birth of the round folder (after the explicit "yes")
+
+The folder `docs/rounds/Rnn-yyyy-mm-name/` is born only AFTER the approval
+"yes" (first artifact commit), in ALL variants:
 - Full: `briefing.md` · Condensed: `mini-briefing.md` · Minimal: the issue is the briefing, but the folder is born anyway (with `scope.md`).
 - **Before writing, re-list `docs/rounds/`**: Rnn = count + 1; collision (parallel round) → increment and re-announce.
 - Announce the identity ("this is round R03") and update the epic metadata line with the round.
 - The briefing is a **RECORD**: sealed at the round closing; later corrections = dated addendum, never a rewrite. Framing: the briefing needs to be honest, not perfect — what counts for the present is the living PRD.
 
-Success criterion: artifact with problem + success metric + constraints; human approved with edits; folder exists and is linked in the metadata.
-
-**Panel available (J9, ad-hoc):** if the discovery reveals a decision with lasting consequence touching multiple domains (e.g., security + UX + data model), you MAY suggest a discussion panel (`journeys/j9-panel.md`) before detailing the briefing — "proceed without" is always a visible option. Never mandatory; zero panels at fixed points remains the rule.
+Success criterion: artifact with problem + success metric + constraints; human approved with an explicit "yes"; folder exists and is linked in the metadata.
 
 ## STAGE 2 — Journeys, stories and acceptance criteria (in the living documents)
 

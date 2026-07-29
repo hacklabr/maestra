@@ -1,6 +1,9 @@
 node_modules/
 dist/
 
+# Worktrees
+.worktrees/
+
 # Reference codebases (Mesa, OpenCode, Mimo Code) — NEVER commit
 refs/
 

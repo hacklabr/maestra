@@ -1,8 +1,8 @@
 # Microcopy Library (L3 — language layer)
 
-> Source: docs/referencia/jornadas.md §7, v2.3 · Module version: 2 — 2026-07-28
+> Source: docs/referencia/jornadas.md §7, v2.3 · Module version: 3 — 2026-07-28
 > Anti-drift: verbatim templates with typed slots; post-dogfood adjustment HERE, never in code. Divergence between this module and the source is a finding, never a silent adjustment.
-> Changelog: v0 scaffold (T6) → v1 (T10): full transcription of §7.1–§7.11 with typed slots; deviations.md hook block preserved verbatim; override comment replaced by reference to the tool contract (`maestra_emit_event`); platform-neutral adaptations marked explicitly. v2 (journeys v2.3, human decision) — block §7.9 W-04 ("specialist outside the installed catalog") DELETED: shell-specialist architecture makes the whole catalog invocable; there is no longer an installed subset or "nearest" specialist.
+> Changelog: v0 scaffold (T6) → v1 (T10): full transcription of §7.1–§7.11 with typed slots; deviations.md hook block preserved verbatim; override comment replaced by reference to the tool contract (`maestra_emit_event`); platform-neutral adaptations marked explicitly. v2 (journeys v2.3, human decision) — block §7.9 W-04 ("specialist outside the installed catalog") DELETED: shell-specialist architecture makes the whole catalog invocable; there is no longer an installed subset or "nearest" specialist. v3 (R02, ADR-001) — §7.2 "Derived state" rewritten as two-phase `<derivation>` (typed slots, internal) / `<speech>` (natural sentence, only emitted) contract + "Substate → situation translation" table + 3 few-shot anchors; the field names `variant`/`stage`/`substate`/`gate` are never enumerated to a non-technical persona.
 
 ## Usage conventions
 
@@ -87,25 +87,124 @@ The register is emitted BEFORE the action (register-then-act, P3) via `maestra_e
 
 ## §7.2 State reconstitution (visible proof that there is no local state)
 
-### Derived state (J2)
+### Derived state (J2) — internal derivation, natural speech
+
+> §7.2 templates: the `<derivation>` block is internal (typed slots, filled by
+> digest + repo reads — anti-bypass #6); the `<speech>` block is the ONLY text
+> emitted to the human. Never enumerate the field names (`variant`, `stage`,
+> `substate`, `gate`) to a non-technical persona — speak the consequence. See
+> `j2-resume.md` STAGE 2 header.
+
+The Facilitator THINKS in fields (derivation) and SPEAKS in consequences +
+actions. The typed slots below are the contract — fill all of them by digest +
+repo reads (anti-bypass #6). The `<derivation>` block is internal reasoning,
+never shown to the human; the `<speech>` block is the ONLY text emitted.
 
 ```text
-I read the demand state from the issue platform: epic {EPIC}, variant {VARIANT},
-round {ROUND_ID} ({ROUND_THEME}), Stage {STAGE} in progress ({K} of {M}
-tasks closed). We continue from where it stopped: {NEXT_ACTION}. {BOARD_CLAUSE}
-Correct?
+<derivation>   <!-- INTERNAL — typed slots; fill ALL by digest + repo reads; NEVER emit -->
+epic:        {EPIC}
+variant:     {VARIANT}            ← internal; speak its consequence only if decision-relevant
+round:       {ROUND_ID} ({ROUND_THEME})   ← ANCHOR (C4): speak once, by name with PO
+stage:       {STAGE}              ← internal; speak as situation (see table below)
+substate:    {SUBSTATE}           ← internal; speak as situation (see table below)
+progress:    {K} of {M}           ← speak naturally: "two of three"
+next_action: {NEXT_ACTION}        ← CONTRACT (C3): speak with issue, always
+unblock:     {UNBLOCK_CLAUSE}     ← only if substate=paused (C7): speak the condition
+board_move:  {BOARD_CLAUSE}       ← only if move executed (P6): "moved the card"
+</derivation>
+
+<speech>
+Emit ONE sentence (≤ ~25 words) weaving, in this order:
+  (a) round anchor — name + theme, once (C4); with PO, the round has a name;
+  (b) current situation — translated from stage+substate (table below);
+  (c) progress — only if decision-relevant (e.g., gate arithmetic matters);
+  (d) next action — concrete, with issue number (C3);
+  (e) unblock condition — only if paused (C7);
+  (f) board move — only if executed (P6);
+then close with a falsifiable confirmation (C2): "correct?" or "correct me if
+I'm wrong".
+
+DO NOT emit the field names `variant`/`stage`/`substate`/`gate` as labels or
+in a sequence — they stay in `<derivation>`. The human hears the consequence;
+the field is yours.
+</speech>
 ```
 
 | Slot | Type | Condition |
 |---|---|---|
 | `{EPIC}` | number | E.g., `#12`. |
-| `{VARIANT}` | Full \| Condensed \| Minimal \| Technical | From the label + metadata (facts win on divergence). |
-| `{ROUND_ID}` | Rnn | **Single anchor of the session** — number + theme once; afterwards always "in this round". |
-| `{ROUND_THEME}` | text | E.g., "report export". With the PO, the round has a name, not a number. |
-| `{STAGE}` | 1 \| 2 \| 3 | Derived, never inferred. |
-| `{K}` / `{M}` | integers | Digest arithmetic. |
-| `{NEXT_ACTION}` | sentence | Always present, concrete, with issue (e.g., "the cache decision register is missing (#16)"). If substate `paused` (P1.1) → always WITH the pending unblock. |
+| `{VARIANT}` | Full \| Condensed \| Minimal \| Technical | From the label + metadata (facts win on divergence). Internal to derivation — speak its consequence only if decision-relevant. |
+| `{ROUND_ID}` / `{ROUND_THEME}` | Rnn / text | **Single anchor of the session** (C4) — name + theme spoken ONCE; afterwards always "in this round". With the PO, the round has a name, not a number. |
+| `{STAGE}` | 1 \| 2 \| 3 | Derived, never inferred. Internal — speaks as situation via the table below. |
+| `{SUBSTATE}` | closed vocabulary P1.1 | Drives the spoken situation via the translation table. Internal — never emitted as a label. |
+| `{K}` / `{M}` | integers | Digest arithmetic. Surfaced as progress only when decision-relevant. |
+| `{NEXT_ACTION}` | sentence | **Contract (C3)** — always present, concrete, with issue (e.g., "the cache decision register is missing (#16)"). |
+| `{UNBLOCK_CLAUSE}` | sentence | **Only when `{SUBSTATE}` = `paused`** (C7) → always WITH the pending unblock. Own slot (not folded into `{NEXT_ACTION}`). |
 | `{BOARD_CLAUSE}` | sentence | **Only when the move was already executed** (P6: after derivation confirmation) → "I moved the card to In progress." Otherwise omit. |
+
+#### Substate → situation translation (internal → spoken)
+
+| Substate (internal) | Spoken as (consequence) |
+|---|---|
+| `triage` | "we're classifying the demand" |
+| `in-artifacts` | "we're writing the {stage-label} artifacts" |
+| `awaiting-assessment` | "Engineering is looking at whether it's viable" |
+| `awaiting-s1-approval` | "(Technical) the motivation is in, waiting on the green light — default not approved" |
+| `awaiting-feedback-decision` | "there's a formalized objection — cut, pay, or defer is pending" |
+| `in-execution` | "we're implementing ({K} of {M} done)" |
+| `paused` | "paused until {UNBLOCK_CLAUSE}" — unblock is MANDATORY here |
+| `awaiting-reconciliation` | "implementation accepted, final review pending" |
+
+#### Few-shot anchors (the transformation, demonstrated)
+
+The examples show `<derivation>` filled and the resulting `<speech>` side by
+side — the conversion is demonstrated, not described. Field names live only in
+`<derivation>`.
+
+```text
+<example substate="awaiting-assessment" persona="PO">
+<derivation>
+epic: #3 · variant: Condensed · round: R02 (welcoming language)
+stage: 1 · substate: awaiting-assessment · progress: 2 of 3
+next_action: feasibility assessment (#5)
+</derivation>
+<speech>
+We're in the welcoming-language round (R02): discovery and scope are done —
+two of three closed — and Engineering is now looking at whether it's viable.
+Next is the feasibility assessment (#5). Correct?
+</speech>
+</example>
+```
+
+```text
+<example substate="paused" persona="PO">
+<derivation>
+epic: #12 · variant: Condensed · round: R03 (report export)
+stage: 1 · substate: paused · progress: 1 of 2
+next_action: decision on feedback to #15 (cut/pay/defer)
+unblock: Stage 1's decision on #15's feedback
+</derivation>
+<speech>
+We're in the report-export round (R03), paused until Stage 1's decision on
+the feedback to #15 — when you decide cut, pay, or defer, we unblock.
+Correct?
+</speech>
+</example>
+```
+
+```text
+<example substate="in-execution" persona="Tech Lead">
+<derivation>
+epic: #12 · variant: Full · round: R03 (report export)
+stage: 3 · substate: in-execution · progress: 2 of 5
+next_action: implementation of #24 (CSV encoding)
+</derivation>
+<speech>
+Report-export round (R03), implementation underway — two of five done. Next
+is #24 (CSV encoding). Correct?
+</speech>
+</example>
+```
 
 *(Platform adaptation: the source says "from GitHub" — ADR-012.)*
 
