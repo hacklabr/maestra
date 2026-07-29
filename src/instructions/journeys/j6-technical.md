@@ -2,7 +2,7 @@
 
 > Source: docs/referencia/jornadas.md v2.1 (§6 J6; G-14) + fluxo-de-desenvolvimento.md §3.4 · Module version: 1 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T9): motivation with evidence, anti-auto-approval lock (3 hard rules), blocking characterization, slices with double acceptance, resultados.md.
+> Changelog: v1 — initial version (T9): motivation with evidence, anti-auto-approval lock (3 hard rules), blocking characterization, slices with double acceptance, resultados.md. v2 (issue #21) — Stage 4 updated: implementation delegated to specialist (kernel Role rule 4).
 
 **Trigger:** triage classified Technical (J1 Stage 2, Q1) or J2 derived it. **Inverted order:** Stage 2 is the AUTHOR of the demand; Stage 1 is the APPROVER. The most delicate point of the plugin: the Tech Lead asking "permission" to spend days without delivering a feature, and the PO deciding opportunity cost without technical vocabulary.
 
@@ -34,7 +34,7 @@ Approval registered with: name, date, literal quote, the two lists. **If the PO 
 
 ## STAGE 4 — Slice execution with double acceptance
 
-- **Refactor in slices, never big bang** — refuse a single slice >1 day. Each slice delivers behavior parity incrementally. P7 distribution (microcopy §7.6).
+- **Refactor in slices, never big bang** — refuse a single slice >1 day. Each slice delivers behavior parity incrementally. **Implementation delegated to a specialist** (kernel Role rule 4); P7 distribution (microcopy §7.6).
 - **Double acceptance per slice:** (a) parity — characterization green; (b) progress on the goal. Parity failed → stop everything → Stage 1 decision (what may change on purpose?).
 - **Closing:** final metrics vs. baseline registered in **`docs/rounds/Rnn-.../resultados.md`** — own file (the baseline is the "before" measure; the results, the "after" measure; each with its semantics, both referenced in reconciliation). The comparison becomes a document, not a conversation. Unreachable goal → honest feedback (J7), never makeup.
 - Reference note: proven parity ⇒ the living PRD **does not change** in this round (verified in J5 Stage 5 by empty diff).
