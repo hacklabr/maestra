@@ -2,7 +2,7 @@
 
 > Source: docs/referencia/jornadas.md v2.2 (§5 P1.1 subestados, §6 J2; gaps G-04, G-06, G-07, G-12) · Module version: 3 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T8): digest enumerates → model derives, closed vocabulary P1.1, facts-win-over-field, branches B1–B6, board after confirmation. v2 (journeys v2.2, human decision) — mirror state file eliminated: derivation is ALWAYS digest + platform docs, every session; removed the branch of cache reading. v3 (R02, ADR-001) — STAGE 2 header rewritten: short imperative replaces field enumeration; cross-refs microcopy §7.2 two-phase template; field names stay internal, spoken as consequences.
+> Changelog: v1 — initial version (T8): digest enumerates → model derives, closed vocabulary P1.1, facts-win-over-field, branches B1–B6, board after confirmation. v2 (journeys v2.2, human decision) — mirror state file eliminated: derivation is ALWAYS digest + platform docs, every session; removed the branch of cache reading. v3 (R02, ADR-001) — STAGE 2 header rewritten: short imperative replaces field enumeration; cross-refs microcopy §7.2 two-phase template; field names stay internal, spoken as consequences. v4 (R03) — branch B1a added: `stage-0` label recognized as flow marker; promotion path to J1 offered.
 
 **Trigger:** issue number. **Promise:** "where we are, what is missing, who I am now" — **zero questions about state present on the platform or in the docs**. Interrogating the human about what the platform already knows destroys the value proposition of this door.
 
@@ -38,6 +38,7 @@
 ## Failure branches
 
 - **B1 — No flow labels** → assume NOTHING: never Minimal by default, never persona of an unclassified issue. Read microcopy §7.2 (issue without labels) and offer: (1) classify now (≤2 questions) — you apply the labels and proceed; (2) the human tells you the stage directly; (3) leave it as a standalone issue, outside the flow.
+- **B1a — Issue with `stage-0` label** → the issue was captured quickly and is awaiting triage (recognized as a flow marker by the digest). Offer promotion as the primary option: "This one is waiting for triage (stage-0). Want to classify it now? I run the triage over it and remove the stage-0 label." Confirmation → J1 runs over it, `stage-0` removed on classification (read `j11-quick-capture.md` Stage 3).
 - **B2 — Contradictory state** (label × closed daughters, two variants, metadata × labels) → evidence + most likely hypothesis as a **FALSIFIABLE statement** + correction path in 1 sentence ("By the structure, it is in Stage 3. I'll assume that — correct me if I'm wrong."). Hiding contradiction destroys trust; naming it is process data.
 - **B3 — Documentation × code contradiction** → kernel trigger #16: precedence **production code > reference > record**; inform and open issue `doc-bug` (microcopy §7.2). It **enters the funnel as Minimal** (label `variant-minimal`, single issue with reconciliation checkbox, round folder as every Minimal) — documentation contradiction is a bug, and a bug follows the flow. Never standalone, never silent fix.
 - **B4 — The issue is a daughter** → digest the parent epic, derive from the parent, anchor the conversation on the daughter as focus.

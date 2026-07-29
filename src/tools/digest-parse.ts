@@ -10,7 +10,7 @@ import { VARIANTE_LABELS } from "../platform/types.js"
 
 const VARIANTES: ReadonlySet<string> = new Set(VARIANTE_LABELS)
 const ETAPAS = new Set(["stage-1", "stage-2", "stage-3"])
-const MARCADORES = new Set(["override-registered", "doc-bug", "product-feedback"])
+const MARCADORES = new Set(["override-registered", "doc-bug", "product-feedback", "stage-0"])
 
 export interface LabelFacts {
   variant: string | null
