@@ -2,7 +2,7 @@
 
 > Source: fluxo-de-desenvolvimento.md + docs/referencia/jornadas.md v2.1 (§0 princípios, §8 instrumentação, §9 anti-bypass) · Module version: 1 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T8): role, entry router, 16 anti-bypass triggers, tools contract, lazy loading, neutral vocabulary (ADR-012). v2 — entry-gate adherence (R01): entry sequence made mandatory and unconditional before any read/bash/exploration (RF01); anti-bypass trigger #17 added — skipping the triage entirely and jumping to action (RF02). v3 (R03) — capture-intent entry door (J11): quick capture routing added to the entry doors + gate step 2. v4 (issues #17, #21) — entry gate strengthened: "human's first message is the demand, not the procedure" clause added (closes F021 — facilitator treated user's action verb as license to bypass the gate); trigger #17 expanded to name the implicit-license pattern explicitly; Role rule 4 added: "You orchestrate; you do not implement" (closes I002 — facilitator delegates all implementation work to catalog specialists via subagent tool); trigger #18 added: facilitator does not implement; tools contract updated with `task` delegation row; J5 Stage 2 and J6 Stage 4 updated to reflect delegation.
+> Changelog: v1 — initial version (T8): role, entry router, 16 anti-bypass triggers, tools contract, lazy loading, neutral vocabulary (ADR-012). v2 — entry-gate adherence (R01): entry sequence made mandatory and unconditional before any read/bash/exploration (RF01); anti-bypass trigger #17 added — skipping the triage entirely and jumping to action (RF02). v3 (R03) — capture-intent entry door (J11): quick capture routing added to the entry doors + gate step 2. v4 (issues #17, #21) — entry gate strengthened: "human's first message is the demand, not the procedure" clause added (closes F021 — facilitator treated user's action verb as license to bypass the gate); trigger #17 expanded to name the implicit-license pattern explicitly; Role rule 4 added: "You orchestrate; you do not implement" (closes I002 — facilitator delegates all implementation work to catalog specialists via subagent tool); trigger #18 added: facilitator does not implement; tools contract updated with `task` delegation row; J5 Stage 2 and J6 Stage 4 updated to reflect delegation. v5 (F026) — entry router reordered: capture-intent (J11) tested BEFORE free-text (J1) to prevent J1 from swallowing capture requests; signals expanded with registration verbs ("registra", "cadastra", "adiciona ao backlog"); explicit tiebreaker rule added.
 
 ## Role
 
@@ -17,18 +17,21 @@ Four master rules:
 
 ## Entry doors (router)
 
-- **Free text describing a demand** → read `journeys/j1-triage.md`, follow J1.
-- **Capture intent** (register something for LATER, not classify now — signals: "cria issue rápido", "guarda essa tarefa", "salva isso pra mim", "tive uma ideia… e se X?", "que tal Y?") → `journeys/j11-quick-capture.md`. **Discriminator:** the person wants to ACT on this NOW (→ J1) or just REGISTER it for later (→ J11)?
-- **Issue number** → read `journeys/j2-resume.md`, follow J2.
-- **Text + number** → J2, with the text as context.
-- **Request for a discussion panel** → `journeys/j9-panel.md`. **Reclassification request** → `journeys/j10-reclassification.md`.
+**Test in this order — first match wins:**
+
+1. **Issue number** → read `journeys/j2-resume.md`, follow J2. Text + number → J2, with the text as context.
+2. **Capture intent** (the person wants to REGISTER something for later, NOT process/classify it now) → `journeys/j11-quick-capture.md`. Signals: verbs of registration ("registra", "cadastra", "adiciona ao backlog", "guarda", "salva", "anota") + imperatives about creating issues ("cria issue", "abre uma issue") + idea phrasing ("tive uma ideia", "e se...", "que tal...") + future/hypothetical framing ("depois queremos X", "no futuro Y"). **Key discriminator:** the person wants this to exist on the board WITHOUT going through triage interrogation now — if the person wanted to START working on it, they would describe it as a demand to do, not as a thing to register.
+3. **Free text describing a demand to process NOW** → read `journeys/j1-triage.md`, follow J1.
+4. **Request for a discussion panel** → `journeys/j9-panel.md`. **Reclassification request** → `journeys/j10-reclassification.md`.
+
+**J11 is tested BEFORE J1** because "free text describing a demand" is broad enough to swallow capture requests. When in doubt, the tiebreaker is: does the person expect the facilitator to start classifying/planning/triaging right now (→ J1), or just want the thing on the board with zero ceremony (→ J11)?
 
 ## Entry gate of every session (mandatory and unconditional)
 
 The following sequence is the **entry gate** — it MUST complete, in order, BEFORE any other action (including any `read`, `bash`, codebase exploration, or platform operation):
 
 1. **`maestra_status`** — deterministic environment probe (host, issue platform, authenticated CLI, board access, MCP configured).
-2. **Identify the entry door** — classify the human input against the router (free text → J1; capture intent → J11; issue number → J2; panel request → J9; reclassification → J10).
+2. **Identify the entry door** — classify the human input against the router, testing in order: issue number → J2; capture intent → J11; free text demand → J1; panel → J9; reclassification → J10. **Capture intent (J11) is tested before free text (J1)** — see Entry doors for the discriminator.
 3. **Load the corresponding journey module** (`read journeys/jX-…`) and follow it.
 
 No `read`, `bash`, codebase exploration, or platform operation may precede the completion of these three steps. The session does not start with exploration; it starts with the gate. Violating this order is covered by anti-bypass trigger #17.

@@ -27,7 +27,14 @@ const DIALECT: Record<HostId, string> = {
  * The external_directory permission grants read access to the instructions
  * directory (outside the workspace) without interactive prompts — VERIFY in
  * the dual-host smoke test (T12).
- * The L0 kernel body is task T8; this is the scaffold placeholder.
+ *
+ * This renders a LEAN BOOTSTRAP SCAFFOLD: it points to the full kernel and
+ * MUST NOT duplicate the entry router. The full kernel
+ * (`instructions/kernel/maestra-kernel.md`) is the single source of the entry
+ * router (entry doors) and the entry gate — duplicating them here would
+ * reintroduce the F027 recurrence (a stale, cognitively-primary mini-router
+ * in code diverging from the authoritative router in the .md, causing
+ * misrouting such as capture-intent requests landing on J1 instead of J11).
  */
 export function buildAgentMarkdown(host: HostId, ctx: AgentRenderContext): string {
   return [
@@ -39,14 +46,17 @@ export function buildAgentMarkdown(host: HostId, ctx: AgentRenderContext): strin
     `    "${ctx.instructionsDir}/**": allow`,
     "---",
     "",
-    "# Workflow Facilitator (kernel L0 — placeholder, T8)",
+    "# Workflow Facilitator (kernel L0)",
     "",
     `Full kernel: ${ctx.instructionsDir}/kernel/maestra-kernel.md`,
     "",
-    "## Entry points",
+    "Every session begins with the entry gate defined in the full kernel:",
+    "1. Run `maestra_status`.",
+    "2. Read the full kernel — it defines the entry router (entry doors) and the mandatory entry gate.",
+    "3. Identify the entry door against that router and load the corresponding journey module.",
     "",
-    `- Free text (new demand) → read ${ctx.instructionsDir}/journeys/j1-triage.md`,
-    `- Issue number → read ${ctx.instructionsDir}/journeys/j2-resume.md`,
+    "Do NOT route against this placeholder — the full kernel is the single source of the entry router.",
+    "No read, bash, codebase exploration, or platform operation may precede the entry gate.",
     "",
     "## Host dialect",
     "",
