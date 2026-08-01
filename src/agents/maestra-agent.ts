@@ -54,3 +54,42 @@ export function buildAgentMarkdown(host: HostId, ctx: AgentRenderContext): strin
     "",
   ].join("\n")
 }
+
+/**
+ * Generates the `maestra-direct` primary agent markdown — the direct-mode
+ * facilitator that runs the Minimal flow in a single session (async gate
+ * boundaries collapsed into synchronous turn boundaries). Same lean-bootstrap
+ * pattern as `buildAgentMarkdown`, but pointing to the direct kernel.
+ */
+export function buildDirectAgentMarkdown(host: HostId, ctx: AgentRenderContext): string {
+  return [
+    "---",
+    "description: Direct workflow mode (Minimal flow in a single session)",
+    "mode: primary",
+    "permission:",
+    "  external_directory:",
+    `    "${ctx.instructionsDir}/**": allow`,
+    "---",
+    "",
+    "# Direct-Mode Facilitator (kernel L0 — modo direto)",
+    "",
+    "You are the **direct-mode** facilitator: a specialization of the standard",
+    "`maestra` agent that runs the entire Minimal flow — triage → discovery →",
+    "technical design → implementation → reconciliation — in a **single session**,",
+    "without async handoffs between stages. Use this agent for small demands that",
+    "don't need async fragmentation; use the standard `maestra` agent when stages",
+    "must be split across sessions.",
+    "",
+    `Full kernel: ${ctx.instructionsDir}/kernel/maestra-direct-kernel.md`,
+    "",
+    "## Entry points",
+    "",
+    `- Free text (new demand) → read ${ctx.instructionsDir}/journeys/j1-triage.md`,
+    `- Issue number → read ${ctx.instructionsDir}/journeys/j2-resume.md`,
+    "",
+    "## Host dialect",
+    "",
+    DIALECT[host],
+    "",
+  ].join("\n")
+}

@@ -1,8 +1,8 @@
 # J9 — Ad-hoc Discussion Panel (shell-specialist architecture)
 
-> Source: docs/referencia/jornadas.md v2.4 (§6 J9, §7.9; G-08) + decisão humana (shell-specialist) · Module version: 4 — 2026-07-28
+> Source: docs/referencia/jornadas.md v2.4 (§6 J9, §7.9; G-08) + decisão humana (shell-specialist) · Module version: 5 — 2026-08-01
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 (T9) — curated roster of 12 personas + W-04. v2 (journeys v2.3, human decision) — **roster eliminated**: ONE shell subagent `maestra/specialist` + `persona::<id>@<panelId>` marker expanded by the plugin hook from the installed catalog (`instructions/catalog/`); WHOLE catalog invocable; native grep/glob search (no dedicated tool, with documented promotion trigger); W-04 deleted (no more installed subset). v3 — unified canonical self-declaration format: `[<id>]` (exact id of the marker), aligned with persona-expansion hook and shell base prompt. v4 — trigger qualifier clarified: "multiple domains" with concrete example; single-domain → ADR without panel.
+> Changelog: v1 (T9) — curated roster of 12 personas + W-04. v2 (journeys v2.3, human decision) — **roster eliminated**: ONE shell subagent `maestra/specialist` + `persona::<id>@<panelId>` marker expanded by the plugin hook from the installed catalog (`instructions/catalog/`); WHOLE catalog invocable; native grep/glob search (no dedicated tool, with documented promotion trigger); W-04 deleted (no more installed subset). v3 — unified canonical self-declaration format: `[<id>]` (exact id of the marker), aligned with persona-expansion hook and shell base prompt. v4 — trigger qualifier clarified: "multiple domains" with concrete example; single-domain → ADR without panel. v5 (R04, issue #29) — Stage 2 parametrized with three round modes: `parallel` (N simultaneous spawns, independent positions), `peer-review` (parallel with peer positions for re-analysis), `sequential` (original turn-by-turn); transition rules between rounds added; spawn contract preserved (applies to all modes).
 
 **Trigger:** human summoning (free, at any time) or your suggestion (only when these instructions indicate — decision with lasting consequence touching multiple domains, e.g., security + performance + data model; single-domain decisions go straight to ADR without a panel). **Vocabulary collision:** the panel never uses "round" alone — "discussion round" or "panel"; the turns of the panel are "turns".
 
@@ -19,11 +19,28 @@
 
 No dedicated search tool: native grep/glob are enough. **Documented promotion trigger:** if the dogfood shows searches failing (correct domain not found in 1 grep attempt, recurrently) or perceptible listing token cost → promote a catalog search tool. Data-driven decision, not anticipated.
 
-## STAGE 2 — Sequential turns (shell spawn contract)
+## STAGE 2 — Discussion rounds (shell spawn contract)
 
-**One specialist at a time.** Each specialist is ONE spawn of the shell subagent with ONE persona — the plugin hook expands the persona from the catalog into the session.
+Three round modes. The facilitator chooses the mode per round based on the round's objective — perspectives that should NOT influence each other go parallel; re-analysis needs the peers' positions; consensus needs sequential turns. A panel may combine modes across rounds (e.g., `parallel` → `peer-review` → `sequential` for progressive alignment).
 
-**Spawn contract (inviolable):**
+### Round modes
+
+- **`parallel`** — N specialists spawned simultaneously (multiple `task` calls in one message). Each receives the SAME agenda base + decision context, with NO paths of peer positions (they are independent this round). Each registers its position at the end of its turn (G-08). The facilitator awaits ALL before synthesizing or transitioning. **Use when** perspectives are independent and cross-contamination of positions is undesired (e.g., security + performance + data model — no one needs to react to the others yet).
+
+- **`peer-review`** — same as `parallel` (N simultaneous spawns, same agenda base), but each prompt ALSO includes the **paths of all peer positions from the previous round(s)**. Each specialist re-analyzes their own position in light of what the others said. **Use as** a re-analysis round after a `parallel` round, when specialists should reconsider based on peer input without direct turn-by-turn interaction.
+
+- **`sequential`** — one specialist at a time (the original model). Each turn receives the paths of positions registered since their last turn. **Use for** alignment and consensus, when the interaction between turns matters (a specialist should react to the previous one).
+
+### Transition between rounds
+
+At the end of each round, the facilitator chooses the next mode based on the objective:
+- Independent perspectives exhausted, peers need to react → `parallel` to `peer-review`.
+- Convergence needed after re-analysis → `peer-review` to `sequential`.
+- A `sequential` round may be followed by another `sequential` (continued dialogue) or close to synthesis (Stage 3).
+
+The transition is always narrated: "Discussion round 1 (`parallel`) complete — 3 positions registered. Moving to discussion round 2 (`peer-review`): each specialist re-analyzes with the peers' positions."
+
+### Spawn contract (applies to ALL modes)
 
 - `subagent_type="maestra/specialist"` — always the same shell.
 - **First line of the prompt:** `persona::<id>@<panelId>` — the marker the hook uses to expand the persona and register the session (e.g., `persona::software-development-backend-architect@panel-cache-relatorio`). Without the marker on the first line, there is no expansion.
@@ -56,5 +73,6 @@ No dedicated search tool: native grep/glob are enough. **Documented promotion tr
 
 - Agenda in one sentence registered; zero mandatory panels at fixed points; "proceed without" offered.
 - Every specialist spawned via shell with a valid marker on the first line; persona self-declaration present in the first response; one session = one persona.
+- Round mode chosen per round based on the objective; transitions between rounds narrated.
 - Position persisted per turn in the correct location of the documental class; resumption after a dead session reconstructs the panel from the artifacts.
 - Synthesis with divergences and tie-breaker registered in the artifact (ADR with status; replacement in the same act).
