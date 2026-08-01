@@ -135,7 +135,7 @@
 - Tentativas/workaround: Lido o erro, corrigidos os nomes dos campos para o schema real, emissão bem-sucedida. A divergência documentação × código (trigger #16) deve ser formalizada como `doc-bug`.
 - Status: open
 
-<!-- Próximo ID: F025. Registre novas entradas abaixo, em ordem cronológica. -->
+<!-- Próximo ID: F030. Registre novas entradas abaixo, em ordem cronológica. -->
 
 ## F020 — Onda de Stage 3 (#7, #8, #9) criada com metadado `epic: 3` mas sem link de sub-issue
 - Data: 2026-07-28
@@ -559,4 +559,44 @@
 - Origem: R03, issue #22, emissão de override register + Event D
 - Sintoma: O `reference/instrumentation.md` documenta os campos do payload de `type=override` como `type`, `contested_criterion`, `stated_reason` (linhas 197-203) e do `type=D` como `contested_criterion` (linhas 114-116). O schema zod real da ferramenta exige `override_type`, `disputed_criterion`, `declared_reason`. O Facilitador tentou primeiro com os nomes documentados e recebeu erro de validação ("Invalid payload for event type override: override_type: Required; disputed_criterion: Required; declared_reason: Required"). Causa 2 chamadas falhas antes de corrigir. O `instrumentation.md` é declarado como cópia do schema da ferramenta ("these formats are a copy of the tool's zod schema — if the tool changes, this file changes with it"), mas divergiu.
 - Tentativas/workaround: Lido o erro, corrigidos os nomes dos campos para o schema real, emissão bem-sucedida. A divergência documentação × código (trigger #16) deve ser formalizada como `doc-bug`.
+- Status: open
+
+## F025 — Fluxo bypassado ao receber pedido direto; humano precisa explicitamente "inicia o fluxo da maestra" a cada sessão (recorrência família F002/F021)
+- Data: 2026-07-29
+- Categoria: instruction-ambiguous
+- Origem: sessão ad-hoc, relato do humano sobre padrão recorrente em uso
+- Sintoma: O humano relata que, em VÁRIAS sessões iniciadas com o agente maestra ativo, o fluxo é bypassado sistematicamente. Ao receber um pedido direto que carrega um verbo de ação ("leia o documento [com a especificação]"), o agente executa o pedido (lê, e começa a fazer outras coisas) e ignora o gate de entrada (`maestra_status` → identificação do entry door → módulo de jornada) — só "lembrando" que é maestra quando o humano o interpela. O humano tem que explicitamente dizer "inicia o fluxo da maestra" a cada sessão para que o gate dispare. Recorrência da família F002/F021: a instrução que exigiria o gate EXISTE e é robusta (kernel §"Entry gate of every session", cláusula "The human's first message is the demand, not the procedure", trigger #17 que cita textualmente "leia os arquivos"/"explore o código" como casos em que o gate não pode ser pulado), mas a adesão falha mesmo diante de instrução explícita. O ponto-chave: a hipótese do humano ("falta instrução") colide com o fato de a instrução já existir — o problema real é saliência/posição da instrução no ponto de decisão do modelo, não ausência dela.
+- Tentativas/workaround: O humano precisa interpelar ("inicia o fluxo da maestra") a cada sessão. A demanda que originou este registro visa resolver a causa-raiz (saliência do gate) nesta round.
+- Status: open
+
+## F026 — Capture-intent (J11) não detectado; roteador fez match com J1 em vez de J11
+- Data: 2026-07-29
+- Categoria: instruction-ambiguous
+- Origem: sessão ad-hoc, humano pediu para registrar uma issue
+- Sintoma: O humano abriu uma nova sessão e pediu ao facilitador para registrar uma issue (quick capture, intenção de J11). O roteador do kernel identificou como "free text describing a demand" (J1) e iniciou o fluxo de triagem completo em vez de simplesmente cadastrar a issue com agilidade via J11. O J11 e o capture-intent entry door existem (implementados em R03, issue #22), mas o roteador lista J1 primeiro e J11 como caso especial — o modelo faz match com a primeira porta (J1) antes de considerar J11. Os sinais listados ("cria issue rápido", "guarda essa tarefa", etc.) são muito específicos; a linguagem real do humano ("registra uma issue sobre X") não corresponde aos exemplos. O discriminador ("ACT now vs REGISTER for later") está presente mas é sutil demais contra o default J1.
+- Tentativas/workaround: O humano precisou corrigir manualmente. A issue foi registrada mas pelo fluxo errado (J1 em vez de J11).
+- Status: open
+
+## F027 — Roteador de entry doors duplicado em duas cópias sem guarda; placeholder injetado (código .ts) divergiu do kernel real (.md) e omite J11 (recorrência estrutural de F026)
+- Data: 2026-07-29
+- Categoria: instruction-ambiguous
+- Origem: sessão ad-hoc, humano pediu "Cria essa issue: <descrição do modo direto>"
+- Sintoma: Recorrência exata do F026. O humano abriu sessão com "Cria essa issue: ..." — sinal canônico de capture-intent (J11): o próprio kernel real (`maestra-kernel.md` Entry doors §2 lista literalmente o imperativo "cria issue" como sinal de J11, e o changelog v5 documenta que J11 é testado ANTES de J1 justamente para evitar que J1 engula pedidos de captura). Mesmo assim, o facilitador disparou J1 (triagem completa) e não J11. **Causa-raiz estrutural (distinta do F026): o entry router — a peça mais crítica de direcionamento do fluxo — existe em DUAS cópias sem sincronização nem guarda.** (1) Cópia autoritativa: `src/instructions/kernel/maestra-kernel.md` § "Entry doors", 4 portas (J11 antes de J1). (2) Cópia placeholder: `src/agents/maestra-agent.ts`, função `buildAgentMarkdown()`, hardcoded como string em CÓDIGO TypeScript (não instrução .md), com apenas 2 portas (J1 e J2 — J11 ausente). O placeholder é o que tem primazia cognitiva: é injetado no system prompt do agente ANTES de qualquer `read`, então é o roteador que o modelo vê primeiro. A correção do F026 (reordenação J11-antes-de-J1 + expansão de sinais) foi aplicada à cópia autoritativa (.md) mas NÃO propagou para a cópia injetada (.ts), porque (a) é um arquivo de código longe das instruções, (b) não há mecanismo de sincronização/teste/check que conecte "mudei entry doors no kernel" com "existe um .ts que duplica esses entry doors", (c) o mini-roteador no placeholder é ativamente prejudicial — permite ao modelo rotear SEM ler o kernel, competindo com o roteador real. O facilitador seguiu o placeholder que viu primeiro. Três falhas combinadas: duplicação de estado crítico + cópia com primazia cognitiva + ausência total de guarda.
+- Tentativas/workaround: O humano corrigiu ("Eu queria que você criasse uma nova issue, não que você entrasse no fluxo da maestra"). Apontada a causa-raiz: o roteador tinha a opção, mas o placeholder injetado não. A issue do "modo direto" ainda não foi criada (pendente).
+- Status: fixed (in-session, 2026-07-29) — correção: eliminada a duplicação do entry router do placeholder. `src/agents/maestra-agent.ts` (`buildAgentMarkdown`) deixou de enumerar entry doors; virou lean bootstrap pointer que manda ler o kernel (fonte única do roteador). Anti-regressão: novo teste `src/agents/maestra-agent.test.ts` asserta ausência dos literais stale ("## Entry points", "Free text (new demand)", "Issue number"). Verificado: `npm run typecheck` ✓, `npm test` 848/848 ✓, `npm run build` ✓. Tornado vivo via `node dist/installer/install.js --host opencode` → `~/.config/opencode/agents/maestra.md` reescrito (confirmado: seção "## Entry points" removida). Observação: esta sessão continuou com o system prompt stale carregado; o fix vale para a PRÓXIMA sessão.
+
+## F028 — Instruções do plugin em dois locais sem guarda de sincronização (src/ vs config instalado)
+- Data: 2026-08-01
+- Categoria: ergonomic-friction
+- Origem: R04, issue #29, Stage 3 — edição do J9 Stage 2 (process work)
+- Sintoma: As instruções do plugin existem em dois locais: `src/instructions/` (fonte do repo, compilada para `dist/` pelo build) e `~/.config/opencode/maestra/instructions/` (instalada, lida em runtime). Ao editar instruções (process work), o facilitador editou primeiro a cópia instalada (onde lê em runtime), depois precisou aplicar as MESMAS edições na fonte do repo. Não há guarda, teste ou check que conecte "editei a instrução instalada" com "preciso propagar para src/instructions/". Atrapalha especialmente em process work (exceção da Role rule 4), onde o facilitador edita diretamente — o caminho natural é editar onde se lê, e a fonte do repo fica esquecida até o `git status` revelar a divergência.
+- Tentativas/workaround: Detectado via `rg "Sequential turns"` que encontrou `src/instructions/journeys/j9-panel.md` ainda com o título antigo. Aplicadas as mesmas 4 edições na fonte do repo; `diff` confirmou paridade. Solução de fundo: ou o `install.sh`/build deveria ser o único caminho (proibir edição manual do config instalado), ou deveria haver um check que detecta divergência src/ ↔ instalado/.
+- Status: open
+
+## F029 — `docs/referencia/jornadas.md` citado como Source em múltiplas instruções mas inexistente no repo
+- Data: 2026-08-01
+- Categoria: doc-contradiction
+- Origem: R04, issue #29, Stage 2 — verificação de doc × código (reconciliation checklist item 4)
+- Sintoma: Vários arquivos de instrução (kernel, J2, J3, J4, J5, J9, microcopy, protocols, instrumentation) citam `docs/referencia/jornadas.md` como "Source" no cabeçalho ("Source: docs/referencia/jornadas.md v2.x..."). Esse arquivo NÃO existe neste repositório (`glob "**/*jornadas*"` → no results; `maestra_status` reporta `referenceDocs: false`). A referência normativa citada como fonte de verdade anti-drift ("module derived from the source; divergence is a finding") aponta para o vazio. Cada arquivo declara "Anti-drift: module derived from the source" — mas a source não existe, tornando a garantia de anti-drift inverificável. O `fluxo-de-senvolvimento.md` (também citado como fonte normativa) igualmente não existe no repo.
+- Tentativas/workaround: Detectado ao tentar ler `docs/referencia/jornadas.md` para alinhar a edição do J9 com a fonte normativa. Os arquivos `src/instructions/` são a fonte operacional de fato. Candidato a issue `doc-bug` (trigger #16: documentary contradiction becomes a bug) — seja para criar os arquivos de referência, seja para remover as citações de Source inexistentes e documentar que `src/instructions/` É a fonte.
 - Status: open
