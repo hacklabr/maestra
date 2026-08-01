@@ -11,6 +11,7 @@
   - status_field_id: PVTSSF_lADOABGYvs4BeutwzhZGvu8
   - options:
     - Todo: f75ad846
+    - Ready: 00314bd5
     - In Progress: 47fc9ee4
     - in review: de6af3ab
     - Done: 98236657
