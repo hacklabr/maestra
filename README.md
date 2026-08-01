@@ -29,20 +29,27 @@ npx maestra --host mimocode
 npx maestra --host both
 ```
 
-What the installer does (in all three ways): installs dependencies and compiles (`tsc`), copies instructions to `<host-config>/maestra/instructions/` (including the **complete greppable persona catalog** in `instructions/catalog/`), generates `agents/maestra.md` with the **correct host dialect** (one host per machine — resolved at install time), generates the direct-mode agent `agents/maestra-direct.md` (Minimal flow in a single session), generates **ONE shell subagent** `agents/maestra/specialist.md` (non-hidden, 1-line description) and registers the plugin in `opencode.json` / `mimocode.json`.
+What the installer does (in all three ways): installs dependencies and compiles (`tsc`), copies instructions to `<host-config>/maestra/instructions/` (including the **complete greppable persona catalog** in `instructions/catalog/`), generates `agents/maestra.md` with the **correct host dialect** (one host per machine — resolved at install time), generates the direct-mode agent `agents/maestra-direct.md` (Minimal flow in a single session), generates the capture-only agent `agents/maestra-issue-writer.md` (quick capture with label `stage-0`, no triage), generates **ONE shell subagent** `agents/maestra/specialist.md` (non-hidden, 1-line description) and registers the plugin in `opencode.json` / `mimocode.json`.
 
-## Direct mode (modo direto)
+## Primary agents
 
-The plugin installs **two** primary agents:
+The plugin installs **three** primary agents:
 
 | Agent | Mode | When to use |
 |---|---|---|
 | `maestra` | Standard (async) | Demands that benefit from stage fragmentation — each stage (Product → Engineering → Delivery) ends with an async gate boundary, a session handoff |
 | `maestra-direct` | Direct (synchronous) | Small demands that don't need async fragmentation — the entire Minimal flow runs in a **single session** |
+| `maestra-issue-writer` | Capture-only | Register a demand for later without interrogation — publishes the issue with label `stage-0` in ≤2 exchanges, no triage |
+
+## Direct mode (modo direto)
 
 In direct mode, the async gate boundaries of the standard flow become **turn boundaries within the same session**: triage → discovery → technical design → implementation → reconciliation all happen without session handoffs. The gates (acceptance criteria, out of scope, verdict per criterion, deviation declaration) are **not skipped** — they are verified as turn boundaries instead of session boundaries. Direct mode is less ceremony, not less rigor.
 
 Switch with `/agent maestra-direct`. The direct-mode kernel lives at `instructions/kernel/maestra-direct-kernel.md`.
+
+## Issue writer (quick capture)
+
+`maestra-issue-writer` is a capture-only agent: every message is treated as capture intent. It drafts the issue in the author's words, waits for explicit confirmation, and publishes with the `stage-0` label (+ board + awaiting-triage comment). It NEVER triages, classifies, assigns variants, emits events A–F, or creates round folders. Use it to register an idea for later; to triage a captured issue, switch to the `maestra` agent and say "triage #N". Capture logic lives in `instructions/journeys/j11-quick-capture.md` (referenced, never restated); the kernel is `instructions/kernel/issue-writer-kernel.md`. Switch with `/agent maestra-issue-writer`.
 
 ## Discussion panel: shell specialist (design A)
 

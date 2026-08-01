@@ -158,6 +158,11 @@ MD
   check_grep "dialect baked ($dialect)" "$dialect" "$home/.config/$configdir/agents/maestra.md"
   check_grep "external_directory allow" 'external_directory' "$home/.config/$configdir/agents/maestra.md"
   check_grep "instructions path in frontmatter" "$home/.config/$configdir/maestra/instructions" "$home/.config/$configdir/agents/maestra.md"
+  check_file "issue-writer agent md generated" "$home/.config/$configdir/agents/maestra-issue-writer.md"
+  check_grep "issue-writer dialect baked ($dialect)" "$dialect" "$home/.config/$configdir/agents/maestra-issue-writer.md"
+  check_grep "issue-writer points to its kernel" 'kernel/issue-writer-kernel.md' "$home/.config/$configdir/agents/maestra-issue-writer.md"
+  check_grep "issue-writer routes to J11" 'journeys/j11-quick-capture.md' "$home/.config/$configdir/agents/maestra-issue-writer.md"
+  check_file "issue-writer kernel installed" "$home/.config/$configdir/maestra/instructions/kernel/issue-writer-kernel.md"
   check_file "instructions copied" "$home/.config/$configdir/maestra/instructions/kernel/maestra-kernel.md"
   check_grep "plugin registered" "maestra\|dist/index.js" "$home/.config/$configdir/$configdir.json"
   # design A: exactly ONE shell specialist + greppable full catalog

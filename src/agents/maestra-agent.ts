@@ -103,3 +103,44 @@ export function buildDirectAgentMarkdown(host: HostId, ctx: AgentRenderContext):
     "",
   ].join("\n")
 }
+
+/**
+ * Generates the `maestra-issue-writer` primary agent markdown — the
+ * capture-only agent that publishes quick-capture issues (label `stage-0`)
+ * WITHOUT traversing the standard kernel's entry router. Same lean-bootstrap
+ * pattern as `buildDirectAgentMarkdown`, but pointing to the issue-writer
+ * kernel. Capture logic lives ONLY in J11/microcopy — this markdown and the
+ * kernel reference it, never restate it (F027 lesson: no router/capture
+ * duplication in code).
+ */
+export function buildIssueWriterAgentMarkdown(host: HostId, ctx: AgentRenderContext): string {
+  return [
+    "---",
+    "description: Quick issue capture (stage-0) without traversing the kernel",
+    "mode: primary",
+    "permission:",
+    "  external_directory:",
+    `    "${ctx.instructionsDir}/**": allow`,
+    "---",
+    "",
+    "# Issue Writer (kernel L0 — quick capture)",
+    "",
+    "You are the **capture-only** facilitator: you publish quick-capture issues",
+    "in the author's words — draft in chat, explicit confirmation gate, publish",
+    "with the `stage-0` label. You NEVER triage, classify, assign variants,",
+    "write metadata lines, emit events A–F, or create round folders — those",
+    "belong to the `maestra` agent.",
+    "",
+    `Full kernel: ${ctx.instructionsDir}/kernel/issue-writer-kernel.md`,
+    "",
+    "## Entry point",
+    "",
+    "Every user message is a capture demand:",
+    `- Any message → read ${ctx.instructionsDir}/journeys/j11-quick-capture.md`,
+    "",
+    "## Host dialect",
+    "",
+    DIALECT[host],
+    "",
+  ].join("\n")
+}

@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, cpSync, readFileSync, writeFileSync, rmSync } fr
 import { homedir } from "node:os"
 import { join, dirname, resolve } from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
-import { buildAgentMarkdown, buildDirectAgentMarkdown, type HostId } from "../agents/maestra-agent.js"
+import { buildAgentMarkdown, buildDirectAgentMarkdown, buildIssueWriterAgentMarkdown, type HostId } from "../agents/maestra-agent.js"
 import { buildShellAgentMarkdown, SHELL_AGENT_FILENAME } from "../agents/specialists.js"
 
 interface HostSpec {
@@ -78,6 +78,11 @@ function installForHost(host: HostSpec): void {
   const directAgentPath = join(agentsDir, "maestra-direct.md")
   writeFileSync(directAgentPath, buildDirectAgentMarkdown(host.id, { instructionsDir }), "utf-8")
 
+  // Issue-writer agent (capture-only): publishes quick-capture issues
+  // (label stage-0) without traversing the standard kernel's entry router.
+  const issueWriterAgentPath = join(agentsDir, "maestra-issue-writer.md")
+  writeFileSync(issueWriterAgentPath, buildIssueWriterAgentMarkdown(host.id, { instructionsDir }), "utf-8")
+
   // ONE shell specialist subagent (design A): agents/maestra/especialista.md →
   // spawnable as "maestra/especialista"; persona injected in the task/actor
   // prompt from the greppable catalog. Replaces the 12 curated agents.
@@ -91,6 +96,7 @@ function installForHost(host: HostSpec): void {
   console.log(`[maestra] ${host.id}: catalog      → ${catalogDir} (greppable)`)
   console.log(`[maestra] ${host.id}: agent        → ${agentPath}`)
   console.log(`[maestra] ${host.id}: direct agent → ${directAgentPath}`)
+  console.log(`[maestra] ${host.id}: issue-writer  → ${issueWriterAgentPath}`)
   console.log(`[maestra] ${host.id}: shell        → ${shellPath} (persona on demand)`)
 
   registerPlugin(host)
