@@ -608,3 +608,11 @@
 - Sintoma: J5 Stage 1 manda remover o worktree com `git worktree remove` no mesmo ato do merge. O comando falhou com "fatal: working trees containing submodules cannot be moved or removed" porque o especialista inicializou o submódulo do catálogo (`git submodule update --init --recursive`) dentro do worktree — passo necessário para a suíte de testes passar (3 testes do loader de catálogo falham sem ele). A instrução do J5 não cobre o caso: neste repo, QUALQUER worktree onde os testes rodam por completo terá o submódulo inicializado, tornando o comando documentado sempre falho na prática.
 - Tentativas/workaround: 1 tentativa documentada falhou; workaround conhecido é `rm -rf .worktrees/<slug>` + `git worktree prune` (+ remoção do submódulo em `.git/modules` se aplicável). J5 deveria documentar o fallback para worktrees com submódulo.
 - Status: open
+
+## F031 — `maestra_emit_event` type=F exigiu 2 tentativas (nomes de campo do payload) — mesma família de F024
+- Data: 2026-08-01
+- Categoria: tool-retry
+- Origem: R06, issue #28, reconciliação — emissão do Event F
+- Sintoma: Primeira tentativa com `deviations_during`/`deviations_at_reconciliation` (nomes inferidos do texto renderizado do evento) falhou com "Invalid payload for event type F: during: Required; at_reconciliation: Required". O schema real exige `during` e `at_reconciliation`. O texto renderizado do evento ("deviations during=0, at-reconciliation=0") induz nomes errados, e o `instrumentation.md` já é sabido divergente do schema (F024) — mesma família, agora confirmada também para o type=F.
+- Tentativas/workaround: 2 tentativas; lido o erro de validação e corrigidos os campos. Reforça a urgência de alinhar `instrumentation.md` ao schema zod real (F024, candidato a doc-bug).
+- Status: open
