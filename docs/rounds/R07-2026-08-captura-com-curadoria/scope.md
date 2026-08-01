@@ -54,3 +54,11 @@ Epic: #35 (relacionado a #28/R06). Classificado Minimal em modo direto;
 mudança aplicada à J11 em si (decisão do humano: "mude a J11"), herdada tanto
 pelo issue writer quanto pela captura via kernel padrão. Decidido por
 @rafaelchavesfreitas em 2026-08-01.
+
+## Resolution (closing — 2026-08-01)
+
+- **RF-17:** Implemented — J11 v2 Stage 2 "curated draft": title/summary rewritten for clarity, faithful to the author's intent; microcopy §7.12 aligned; regression test guards the doctrine.
+- **RF-18:** Implemented — J11 v2 Stage 1: bounded code grounding (one fast pass) + mandatory board duplicate check with create new / relate / discard (new microcopy "Duplicate found" template; relate handled in Stage 3 publish).
+- **RF-19:** Implemented — ≤2 quick questions when ambiguity is material; per-host `QUESTION` dialect baked into the issue-writer markdown (`question` tool verified built-in on both hosts); instructions stay host-neutral.
+- **RF-20:** Implemented — confirmation gate text unchanged in J11 Stage 2; capture speed preserved (bounded enrichment).
+- PR: #36 (commit `cfa36a7`, merge `2721baf`).
