@@ -107,6 +107,7 @@ fi
 info ""
 info "How to use:"
 info "  /agent maestra  — workflow facilitator (triage → stages → reconciliation)"
+info "  /agent maestra-direct  — direct workflow mode (Minimal flow in a single session)"
 info "  maestra-report  — instrumentation audit (events A–F)"
 info ""
 info "To also install on another host later:"

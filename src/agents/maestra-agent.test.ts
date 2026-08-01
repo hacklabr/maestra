@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { buildAgentMarkdown } from "./maestra-agent.js"
+import { buildAgentMarkdown, buildDirectAgentMarkdown } from "./maestra-agent.js"
 
 describe("buildAgentMarkdown (lean bootstrap scaffold, post-F027)", () => {
   const ctx = { instructionsDir: "/x" }
@@ -41,5 +41,55 @@ describe("buildAgentMarkdown (lean bootstrap scaffold, post-F027)", () => {
     const md = buildAgentMarkdown("mimocode", ctx)
     expect(md).toContain("actor")
     expect(md).toContain("## Host dialect")
+  })
+})
+
+describe("buildDirectAgentMarkdown (direct mode — modo direto)", () => {
+  const ctx = { instructionsDir: "/x" }
+
+  it("OpenCode: mode primary, description mentions direct mode", () => {
+    const md = buildDirectAgentMarkdown("opencode", ctx)
+
+    expect(md).toContain("mode: primary")
+    const descLine = md.split("\n").find((l) => l.startsWith("description:"))!
+    expect(descLine.toLowerCase()).toContain("direct")
+  })
+
+  it("references maestra-direct-kernel.md", () => {
+    const md = buildDirectAgentMarkdown("opencode", ctx)
+
+    expect(md).toContain("maestra-direct-kernel.md")
+  })
+
+  it("does NOT reference the standard kernel", () => {
+    const md = buildDirectAgentMarkdown("opencode", ctx)
+
+    expect(md).not.toContain("maestra-kernel.md")
+  })
+
+  it("explains single-session Minimal flow", () => {
+    const md = buildDirectAgentMarkdown("opencode", ctx)
+
+    expect(md).toContain("single session")
+  })
+
+  it("OpenCode: task dialect present", () => {
+    const md = buildDirectAgentMarkdown("opencode", ctx)
+
+    expect(md).toContain("`task` tool")
+  })
+
+  it("Mimo: mode primary, description mentions direct mode", () => {
+    const md = buildDirectAgentMarkdown("mimocode", ctx)
+
+    expect(md).toContain("mode: primary")
+    const descLine = md.split("\n").find((l) => l.startsWith("description:"))!
+    expect(descLine.toLowerCase()).toContain("direct")
+  })
+
+  it("Mimo: actor dialect present", () => {
+    const md = buildDirectAgentMarkdown("mimocode", ctx)
+
+    expect(md).toContain("`actor` tool")
   })
 })
