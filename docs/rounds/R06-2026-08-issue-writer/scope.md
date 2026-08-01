@@ -47,3 +47,10 @@ Epic: #28. Classificado Minimal em modo direto (variante confirmada por
 construção; nenhum critério de escala aplicável — decisão técnica duradoura
 "agente separado × porta no roteador" já tomada na R05). Decidido por
 @rafaelchavesfreitas em 2026-08-01.
+
+## Resolution (closing — 2026-08-01)
+
+- **RF-14:** Implemented — `buildIssueWriterAgentMarkdown()` generates `agents/maestra-issue-writer.md` (`mode: primary`); installer generates it alongside the standard and direct agents.
+- **RF-15:** Implemented — `issue-writer-kernel.md` reuses J11 Stages 1–2 + microcopy §7.12 by reference; explicit NEVER list; no capture logic duplicated (guarded by builder tests).
+- **RF-16:** Implemented — README `## Primary agents` table + `## Issue writer (quick capture)` section; install.sh usage line.
+- PR: #33 (commit `1adcbc0`, merge `5efcad5`).

@@ -600,3 +600,11 @@
 - Sintoma: Vários arquivos de instrução (kernel, J2, J3, J4, J5, J9, microcopy, protocols, instrumentation) citam `docs/referencia/jornadas.md` como "Source" no cabeçalho ("Source: docs/referencia/jornadas.md v2.x..."). Esse arquivo NÃO existe neste repositório (`glob "**/*jornadas*"` → no results; `maestra_status` reporta `referenceDocs: false`). A referência normativa citada como fonte de verdade anti-drift ("module derived from the source; divergence is a finding") aponta para o vazio. Cada arquivo declara "Anti-drift: module derived from the source" — mas a source não existe, tornando a garantia de anti-drift inverificável. O `fluxo-de-senvolvimento.md` (também citado como fonte normativa) igualmente não existe no repo.
 - Tentativas/workaround: Detectado ao tentar ler `docs/referencia/jornadas.md` para alinhar a edição do J9 com a fonte normativa. Os arquivos `src/instructions/` são a fonte operacional de fato. Candidato a issue `doc-bug` (trigger #16: documentary contradiction becomes a bug) — seja para criar os arquivos de referência, seja para remover as citações de Source inexistentes e documentar que `src/instructions/` É a fonte.
 - Status: open
+
+## F030 — `git worktree remove` falha quando o worktree contém submódulo inicializado
+- Data: 2026-08-01
+- Categoria: ergonomic-friction
+- Origem: R06, issue #28, Stage 3 (J5) — remoção do worktree após merge do PR #33
+- Sintoma: J5 Stage 1 manda remover o worktree com `git worktree remove` no mesmo ato do merge. O comando falhou com "fatal: working trees containing submodules cannot be moved or removed" porque o especialista inicializou o submódulo do catálogo (`git submodule update --init --recursive`) dentro do worktree — passo necessário para a suíte de testes passar (3 testes do loader de catálogo falham sem ele). A instrução do J5 não cobre o caso: neste repo, QUALQUER worktree onde os testes rodam por completo terá o submódulo inicializado, tornando o comando documentado sempre falho na prática.
+- Tentativas/workaround: 1 tentativa documentada falhou; workaround conhecido é `rm -rf .worktrees/<slug>` + `git worktree prune` (+ remoção do submódulo em `.git/modules` se aplicável). J5 deveria documentar o fallback para worktrees com submódulo.
+- Status: open
