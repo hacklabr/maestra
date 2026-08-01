@@ -153,4 +153,32 @@ describe("buildIssueWriterAgentMarkdown (quick capture — stage-0)", () => {
     expect(md).toContain("mode: primary")
     expect(md).toContain("`actor` tool")
   })
+
+  it("OpenCode: question dialect present — clickable `question` tool (R07)", () => {
+    const md = buildIssueWriterAgentMarkdown("opencode", ctx)
+
+    expect(md).toContain("## Host question tool")
+    expect(md).toContain("`question` tool")
+    expect(md).toContain("J11 Stage 1")
+  })
+
+  it("Mimo: question dialect present — clickable `question` tool (R07)", () => {
+    const md = buildIssueWriterAgentMarkdown("mimocode", ctx)
+
+    expect(md).toContain("## Host question tool")
+    expect(md).toContain("`question` tool")
+  })
+
+  it("states the curated-capture doctrine (author's intent, curated text — R07)", () => {
+    const md = buildIssueWriterAgentMarkdown("opencode", ctx)
+
+    expect(md).toContain("curated")
+    expect(md).toContain("author's intent")
+    expect(md).not.toContain("author's words")
+  })
+
+  it("question dialect is baked ONLY into the issue-writer markdown", () => {
+    expect(buildAgentMarkdown("opencode", ctx)).not.toContain("## Host question tool")
+    expect(buildDirectAgentMarkdown("opencode", ctx)).not.toContain("## Host question tool")
+  })
 })

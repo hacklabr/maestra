@@ -23,6 +23,29 @@ const DIALECT: Record<HostId, string> = {
 }
 
 /**
+ * Host question dialect — the clickable-question tool used by J11 Stage 1
+ * (≤2 quick questions when ambiguity is material). Baked at INSTALL time,
+ * same pattern as DIALECT. Verified per host (R07):
+ * - opencode: built-in `question` tool, enabled by default — no frontmatter
+ *   enablement needed (built-in tools are on unless denied by permission).
+ * - mimocode: same built-in `question` tool (verified in the installed
+ *   binary: tool registered under the name "question" with a `questions`
+ *   parameter — header/question/options with label/description).
+ * The instruction modules (J11, microcopy) stay host-neutral and refer only
+ * to "the host's clickable-question tool, when available" — the concrete
+ * name lives ONLY here.
+ */
+const QUESTION: Record<HostId, string> = {
+  opencode:
+    "To ask the author quick questions during capture (J11 Stage 1, ≤2 questions), " +
+    "use the `question` tool (questions: header, question, options with label/description). " +
+    "It is built in and enabled by default.",
+  mimocode:
+    "To ask the author quick questions during capture (J11 Stage 1, ≤2 questions), " +
+    "use the `question` tool (questions: header, question, options with label/description).",
+}
+
+/**
  * Generates the `maestra` primary agent markdown for a given host.
  * The external_directory permission grants read access to the instructions
  * directory (outside the workspace) without interactive prompts — VERIFY in
@@ -126,10 +149,10 @@ export function buildIssueWriterAgentMarkdown(host: HostId, ctx: AgentRenderCont
     "# Issue Writer (kernel L0 — quick capture)",
     "",
     "You are the **capture-only** facilitator: you publish quick-capture issues",
-    "in the author's words — draft in chat, explicit confirmation gate, publish",
-    "with the `stage-0` label. You NEVER triage, classify, assign variants,",
-    "write metadata lines, emit events A–F, or create round folders — those",
-    "belong to the `maestra` agent.",
+    "with curated text faithful to the author's intent — draft in chat,",
+    "explicit confirmation gate, publish with the `stage-0` label. You",
+    "NEVER triage, classify, assign variants, write metadata lines, emit",
+    "events A–F, or create round folders — those belong to the `maestra` agent.",
     "",
     `Full kernel: ${ctx.instructionsDir}/kernel/issue-writer-kernel.md`,
     "",
@@ -141,6 +164,10 @@ export function buildIssueWriterAgentMarkdown(host: HostId, ctx: AgentRenderCont
     "## Host dialect",
     "",
     DIALECT[host],
+    "",
+    "## Host question tool",
+    "",
+    QUESTION[host],
     "",
   ].join("\n")
 }
