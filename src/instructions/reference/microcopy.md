@@ -1,8 +1,8 @@
 # Microcopy Library (L3 — language layer)
 
-> Source: docs/referencia/jornadas.md §7, v2.3 · Module version: 3 — 2026-07-28
+> Source: docs/referencia/jornadas.md §7, v2.3 · Module version: 4 — 2026-08-01
 > Anti-drift: verbatim templates with typed slots; post-dogfood adjustment HERE, never in code. Divergence between this module and the source is a finding, never a silent adjustment.
-> Changelog: v0 scaffold (T6) → v1 (T10): full transcription of §7.1–§7.11 with typed slots; deviations.md hook block preserved verbatim; override comment replaced by reference to the tool contract (`maestra_emit_event`); platform-neutral adaptations marked explicitly. v2 (journeys v2.3, human decision) — block §7.9 W-04 ("specialist outside the installed catalog") DELETED: shell-specialist architecture makes the whole catalog invocable; there is no longer an installed subset or "nearest" specialist. v3 (R02, ADR-001) — §7.2 "Derived state" rewritten as two-phase `<derivation>` (typed slots, internal) / `<speech>` (natural sentence, only emitted) contract + "Substate → situation translation" table + 3 few-shot anchors; the field names `variant`/`stage`/`substate`/`gate` are never enumerated to a non-technical persona.
+> Changelog: v0 scaffold (T6) → v1 (T10): full transcription of §7.1–§7.11 with typed slots; deviations.md hook block preserved verbatim; override comment replaced by reference to the tool contract (`maestra_emit_event`); platform-neutral adaptations marked explicitly. v2 (journeys v2.3, human decision) — block §7.9 W-04 ("specialist outside the installed catalog") DELETED: shell-specialist architecture makes the whole catalog invocable; there is no longer an installed subset or "nearest" specialist. v3 (R02, ADR-001) — §7.2 "Derived state" rewritten as two-phase `<derivation>` (typed slots, internal) / `<speech>` (natural sentence, only emitted) contract + "Substate → situation translation" table + 3 few-shot anchors; the field names `variant`/`stage`/`substate`/`gate` are never enumerated to a non-technical persona. v4 (R07) — §7.12 aligned to curated capture (J11 v2): draft wording "improved from what you said", `{SUMMARY}` curated (may carry one grounding sentence), new "Duplicate found" template (create new / relate / discard), Rules line updated to the curated doctrine.
 
 ## Usage conventions
 
@@ -656,7 +656,7 @@ decision or forgetfulness — and the documentation starts to lie.
 ### Draft presentation + confirmation
 
 ```text
-Here's a draft from what you said — tell me if it's OK or adjust:
+Here's a draft, improved from what you said — tell me if it's OK or adjust:
 
 **Title:** {TITLE}
 **Summary:** {SUMMARY}
@@ -667,8 +667,26 @@ Publish on the board as "awaiting triage" ({STAGE_0_MEANING})? When prioritized,
 | Slot | Type | Condition |
 |---|---|---|
 | `{TITLE}` | text | ≤60 chars, verb + object, business language. Derived from the user's message. |
-| `{SUMMARY}` | text | 2–4 sentences in the author's words — paraphrase, never diagnosis. |
+| `{SUMMARY}` | text | 2–4 sentences, curated — the author's intent rewritten for clarity, never diagnosis. May include one sentence of verified current behavior when code grounding happened. |
 | `{STAGE_0_MEANING}` | text | **First occurrence gloss:** "pre-triage, not yet classified". Omit on subsequent uses in the same session. |
+
+### Duplicate found
+
+```text
+Before publishing — this looks similar to {CANDIDATE}, already open on the board:
+
+**Candidate:** {CANDIDATE_TITLE}
+
+How do you want to proceed?
+1. **Create new** — publish the draft as a separate issue.
+2. **Relate** — publish the draft and relate it to {CANDIDATE}.
+3. **Discard** — drop the draft; the candidate already covers it.
+```
+
+| Slot | Type | Condition |
+|---|---|---|
+| `{CANDIDATE}` | issue ref | The open issue found by the duplicate check. |
+| `{CANDIDATE_TITLE}` | text | The candidate issue's current title. |
 
 ### Published
 
@@ -680,4 +698,4 @@ Published {ISSUE} on the board — awaiting triage. When you want to classify it
 |---|---|---|
 | `{ISSUE}` | number | The newly created issue number. |
 
-Rules: author's words in the draft, never facilitator diagnosis; no issue published without explicit confirmation; `stage-0` is pre-flow, not a variant.
+Rules: author's intent, curated text — the draft is rewritten for clarity, faithful to what the author meant, never facilitator diagnosis; no issue published without explicit confirmation; no duplicate published without the author having seen the candidate; `stage-0` is pre-flow, not a variant.
