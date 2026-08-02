@@ -182,18 +182,24 @@ describe("buildIssueWriterAgentMarkdown (quick capture — stage-0)", () => {
     expect(buildDirectAgentMarkdown("opencode", ctx)).not.toContain("## Host question tool")
   })
 
-  it("links the DIALECT subagent tool to J11 enrichment delegation (R08)", () => {
+  it("links the DIALECT subagent tool to J11 delegation (R08 enrichment + R09 publish)", () => {
     const oc = buildIssueWriterAgentMarkdown("opencode", ctx)
     const mimo = buildIssueWriterAgentMarkdown("mimocode", ctx)
 
     for (const md of [oc, mimo]) {
-      expect(md).toContain("J11 Stage 1 enrichment delegation")
+      expect(md).toContain("Stage 1 enrichment")
       expect(md).toContain("generic research subagent")
+      expect(md).toContain("Stage 3 publish")
+      expect(md).toContain("generic operations subagent")
+      expect(md).toContain("post-confirmation only")
+      expect(md).toContain("never the discussion-panel shell")
     }
   })
 
-  it("enrichment-delegation line is baked ONLY into the issue-writer markdown (R08)", () => {
-    expect(buildAgentMarkdown("opencode", ctx)).not.toContain("enrichment delegation")
-    expect(buildDirectAgentMarkdown("opencode", ctx)).not.toContain("enrichment delegation")
+  it("delegation line is baked ONLY into the issue-writer markdown (R08/R09)", () => {
+    expect(buildAgentMarkdown("opencode", ctx)).not.toContain("J11 delegation")
+    expect(buildDirectAgentMarkdown("opencode", ctx)).not.toContain("J11 delegation")
+    expect(buildAgentMarkdown("opencode", ctx)).not.toContain("Stage 3 publish")
+    expect(buildDirectAgentMarkdown("opencode", ctx)).not.toContain("Stage 3 publish")
   })
 })
