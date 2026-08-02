@@ -43,3 +43,8 @@ _Nenhum._
 Epic: #35 (incremento da R07 — decisão de @rafaelchavesfreitas em 2026-08-01:
 "continuação da tarefa, não mais um épico"). Feedback sobre o escopo
 implementado na R07. Classificado Minimal em modo direto.
+
+## Resolution (closing — 2026-08-02)
+
+- **RF-21:** Implemented — J11 v3 Stage 1: grounding and duplicate check delegated to generic research subagents with a distilled-return contract (one verified sentence / ≤3 candidates); quick questions and confirmation gate stay in the main session; issue-writer kernel v3 + one builder sentence linking DIALECT to the delegation (issue-writer only, regression-tested).
+- PR: #38 (commit `1a26fd3`, merge `fbb70af`).
