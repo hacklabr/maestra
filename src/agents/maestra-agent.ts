@@ -165,6 +165,8 @@ export function buildIssueWriterAgentMarkdown(host: HostId, ctx: AgentRenderCont
     "",
     DIALECT[host],
     "",
+    "The same subagent tool powers J11 Stage 1 enrichment delegation — spawn a generic research subagent, never the discussion-panel shell.",
+    "",
     "## Host question tool",
     "",
     QUESTION[host],

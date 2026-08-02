@@ -181,4 +181,19 @@ describe("buildIssueWriterAgentMarkdown (quick capture — stage-0)", () => {
     expect(buildAgentMarkdown("opencode", ctx)).not.toContain("## Host question tool")
     expect(buildDirectAgentMarkdown("opencode", ctx)).not.toContain("## Host question tool")
   })
+
+  it("links the DIALECT subagent tool to J11 enrichment delegation (R08)", () => {
+    const oc = buildIssueWriterAgentMarkdown("opencode", ctx)
+    const mimo = buildIssueWriterAgentMarkdown("mimocode", ctx)
+
+    for (const md of [oc, mimo]) {
+      expect(md).toContain("J11 Stage 1 enrichment delegation")
+      expect(md).toContain("generic research subagent")
+    }
+  })
+
+  it("enrichment-delegation line is baked ONLY into the issue-writer markdown (R08)", () => {
+    expect(buildAgentMarkdown("opencode", ctx)).not.toContain("enrichment delegation")
+    expect(buildDirectAgentMarkdown("opencode", ctx)).not.toContain("enrichment delegation")
+  })
 })
