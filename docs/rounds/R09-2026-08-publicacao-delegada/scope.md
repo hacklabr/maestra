@@ -45,3 +45,8 @@ Epic: #35 (incremento das R07/R08 — decisão de @rafaelchavesfreitas em
 2026-08-02). Feedback sobre o comportamento observado em uso: publicação
 poluindo a sessão principal com mecânica de plataforma e retentativas.
 Classificado Minimal em modo direto.
+
+## Resolution (closing — 2026-08-02)
+
+- **RF-22:** Implemented — J11 v4 Stage 3 "Publish (delegated)": operations subagent spawned only after the confirmation gate; retries confined; distilled return (issue number + URL + column, or final error surfaced to the author); issue-writer kernel v4 + builder sentence extended (one line, issue-writer only); confirmation gate verbatim.
+- PR: #39 (commit `fb59eda`, merge `5c8a1bb`).
