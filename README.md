@@ -17,7 +17,7 @@ git clone https://github.com/hacklabr/maestra
 cd Fluxo/maestra
 bash install.sh                    # auto-detects present hosts
 bash install.sh --host both        # or: opencode | mimocode
-bash install.sh --tag v0.1.0       # pins a version (clone/update mode)
+bash install.sh --tag v1.0.0       # pins a version (clone/update mode)
 ```
 
 **Via npx (already published package):**
