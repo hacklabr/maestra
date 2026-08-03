@@ -2,6 +2,50 @@
 
 Plugin for **OpenCode** and **Mimo Code** that facilitates the team's development workflow (triage → three stages → reconciliation, with gates and four depth variants), replacing Mesa: a **single facilitator agent** drives demands from free text to the reconciled round, with **state derived from the issue platform** — never local to the session — and behavior defined in lean *instructions*. The issue platform is the memory; the plugin is the discipline.
 
+## How the flow works
+
+Maestra takes a demand from free text all the way to a reconciled round. All state lives on the issue platform (GitHub/GitLab), never in the session. Pick the agent that matches your demand:
+
+**🤖 `maestra` — the standard flow.** For demands that benefit from stage fragmentation: each stage ends in a session handoff, and triage classifies the demand into one of four depth variants (Completo, Condensado, Mínimo, Técnica).
+
+```mermaid
+flowchart LR
+    U["💬 Demand"] --> T["🔍 Triage<br>picks the variant"]
+    T --> E1["📦 Product<br>what & why"]
+    E1 --> E2["⚙️ Engineering<br>how"]
+    E2 --> E3["🚀 Delivery<br>build & validate"]
+    E3 --> R["✅ Reconciliation<br>docs match what shipped"]
+    R -.->|"feedback starts<br>a new round"| T
+```
+
+**⚡ `maestra-direct` — everything in one session.** For small demands: the same Minimal flow, without session handoffs — each stage boundary becomes just the next turn of the conversation.
+
+```mermaid
+flowchart LR
+    subgraph S["⚡ Single session"]
+        T["🔍 Triage<br>(always Minimal)"] --> D1["📦 Discovery<br>briefing, approved by you"]
+        D1 --> D2["⚙️ Tech design<br>a comment on the issue"]
+        D2 --> D3["🚀 Implementation<br>delegated to a specialist"]
+        D3 --> D4["✅ Reconciliation<br>round closed"]
+    end
+    U["💬 Small demand"] --> T
+```
+
+**✍️ `maestra-issue-writer` — quick capture.** Register an idea now, triage it later. Before drafting, it does a quick bounded enrichment: if your demand cites code, it verifies what that code does today (one verified sentence), and it always searches the board for duplicates — you never publish a likely duplicate without seeing it first.
+
+```mermaid
+flowchart LR
+    U["💬 Idea"] --> E["🧭 Enrichment<br>code grounding + duplicate search<br>(≤2 quick questions if needed)"]
+    E --> Q{"Duplicate found?"}
+    Q -->|"yes"| C["You choose:<br>create new · relate · discard"]
+    Q -->|"no"| D["📝 Curated draft<br>title + summary"]
+    C --> D
+    D --> P["📌 Published<br>label stage-0 · on the board<br>awaiting triage"]
+    P -.->|"later: “triage #N”"| M["🤖 maestra flow"]
+```
+
+Each stage only starts when the previous one is complete, and acceptance criteria are mandatory in **every** variant — what changes is how much each stage produces. The normative source of truth is [fluxo-de-desenvolvimento.md](../fluxo-de-desenvolvimento.md).
+
 ## Installation
 
 **Single line (curl):**
