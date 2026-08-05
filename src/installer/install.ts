@@ -5,6 +5,7 @@ import { join, dirname, resolve } from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
 import { buildAgentMarkdown, buildDirectAgentMarkdown, buildIssueWriterAgentMarkdown, type HostId } from "../agents/maestra-agent.js"
 import { buildShellAgentMarkdown, SHELL_AGENT_FILENAME } from "../agents/specialists.js"
+import { buildOpsAgentMarkdown, OPS_AGENT_FILENAME } from "../agents/ops.js"
 
 interface HostSpec {
   id: HostId
@@ -92,12 +93,18 @@ function installForHost(host: HostSpec): void {
   const shellPath = join(subagentsDir, SHELL_AGENT_FILENAME)
   writeFileSync(shellPath, buildShellAgentMarkdown(host.id), "utf-8")
 
+  // Ops subagent: git + issue-platform CLI mechanics, delegated by the
+  // facilitator; returns distilled results only.
+  const opsPath = join(subagentsDir, OPS_AGENT_FILENAME)
+  writeFileSync(opsPath, buildOpsAgentMarkdown(host.id, { instructionsDir }), "utf-8")
+
   console.log(`[maestra] ${host.id}: instructions → ${instructionsDir}`)
   console.log(`[maestra] ${host.id}: catalog      → ${catalogDir} (greppable)`)
   console.log(`[maestra] ${host.id}: agent        → ${agentPath}`)
   console.log(`[maestra] ${host.id}: direct agent → ${directAgentPath}`)
   console.log(`[maestra] ${host.id}: issue-writer  → ${issueWriterAgentPath}`)
   console.log(`[maestra] ${host.id}: shell        → ${shellPath} (persona on demand)`)
+  console.log(`[maestra] ${host.id}: ops          → ${opsPath}`)
 
   registerPlugin(host)
 }

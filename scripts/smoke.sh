@@ -165,14 +165,19 @@ MD
   check_file "issue-writer kernel installed" "$home/.config/$configdir/maestra/instructions/kernel/issue-writer-kernel.md"
   check_file "instructions copied" "$home/.config/$configdir/maestra/instructions/kernel/maestra-kernel.md"
   check_grep "plugin registered" "maestra\|dist/index.js" "$home/.config/$configdir/$configdir.json"
-  # design A: exactly ONE shell specialist + greppable full catalog
-  local n_specialists
-  n_specialists=$(find "$home/.config/$configdir/agents/maestra" -name "*.md" 2>/dev/null | wc -l)
-  [ "$n_specialists" -eq 1 ] && ok "exactly 1 shell agent generated" || bad "exactly 1 shell agent generated (got $n_specialists)"
+  # design A: shell specialist + ops subagent + greppable full catalog
+  local n_subagents
+  n_subagents=$(find "$home/.config/$configdir/agents/maestra" -name "*.md" 2>/dev/null | wc -l)
+  [ "$n_subagents" -eq 2 ] && ok "exactly 2 subagents generated (shell + ops)" || bad "exactly 2 subagents generated (shell + ops) (got $n_subagents)"
   local shell="$home/.config/$configdir/agents/maestra/specialist.md"
   check_grep "shell has task/actor dialect" "$([ "$host" = opencode ] && echo 'task:' || echo 'actor:')" "$shell"
   ! grep -q "^hidden:" "$shell" && ok "shell is non-hidden (Mimo actor enum)" || bad "shell is non-hidden (Mimo actor enum)"
   check_grep "shell base prompt: persona on delegation" "persona is defined entirely by the delegation prompt" "$shell"
+  local ops="$home/.config/$configdir/agents/maestra/ops.md"
+  check_file "ops agent md generated" "$ops"
+  check_grep "ops has task/actor nesting denied" "$([ "$host" = opencode ] && echo 'task:' || echo 'actor:')" "$ops"
+  ! grep -q "^hidden:" "$ops" && ok "ops is non-hidden (Mimo actor enum)" || bad "ops is non-hidden (Mimo actor enum)"
+  check_grep "ops points to its kernel" 'kernel/ops-kernel.md' "$ops"
   check_file "greppable catalog installed" "$home/.config/$configdir/maestra/instructions/catalog/design/design-ux-researcher.md"
 
   # 2. maestra_status

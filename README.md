@@ -73,17 +73,18 @@ npx maestra --host mimocode
 npx maestra --host both
 ```
 
-What the installer does (in all three ways): installs dependencies and compiles (`tsc`), copies instructions to `<host-config>/maestra/instructions/` (including the **complete greppable persona catalog** in `instructions/catalog/`), generates `agents/maestra.md` with the **correct host dialect** (one host per machine — resolved at install time), generates the direct-mode agent `agents/maestra-direct.md` (Minimal flow in a single session), generates the capture-only agent `agents/maestra-issue-writer.md` (quick capture with label `stage-0`, no triage), generates **ONE shell subagent** `agents/maestra/specialist.md` (non-hidden, 1-line description) and registers the plugin in `opencode.json` / `mimocode.json`.
+What the installer does (in all three ways): installs dependencies and compiles (`tsc`), copies instructions to `<host-config>/maestra/instructions/` (including the **complete greppable persona catalog** in `instructions/catalog/`), generates `agents/maestra.md` with the **correct host dialect** (one host per machine — resolved at install time), generates the direct-mode agent `agents/maestra-direct.md` (Minimal flow in a single session), generates the capture-only agent `agents/maestra-issue-writer.md` (quick capture with label `stage-0`, no triage), generates the shell subagent `agents/maestra/specialist.md` (non-hidden, 1-line description) and the ops subagent `agents/maestra/ops.md` (git + issue-platform CLI mechanics, distilled results only), and registers the plugin in `opencode.json` / `mimocode.json`.
 
 ## Primary agents
 
-The plugin installs **three** primary agents:
+The plugin installs **three** primary agents and **one** operations subagent:
 
 | Agent | Mode | When to use |
 |---|---|---|
 | `maestra` | Standard (async) | Demands that benefit from stage fragmentation — each stage (Product → Engineering → Delivery) ends with an async gate boundary, a session handoff |
 | `maestra-direct` | Direct (synchronous) | Small demands that don't need async fragmentation — the entire Minimal flow runs in a **single session** |
 | `maestra-issue-writer` | Capture-only | Register a demand for later without interrogation — publishes the issue with label `stage-0` in ≤2 exchanges, no triage |
+| `maestra/ops` | Subagent (delegated, not switchable) | Executes git + platform CLI mechanics on behalf of the facilitator, returning distilled results (retries stay inside) |
 
 ## Direct mode (modo direto)
 
@@ -104,6 +105,10 @@ Instead of registering personas as subagents (Mesa registers ~369 — each becom
 3. the shell declares the persona name and analyzes the agenda from it.
 
 Cost: 1 line in the subagent enum (~60 tokens/msg) instead of 12+. Works identically on both hosts (verified in the sources: OpenCode's `describeTask` doesn't filter hidden; Mimo's `actor` enum filters `!hidden`). **No search tool** — native grep suffices; a promotion trigger for a `maestra_catalog_search` is in [ROADMAP.md](ROADMAP.md), alongside the persona-via-`system.transform` upgrade (phase 2).
+
+## Operations specialist: maestra/ops
+
+`maestra/ops` absorbs git and issue-platform CLI trial-and-error away from facilitator sessions. The facilitator delegates **named operations** (never raw commands) via the host's subagent tool (`task`/`actor`); the subagent executes the mechanics and returns only a distilled result — a success summary or the final error, with retries and error trails never leaving the subagent. Its kernel lives at `instructions/kernel/ops-kernel.md` (referenced, never restated).
 
 ## Supported issue platforms
 

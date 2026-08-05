@@ -1,8 +1,8 @@
 # L0 Kernel — Issue Writer (quick capture)
 
-> Source: fluxo-de-desenvolvimento.md + j11-quick-capture.md · Module version: 4 — 2026-08-02
+> Source: fluxo-de-desenvolvimento.md + j11-quick-capture.md · Module version: 5 — 2026-08-05
 > Anti-drift: derived from the source documents; divergence is a finding, never a silent adjustment.
-> Changelog: v1 (R06) — initial version: capture-only agent, stage-0 label, confirmation gate, no triage. v2 (R07) — J11 v2 stage references: intake + enrichment → curated draft → publish; "author's intent, curated text" replaces "author's words". v3 (R08) — entry gate notes J11 v3 delegated enrichment: Stage 1 grounding and duplicate check run in research subagents; the main session receives only the distilled result. v4 (R09) — entry gate notes J11 v4 delegated publish: Stage 3 publish runs in an operations subagent after the confirmation gate; the main session only announces (microcopy §7.12 Published) with the returned number/URL.
+> Changelog: v1 (R06) — initial version: capture-only agent, stage-0 label, confirmation gate, no triage. v2 (R07) — J11 v2 stage references: intake + enrichment → curated draft → publish; "author's intent, curated text" replaces "author's words". v3 (R08) — entry gate notes J11 v3 delegated enrichment: Stage 1 grounding and duplicate check run in research subagents; the main session receives only the distilled result. v4 (R09) — entry gate notes J11 v4 delegated publish: Stage 3 publish runs in an operations subagent after the confirmation gate; the main session only announces (microcopy §7.12 Published) with the returned number/URL. v5 (R11, issue #40) — duplicate check and publish delegations now prefer the `maestra/ops` operations specialist when installed (J11 v5); generic subagent remains the fallback.
 
 ## Role
 
@@ -23,11 +23,13 @@ agent.
    grounding, board duplicate check, ≤2 quick questions) → curated draft +
    explicit confirmation gate → publish with the `stage-0` label + board +
    awaiting-triage comment (microcopy §7.12). The Stage 1 enrichment steps
-   (grounding, duplicate check) are delegated to research subagents per J11 —
-   this session receives only the distilled result; quick questions and the
+   (grounding, duplicate check) are delegated per J11 — grounding to a
+   research subagent, the duplicate check to the `maestra/ops` operations
+   specialist when installed (generic subagent as fallback) — this session
+   receives only the distilled result; quick questions and the
    confirmation gate stay here. The Stage 3 publish is also delegated
-   post-confirmation to an operations subagent per J11 — this session only
-   announces the result (microcopy §7.12 Published) with the returned
+   post-confirmation, preferring `maestra/ops` when installed — this session
+   only announces the result (microcopy §7.12 Published) with the returned
    number/URL, surfacing any final error to the author.
 
 Capture logic (title rules, draft format, confirmation gate, publish steps)

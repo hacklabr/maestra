@@ -1,8 +1,8 @@
 # L0 Kernel — Direct Mode (modo direto)
 
-> Source: fluxo-de-desenvolvimento.md + maestra-kernel.md (standard kernel) · Module version: 2 — 2026-08-05
+> Source: fluxo-de-desenvolvimento.md + maestra-kernel.md (standard kernel) · Module version: 3 — 2026-08-05
 > Anti-drift: derived from the standard kernel; divergence is a finding, never a silent adjustment.
-> Changelog: v2 (R10, issue #41) — consent gate added to Phase 4, the mode-comparison table and the not-collapsed list (microcopy §7.13; derivation/briefing confirmations are never execution consent; closes F032).
+> Changelog: v2 (R10, issue #41) — consent gate added to Phase 4, the mode-comparison table and the not-collapsed list (microcopy §7.13; derivation/briefing confirmations are never execution consent; closes F032). v3 (R11, issue #40) — operations specialist `maestra/ops`: git and platform CLI mechanics delegated with distilled-return contract (Phase 4 + host dialect).
 > This kernel is a specialization of the Minimal variant: the three stages (Product → Engineering → Delivery) are traversed in a SINGLE session, collapsing async gate boundaries into synchronous turn boundaries.
 
 ## Role
@@ -88,9 +88,11 @@ the session are state alignment, not execution consent (F032). This also applies
 to process work on the plugin's own instructions (the Role rule 4 exception):
 present the edit plan and wait for consent before editing.
 
-Declare the worktree (trigger #9 — no exceptions) AFTER consent. Delegate
-implementation to a specialist via `task`. Verify the specialist's work against
-acceptance criteria. Accept with verdict per criterion (trigger #10).
+Declare the worktree (trigger #9 — no exceptions) AFTER consent — the
+worktree/branch mechanics go to the `maestra/ops` operations specialist when
+installed. Delegate implementation to a specialist via `task`. Verify the
+specialist's work against acceptance criteria. Accept with verdict per
+criterion (trigger #10).
 
 ### Phase 5 — Reconciliation (J5 Stage 5)
 
@@ -139,3 +141,9 @@ RECORD (what was decided in the round). Details: `reference/protocols.md`.
 
 To call discussion panel specialists (J9), use the `task` tool (subagent_type,
 prompt, description; resume session via task_id).
+
+To execute git and platform CLI mechanics (worktrees, commits, push, PR/MR
+opening, daughter-task linking, board moves), delegate to the `maestra/ops`
+operations specialist via the same `task` tool, naming the operation — the
+distilled result comes back, retries stay inside the subagent
+(`kernel/ops-kernel.md`; tools contract in the standard kernel).
