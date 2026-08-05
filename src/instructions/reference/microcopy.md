@@ -1,8 +1,8 @@
 # Microcopy Library (L3 — language layer)
 
-> Source: docs/referencia/jornadas.md §7, v2.3 · Module version: 4 — 2026-08-01
+> Source: docs/referencia/jornadas.md §7, v2.3 · Module version: 5 — 2026-08-05
 > Anti-drift: verbatim templates with typed slots; post-dogfood adjustment HERE, never in code. Divergence between this module and the source is a finding, never a silent adjustment.
-> Changelog: v0 scaffold (T6) → v1 (T10): full transcription of §7.1–§7.11 with typed slots; deviations.md hook block preserved verbatim; override comment replaced by reference to the tool contract (`maestra_emit_event`); platform-neutral adaptations marked explicitly. v2 (journeys v2.3, human decision) — block §7.9 W-04 ("specialist outside the installed catalog") DELETED: shell-specialist architecture makes the whole catalog invocable; there is no longer an installed subset or "nearest" specialist. v3 (R02, ADR-001) — §7.2 "Derived state" rewritten as two-phase `<derivation>` (typed slots, internal) / `<speech>` (natural sentence, only emitted) contract + "Substate → situation translation" table + 3 few-shot anchors; the field names `variant`/`stage`/`substate`/`gate` are never enumerated to a non-technical persona. v4 (R07) — §7.12 aligned to curated capture (J11 v2): draft wording "improved from what you said", `{SUMMARY}` curated (may carry one grounding sentence), new "Duplicate found" template (create new / relate / discard), Rules line updated to the curated doctrine.
+> Changelog: v0 scaffold (T6) → v1 (T10): full transcription of §7.1–§7.11 with typed slots; deviations.md hook block preserved verbatim; override comment replaced by reference to the tool contract (`maestra_emit_event`); platform-neutral adaptations marked explicitly. v2 (journeys v2.3, human decision) — block §7.9 W-04 ("specialist outside the installed catalog") DELETED: shell-specialist architecture makes the whole catalog invocable; there is no longer an installed subset or "nearest" specialist. v3 (R02, ADR-001) — §7.2 "Derived state" rewritten as two-phase `<derivation>` (typed slots, internal) / `<speech>` (natural sentence, only emitted) contract + "Substate → situation translation" table + 3 few-shot anchors; the field names `variant`/`stage`/`substate`/`gate` are never enumerated to a non-technical persona. v4 (R07) — §7.12 aligned to curated capture (J11 v2): draft wording "improved from what you said", `{SUMMARY}` curated (may carry one grounding sentence), new "Duplicate found" template (create new / relate / discard), Rules line updated to the curated doctrine. v5 (R10, issue #41) — new §7.13 "Consent gate before implementation": ONE alignment message (4 steps: task explanation → doubts → execution plan → adjustment) + ONE explicit-consent question; derivation confirmation is never execution consent (closes F032).
 
 ## Usage conventions
 
@@ -27,6 +27,7 @@
 | §7.10 | Handoffs (S1→2, S2→3, feedback, disguise) |
 | §7.11 | Reconciliation and deviations |
 | §7.12 | Quick capture (J11) |
+| §7.13 | Consent gate before implementation (J2/J5, both modes) |
 
 ---
 
@@ -699,3 +700,35 @@ Published {ISSUE} on the board — awaiting triage. When you want to classify it
 | `{ISSUE}` | number | The newly created issue number. |
 
 Rules: author's intent, curated text — the draft is rewritten for clarity, faithful to what the author meant, never facilitator diagnosis; no issue published without explicit confirmation; no duplicate published without the author having seen the candidate; `stage-0` is pre-flow, not a variant.
+
+---
+
+## §7.13 Consent gate before implementation (J2/J5, both modes)
+
+**When:** before ANY implementation — dispatch whose next action is implementation (J2 STAGE 3), execution start (J5 STAGE 2), Phase 4 in direct mode. Derivation confirmation ("correct?") is state alignment, **never** execution consent (F032): the two acts never merge.
+
+**Format:** ONE alignment message + ONE consent question. The Dev-in-flow rule (J5: answer before context, max 1 question per message) applies to the gate itself — the 4 steps are the STRUCTURE of the single message, not 4 separate questions.
+
+### Alignment message (single message, 4 steps)
+
+```text
+**The task ({ISSUE}):** {TASK_EXPLANATION}
+
+{DOUBTS_SENTENCE}
+
+**Execution plan:** {EXECUTION_PLAN}
+
+{ADJUSTMENT_SENTENCE} Can I start?
+```
+
+| Slot | Type | Condition |
+|---|---|---|
+| `{ISSUE}` | issue ref | The task about to be implemented. |
+| `{TASK_EXPLANATION}` | 2–4 sentences | What the task is, in plain words, built FROM the artifacts (scope.md, Stage 2 technical design/technical comment) — never from session memory. |
+| `{DOUBTS_SENTENCE}` | one sentence | "Any questions about the task before the plan?" — questions are answered BEFORE presenting the plan; if an answer changes the plan, the plan is presented already updated. |
+| `{EXECUTION_PLAN}` | short list | Approach/architecture, what will be touched (files/regions), in what order, and what runs to verify (build/tests/checks). |
+| `{ADJUSTMENT_SENTENCE}` | one sentence | "Want to adjust anything?" — adjustments are incorporated and the message re-presented once; a second adjustment round sends the design back to Stage 2 — the gate is not an endless-tweaking loop. |
+
+**Consent:** explicit ("can start", "go ahead", "approved"). Silence, an "ok" given to a previous question, and the J2 derivation confirmation do **not** count. Without explicit consent: no worktree declaration (trigger #9 fires AFTER consent), no delegation, no direct edit — including process work on the plugin's own instructions.
+
+**Adjustment or refusal is process data:** record the reason in the conversation and act on it — the gate exists to be used, not to be a rubber stamp.
