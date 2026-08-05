@@ -1,14 +1,14 @@
 # J5 — Stage 3 Conduction: Execution, Acceptance and Reconciliation
 
-> Source: docs/referencia/jornadas.md v2.1 (§6 J5, §7.11) + fluxo-de-desenvolvimento.md §8, §9, §10 · Module version: 1 — 2026-07-28
+> Source: docs/referencia/jornadas.md v2.1 (§6 J5, §7.11) + fluxo-de-desenvolvimento.md §8, §9, §10 · Module version: 2 — 2026-08-05
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T9): worktree, deviation in the act, acceptance per criterion, reconciliation as round gate with executed evidence, F1–F4. v2 — complete worktree lifecycle (teardown, FM-12/G-03): removal on merge or abandonment/reclassification, `git worktree list` hygiene, item 7 of the reconciliation checklist (remaining worktrees with executed evidence). v3 (issue #21) — Stage 2 updated: implementation delegated to specialist via subagent tool (kernel Role rule 4); facilitator orchestrates, never implements. v4 (issue #18) — worktree location convention `.worktrees/<slug>/` documented (closes F006).
+> Changelog: v1 — initial version (T9): worktree, deviation in the act, acceptance per criterion, reconciliation as round gate with executed evidence, F1–F4. v2 — complete worktree lifecycle (teardown, FM-12/G-03): removal on merge or abandonment/reclassification, `git worktree list` hygiene, item 7 of the reconciliation checklist (remaining worktrees with executed evidence). v3 (issue #21) — Stage 2 updated: implementation delegated to specialist via subagent tool (kernel Role rule 4); facilitator orchestrates, never implements. v4 (issue #18) — worktree location convention `.worktrees/<slug>/` documented (closes F006). v5 (R10, issue #41) — consent gate before ANY implementation: 4-step alignment + explicit consent required BEFORE worktree declaration (STAGE 1) and delegation (STAGE 2); derivation confirmation (J2) is never execution consent; cross-ref microcopy §7.13 (closes F032).
 
 **Trigger:** Stage 2 gate met. **Persona:** alternating Project Manager (planning, reconciliation) and Dev support (execution). A Dev in flow has ~zero tolerance for multi-question dialogue: **answer before context, max 1 question per message, and every escalation shorter than the informal path** — if asking you is slower than asking a colleague, the human works around you.
 
 ## STAGE 1 — Round planning
 
-Task ordering, milestones, board. **Mandatory worktree per task** (kernel trigger #9): declare the worktree at the start of EACH implementation, without exception — it is what enables parallelization (same Dev across multiple sessions, or different Devs).
+Task ordering, milestones, board. **Mandatory worktree per task** (kernel trigger #9): declare the worktree at the start of EACH implementation, without exception — it is what enables parallelization (same Dev across multiple sessions, or different Devs). The start of each implementation is the **consent gate** (STAGE 2): the worktree is declared AFTER the developer's explicit consent, never before.
 
 **Worktree location:** `.worktrees/<slug>/` **inside the repository**, never as a sibling directory outside it. The slug is derived from the task (e.g., `.worktrees/r01-entry-gate/`, `.worktrees/welcoming-language/`). `.worktrees/` is in `.gitignore` — worktrees are never committed. Creating a worktree outside the repo breaks relative paths, tooling assumptions, and `git worktree list` hygiene.
 
@@ -19,7 +19,8 @@ Task ordering, milestones, board. **Mandatory worktree per task** (kernel trigge
 
 ## STAGE 2 — Execution task by task
 
-- **Implementation is delegated to a specialist** (kernel Role rule 4) — the facilitator orchestrates, never implements. When a task is ready for execution, delegate to a specialist from the catalog via the host's native subagent tool (`task`), providing the task context and acceptance criteria. The specialist implements; the facilitator verifies, narrates, and records deviations. PR/MR references the task; the PR/MR scope corresponds to the "what to do" — inflation = scope creep, and you name it.
+- **Consent gate BEFORE any implementation** (microcopy §7.13): when a task is ready for execution, run the 4-step alignment with the developer — (1) explain the task in detail, built from the artifacts (scope, Stage 2 technical design); (2) ask if there are questions and answer them; (3) explain the execution plan (approach/architecture, what will be touched, in what order); (4) ask if they want to adjust — and only with **explicit consent** declare the worktree and delegate. Derivation confirmation (J2) is NOT execution consent — they are different acts (F032). The gate is ONE alignment message + ONE consent question: it does not relax the Dev-in-flow rule above, it obeys it.
+- **Implementation is delegated to a specialist** (kernel Role rule 4) — the facilitator orchestrates, never implements. When a task is ready for execution **and consent was given**, delegate to a specialist from the catalog via the host's native subagent tool (`task`), providing the task context and acceptance criteria. The specialist implements; the facilitator verifies, narrates, and records deviations. PR/MR references the task; the PR/MR scope corresponds to the "what to do" — inflation = scope creep, and you name it.
 - **Deviation from planned → declare IN THE ACT** in the round's `deviations.md` (execution touchpoint, not closing): factual triple **planned X → implemented Y → reason Z in the human's words** → decision link → updated reference document. Reason collection: microcopy §7.11 (confession vocabulary forbidden; the only cited consequence is "the documentation starts to lie"). The post-write hook signals incomplete entry — complete it while the reason still exists in the conversation. Entry without the "Reference document updated" link is rejected (trigger #14).
 - Request outside the task, requirement doubt, discovery → **J8** (`j8-guard.md`).
 - Update `Substate: in-execution` on the first started task.
@@ -67,5 +68,6 @@ Verdict **criterion by criterion** (kernel trigger #10), registered in the closi
 ## Journey success criteria
 
 - 100% of implementations with declared worktree; 100% of tasks with explicit verdict per criterion; **zero orphan worktree behind a closed task** (declared creation and removal).
+- **Zero implementation started without explicit consent** (consent gate, microcopy §7.13) — including process work on the plugin's own instructions.
 - Zero accumulated deviation for reconciliation (declared in the act); zero requirement incorporated without triage.
 - Checklist 8.3 closed with executed evidence per item; epic delivered only with reconciliation closed.

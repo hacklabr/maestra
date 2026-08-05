@@ -1,7 +1,8 @@
 # L0 Kernel — Direct Mode (modo direto)
 
-> Source: fluxo-de-desenvolvimento.md + maestra-kernel.md (standard kernel) · Module version: 1 — 2026-08-01
+> Source: fluxo-de-desenvolvimento.md + maestra-kernel.md (standard kernel) · Module version: 2 — 2026-08-05
 > Anti-drift: derived from the standard kernel; divergence is a finding, never a silent adjustment.
+> Changelog: v2 (R10, issue #41) — consent gate added to Phase 4, the mode-comparison table and the not-collapsed list (microcopy §7.13; derivation/briefing confirmations are never execution consent; closes F032).
 > This kernel is a specialization of the Minimal variant: the three stages (Product → Engineering → Delivery) are traversed in a SINGLE session, collapsing async gate boundaries into synchronous turn boundaries.
 
 ## Role
@@ -37,7 +38,7 @@ session**:
 | Standard flow (async) | Direct mode (synchronous) |
 |---|---|
 | Stage 1 ends → async handoff → Engineering picks up later | Stage 1 artifacts produced → **continue immediately** to Stage 2 in the same session |
-| Stage 2 ends → async handoff → implementation wave assigned | Stage 2 design produced → **delegate implementation** to specialist → verify → **continue** to reconciliation |
+| Stage 2 ends → async handoff → implementation wave assigned | Stage 2 design produced → **consent gate** → **delegate implementation** to specialist → verify → **continue** to reconciliation |
 | Stage 3 ends → reconciliation as separate session | Reconciliation runs **right after** implementation is accepted |
 
 The gates (acceptance criteria, out of scope, verdict per criterion, deviation
@@ -79,9 +80,17 @@ implementation surface. ADR only if lasting technical decision.
 
 ### Phase 4 — Implementation (J5 Stage 3)
 
-Declare the worktree (trigger #9 — no exceptions). Delegate implementation to a
-specialist via `task`. Verify the specialist's work against acceptance criteria.
-Accept with verdict per criterion (trigger #10).
+**Consent gate first** (microcopy §7.13): before any worktree or delegation, run
+the 4-step alignment with the developer — explain the task in detail from the
+artifacts, answer questions, present the execution plan, offer adjustment — and
+proceed only on **explicit consent**. The briefing/design approvals earlier in
+the session are state alignment, not execution consent (F032). This also applies
+to process work on the plugin's own instructions (the Role rule 4 exception):
+present the edit plan and wait for consent before editing.
+
+Declare the worktree (trigger #9 — no exceptions) AFTER consent. Delegate
+implementation to a specialist via `task`. Verify the specialist's work against
+acceptance criteria. Accept with verdict per criterion (trigger #10).
 
 ### Phase 5 — Reconciliation (J5 Stage 5)
 
@@ -94,6 +103,7 @@ correct, retrospective filled, worktrees handled. Close the round.
 These elements are **never skipped or weakened** in direct mode:
 
 - **Entry gate** (`maestra_status` → entry door → journey module).
+- **Consent gate before implementation** (microcopy §7.13 — explicit consent; derivation/briefing confirmation is not consent).
 - **Acceptance criteria + out of scope** (trigger #4 — blocking).
 - **Worktree per implementation** (trigger #9).
 - **Verdict per criterion** (trigger #10).

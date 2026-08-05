@@ -1,8 +1,8 @@
 # J2 — Context Resumption by Issue
 
-> Source: docs/referencia/jornadas.md v2.2 (§5 P1.1 subestados, §6 J2; gaps G-04, G-06, G-07, G-12) · Module version: 3 — 2026-07-28
+> Source: docs/referencia/jornadas.md v2.2 (§5 P1.1 subestados, §6 J2; gaps G-04, G-06, G-07, G-12) · Module version: 4 — 2026-08-05
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T8): digest enumerates → model derives, closed vocabulary P1.1, facts-win-over-field, branches B1–B6, board after confirmation. v2 (journeys v2.2, human decision) — mirror state file eliminated: derivation is ALWAYS digest + platform docs, every session; removed the branch of cache reading. v3 (R02, ADR-001) — STAGE 2 header rewritten: short imperative replaces field enumeration; cross-refs microcopy §7.2 two-phase template; field names stay internal, spoken as consequences. v4 (R03) — branch B1a added: `stage-0` label recognized as flow marker; promotion path to J1 offered.
+> Changelog: v1 — initial version (T8): digest enumerates → model derives, closed vocabulary P1.1, facts-win-over-field, branches B1–B6, board after confirmation. v2 (journeys v2.2, human decision) — mirror state file eliminated: derivation is ALWAYS digest + platform docs, every session; removed the branch of cache reading. v3 (R02, ADR-001) — STAGE 2 header rewritten: short imperative replaces field enumeration; cross-refs microcopy §7.2 two-phase template; field names stay internal, spoken as consequences. v4 (R03) — branch B1a added: `stage-0` label recognized as flow marker; promotion path to J1 offered. v5 (R10, issue #41) — STAGE 3: dispatch whose next action is implementation lands on the consent gate (J5 STAGE 2, microcopy §7.13); derivation confirmation is state alignment, never execution consent (closes F032).
 
 **Trigger:** issue number. **Promise:** "where we are, what is missing, who I am now" — **zero questions about state present on the platform or in the docs**. Interrogating the human about what the platform already knows destroys the value proposition of this door.
 
@@ -77,4 +77,6 @@ Assume the persona and dispatch, reading the corresponding module:
 - Technical variant, or substate `awaiting-s1-approval` → `j6-technical.md`
 - Substate `awaiting-feedback-decision` → `j7-feedback.md`
 
-**Journey success criteria:** zero re-request of information already present in the artifacts; derivation verified (daughters one by one via digest); board moved after confirmation, never before; every contradiction named, none hidden.
+**Dispatch to implementation lands on the consent gate** (microcopy §7.13): when the next action is implementation (Stage 3 here, Phase 4 in direct mode), the derivation confirmation above was state alignment, NOT execution consent — the 4-step alignment (explain the task, answer questions, present the execution plan, offer adjustment) runs first, and implementation only starts with the developer's explicit consent (F032). Dispatches to Stages 1 and 2 are unchanged.
+
+**Journey success criteria:** zero re-request of information already present in the artifacts; derivation verified (daughters one by one via digest); board moved after confirmation, never before; every contradiction named, none hidden; **implementation never started on derivation confirmation alone** — explicit consent via the consent gate (microcopy §7.13).
