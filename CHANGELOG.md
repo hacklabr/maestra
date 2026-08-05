@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-05
+
+### Added
+
+- `maestra/ops` operations specialist (R11, issue #40): a subagent that
+  executes git and issue-platform mechanics (worktrees, branches, commits,
+  pushes, PR/MR opening, task linking, board moves) on behalf of the
+  facilitator under a distilled-return contract — retries and raw command
+  output stay inside the ops session; the caller receives only the distilled
+  success or a precise final error. Installer writes the ops agent for both
+  hosts; smoke suite asserts 2 subagents (shell + ops) per cell.
+- Consent gate before implementation (R10): the facilitator must obtain
+  explicit human consent before any implementation begins — wired into J2
+  (resume), J5 (stage 3), the direct-mode kernel, and microcopy §7.13.
+
+### Changed
+
+- README: "How the flow works" intro with one mermaid diagram per agent, and
+  a dedicated section for the operations specialist.
+
 ## [1.0.0] - 2026-08-03
 
 First stable release of Maestra — a development workflow facilitator plugin
@@ -61,5 +81,6 @@ for OpenCode and Mimo Code. The plugin is the discipline; the issue platform
 - Round setup conventions and discovery conduct in journeys.
 - Protocol P6 board movement rewrite and P1 metadata atomicity.
 
-[Unreleased]: https://github.com/hacklabr/maestra/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/hacklabr/maestra/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/hacklabr/maestra/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/hacklabr/maestra/releases/tag/v1.0.0
