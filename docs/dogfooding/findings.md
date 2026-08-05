@@ -616,3 +616,11 @@
 - Sintoma: Primeira tentativa com `deviations_during`/`deviations_at_reconciliation` (nomes inferidos do texto renderizado do evento) falhou com "Invalid payload for event type F: during: Required; at_reconciliation: Required". O schema real exige `during` e `at_reconciliation`. O texto renderizado do evento ("deviations during=0, at-reconciliation=0") induz nomes errados, e o `instrumentation.md` já é sabido divergente do schema (F024) — mesma família, agora confirmada também para o type=F.
 - Tentativas/workaround: 2 tentativas; lido o erro de validação e corrigidos os campos. Reforça a urgência de alinhar `instrumentation.md` ao schema zod real (F024, candidato a doc-bug).
 - Status: open
+
+## F032 — Retomada por issue confirma estado e sai implementando, sem alinhamento nem consentimento
+- Data: 2026-08-05
+- Categoria: instruction-ambiguous
+- Origem: sessão ad-hoc (relato do humano em triagem de nova demanda, 2026-08-05) — retomada de issue via número (J2 → J5)
+- Sintoma: O humano abriu sessão informando um número de issue. O Facilitador derivou o estado, perguntou apenas se a issue era a correta e, na confirmação, partiu direto para a implementação. O humano esperava (e o fluxo não entregou): (1) explicação detalhada do que é a tarefa; (2) pergunta explícita sobre dúvidas; (3) apresentação do plano de execução/arquitetura; (4) oportunidade de ajustar o plano; (5) consentimento explícito ANTES de implementar. A J2 STAGE 3 manda "assume the persona and dispatch" logo após a confirmação da derivação, e a J5 STAGE 2 delega implementação "when a task is ready for execution" — nenhum dos dois módulos exige gate de consentimento. A confirmação da derivação ("correto?") é tratada como consentimento de execução, mas são coisas distintas (mesma família do F008/F010: confundir "entendimento confirmado" com "trabalho autorizado").
+- Tentativas/workaround: Nenhuma na sessão observada — o humano interrompeu e relatou a falha em sessão posterior, convertendo em demanda de mudança de fluxo (triagem J1 na sessão do registro). Comportamento desejado especificado pelo humano em 4 passos: explicar a tarefa → perguntar dúvidas → explicar plano de execução → perguntar se quer ajustar → só implementar com consentimento.
+- Status: triaged→R10
