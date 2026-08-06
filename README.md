@@ -130,8 +130,8 @@ The platform is **not** baked in at install time: it is detected **per repositor
 
 ## Instructions architecture (L0–L4)
 
-- **L0 kernel** (~2.5k tokens, always resident): role, router of the two entry doors, the 16 anti-bypass as one-line triggers, tools contract — platform-neutral vocabulary.
-- **L1/L2 journey modules** (J1–J10), loaded on demand; **L3/L4 reference library**: editable microcopy, protocols, templates and cookbooks per platform (`cookbook-github.md`, `cookbook-gitlab.md` — the CLI dialect lives only in them).
+- **L0 kernel** (~2.5k tokens, always resident): role, entry-doors router (issue number → J2, setup intent → J12, capture intent → J11, free text → J1), the anti-bypass as one-line triggers, tools contract — platform-neutral vocabulary.
+- **L1/L2 journey modules** (J1–J12), loaded on demand; **L3/L4 reference library**: editable microcopy, protocols, templates and cookbooks per platform (`cookbook-github.md`, `cookbook-gitlab.md` — the CLI dialect lives only in them).
 - Typical session ≈ 6–8k tokens of instructions (vs ~27k monolithic; toolset ≈ 1k tokens/msg vs Mesa's ~8–12k).
 
 ## Evals — "harness or no-dogfood"

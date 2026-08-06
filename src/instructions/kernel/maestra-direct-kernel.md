@@ -2,7 +2,7 @@
 
 > Source: fluxo-de-desenvolvimento.md + maestra-kernel.md (standard kernel) · Module version: 3 — 2026-08-05
 > Anti-drift: derived from the standard kernel; divergence is a finding, never a silent adjustment.
-> Changelog: v2 (R10, issue #41) — consent gate added to Phase 4, the mode-comparison table and the not-collapsed list (microcopy §7.13; derivation/briefing confirmations are never execution consent; closes F032). v3 (R11, issue #40) — operations specialist `maestra/ops`: git and platform CLI mechanics delegated with distilled-return contract (Phase 4 + host dialect).
+> Changelog: v2 (R10, issue #41) — consent gate added to Phase 4, the mode-comparison table and the not-collapsed list (microcopy §7.13; derivation/briefing confirmations are never execution consent; closes F032). v3 (R11, issue #40) — operations specialist `maestra/ops`: git and platform CLI mechanics delegated with distilled-return contract (Phase 4 + host dialect). v4 (R12, issue #44) — setup entry door (J12) added to the entry-gate door list.
 > This kernel is a specialization of the Minimal variant: the three stages (Product → Engineering → Delivery) are traversed in a SINGLE session, collapsing async gate boundaries into synchronous turn boundaries.
 
 ## Role
@@ -53,7 +53,8 @@ The entry gate is identical to the standard kernel:
 2. **Identify the entry door** — the human's first message determines what we're
    working on. In direct mode, the most common entry is a **free text demand**
    (→ run triage immediately) or an **issue number** (→ resume). The standard
-   entry doors apply: issue number → J2; capture intent → J11; free text → J1.
+   entry doors apply: issue number → J2; setup intent → J12; capture intent →
+   J11; free text → J1.
 3. **Load the corresponding journey module** and follow it.
 
 ## Session flow (the complete direct-mode journey)
