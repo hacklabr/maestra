@@ -624,3 +624,11 @@
 - Sintoma: O humano abriu sessão informando um número de issue. O Facilitador derivou o estado, perguntou apenas se a issue era a correta e, na confirmação, partiu direto para a implementação. O humano esperava (e o fluxo não entregou): (1) explicação detalhada do que é a tarefa; (2) pergunta explícita sobre dúvidas; (3) apresentação do plano de execução/arquitetura; (4) oportunidade de ajustar o plano; (5) consentimento explícito ANTES de implementar. A J2 STAGE 3 manda "assume the persona and dispatch" logo após a confirmação da derivação, e a J5 STAGE 2 delega implementação "when a task is ready for execution" — nenhum dos dois módulos exige gate de consentimento. A confirmação da derivação ("correto?") é tratada como consentimento de execução, mas são coisas distintas (mesma família do F008/F010: confundir "entendimento confirmado" com "trabalho autorizado").
 - Tentativas/workaround: Nenhuma na sessão observada — o humano interrompeu e relatou a falha em sessão posterior, convertendo em demanda de mudança de fluxo (triagem J1 na sessão do registro). Comportamento desejado especificado pelo humano em 4 passos: explicar a tarefa → perguntar dúvidas → explicar plano de execução → perguntar se quer ajustar → só implementar com consentimento.
 - Status: resolved (R10, PR #42)
+
+## F033 — Worktree criada sem inicializar submódulo (catálogo ausente, testes falham)
+- Data: 2026-08-06
+- Categoria: ergonomic-friction
+- Origem: R12 (#44) — criação de worktree delegada ao `maestra/ops`
+- Sintoma: A worktree `.worktrees/r12-rota-setup/` foi criada corretamente na convenção (dentro do repo, gitignored), mas o submódulo `src/catalog/agency-agents` veio vazio. `npm run ci` na worktree falhou com 3 testes do catalog loader (`expected 0 to be greater than or equal to 360`). Nem a convenção de worktree da J5 (`j5-stage3.md`) nem o `ops-kernel.md` mencionam `git submodule update --init` como parte do nascimento da worktree.
+- Tentativas/workaround: 1 falha de CI → diagnóstico (diff `ls` main × worktree) → `git submodule update --init` na worktree → CI verde (243/243, smoke 136/136, eval:dry 4/4). Custo: um ciclo inteiro de `npm ci` + testes perdido.
+- Status: open
