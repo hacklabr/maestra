@@ -1,0 +1,109 @@
+# R15 — QA session (J2 branch B7, microcopy §7.14): the facilitator RUNS the
+# guided session. Mock-driven (vars.mock — R02 doctrine): the golden script
+# pins the order contract — presentation (what was done + acceptance criteria
+# one by one + where to validate in the test environment) BEFORE any mutation;
+# transitions (close/card/reassign/metadata) only AFTER the human verdict.
+
+- description: "R15 QA-approve: entry 'vou fazer o QA da #33' presents task + criteria + where to validate BEFORE any mutation; verdict closes issue + card to approval column + round awaiting-reconciliation (one act, three touchpoints)"
+  vars:
+    fixture: fixtures/github/r15-awaiting-qa.json
+    repo: fixtures/repo/r15-fluxo-qa.json
+    modules: ["journeys/j2-resume.md"]
+    mock: true
+    entry: "vou fazer o QA da #33"
+    humanScript:
+      - "Aprovado — validei no ambiente de testes, os três critérios passaram."
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "maestra_issue_digest", args: { issue: 33 } }
+      - toolCall: { name: "read", args: { filePath: ".maestra/workflow.md" } }
+      - toolCall: { name: "read", args: { filePath: "docs/rounds/R15-2026-08-shipping-cost-fix/scope.md" } }
+      - text: "QA of #33 (fix the shipping cost at checkout), round R15 (shipping cost). Here's what was done: the calculation now applies the region rules and the free-shipping promotions, merged in PR/MR #34. Acceptance criteria, one by one: (1) the checkout shows the updated shipping cost right after the address is chosen; (2) free shipping (FOX promotion) appears for the SE region; (3) the totals recalculate without reloading the page. Where to validate: the test environment (staging checkout, the FOX/SE case is included). Any questions? I answer here in the chat — when you have the verdict, I register it."
+      - toolCall:
+          name: "bash"
+          args:
+            command: 'gh issue close 33 --repo acme/loja --comment "QA verdict: approved — criteria met one by one (updated cost after address; FOX free shipping in SE; totals without reload). — facilitator"'
+      - toolCall:
+          name: "bash"
+          args:
+            command: "gh project item-edit --project-id PVT_kwDOAB --id PVTI_33 --field-id PVTSSF_lADO --single-select-option-id 98236657"
+      - toolCall:
+          name: "bash"
+          args:
+            command: "gh issue edit 33 --repo acme/loja --body-file updated-body.md"
+      - text: "QA approved #33. Registering in one act: issue closed with the QA verdict, card moved to Done, and the round enters the final review (#35)."
+    expectedCallOrder:
+      - "tool:maestra_issue_digest"
+      - "tool:read.*workflow\\.md"
+      - "exec:.*issue close"
+      - "exec:.*item-edit"
+      - "exec:.*--body-file"
+    requiredPatterns:
+      - "one by one"
+      - "test environment|staging"
+      - "Done"
+      - "final review"
+  assert:
+    - type: javascript
+      value: file://asserts/qa-session.mjs
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/round-anchor-spoken.mjs
+
+- description: "R15 QA-reject: verdict moves card to Ready + reassigns the implementer + qa-rejected + comment naming WHAT failed (no blame language)"
+  vars:
+    fixture: fixtures/github/r15-awaiting-qa.json
+    repo: fixtures/repo/r15-fluxo-qa.json
+    modules: ["journeys/j2-resume.md"]
+    mock: true
+    entry: "vou fazer o QA da #33"
+    humanScript:
+      - "Reprovado — o frete grátis da FOX não aparece pra SE."
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "maestra_issue_digest", args: { issue: 33 } }
+      - toolCall: { name: "read", args: { filePath: ".maestra/workflow.md" } }
+      - toolCall: { name: "read", args: { filePath: "docs/rounds/R15-2026-08-shipping-cost-fix/scope.md" } }
+      - text: "QA of #33 (fix the shipping cost at checkout), round R15 (shipping cost). Here's what was done: the calculation now applies the region rules and the free-shipping promotions, merged in PR/MR #34. Acceptance criteria, one by one: (1) the checkout shows the updated shipping cost right after the address is chosen; (2) free shipping (FOX promotion) appears for the SE region; (3) the totals recalculate without reloading the page. Where to validate: the test environment (staging checkout, the FOX/SE case is included). Any questions? I answer here in the chat — when you have the verdict, I register it."
+      - toolCall:
+          name: "bash"
+          args:
+            command: "gh issue edit 33 --repo acme/loja --remove-assignee quesia --add-assignee debora"
+      - toolCall:
+          name: "bash"
+          args:
+            command: "gh project item-edit --project-id PVT_kwDOAB --id PVTI_33 --field-id PVTSSF_lADO --single-select-option-id 00314bd5"
+      - toolCall:
+          name: "bash"
+          args:
+            command: "gh issue edit 33 --repo acme/loja --body-file updated-body.md"
+      - toolCall:
+          name: "bash"
+          args:
+            command: 'gh issue comment 33 --repo acme/loja --body "QA rejected — what failed: free shipping (FOX) does not appear for SE. Task back to whoever implemented it. — facilitator"'
+      - text: "QA found problems in #33: the free shipping for FOX/SE does not appear. The task goes back to @debora, who implemented it, with the failure named in the comment — card back in Ready. When the fix is in, we validate again."
+    expectedCallOrder:
+      - "tool:maestra_issue_digest"
+      - "exec:.*--remove-assignee.*--add-assignee"
+      - "exec:.*item-edit"
+      - "exec:.*issue comment"
+    requiredPatterns:
+      - "Ready"
+      - "debora"
+      - "FOX"
+    forbiddenPatterns:
+      - "unfortunately"
+      - "didn't work out"
+      - "we had to"
+  assert:
+    - type: javascript
+      value: file://asserts/qa-session.mjs
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/forbidden-patterns.mjs

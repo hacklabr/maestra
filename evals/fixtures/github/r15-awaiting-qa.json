@@ -1,0 +1,66 @@
+{
+  "id": "r15-awaiting-qa",
+  "description": "Task #33 accepted in qa mode (PR/MR #34 merged, implemented by @debora) — substate awaiting-qa, card In review, assigned to QA (@quesia). Stage for the R15 QA-session scenarios (J2 branch B7).",
+  "digests": {
+    "33": {
+      "platform": {
+        "kind": "github",
+        "host": "github.com",
+        "project": "acme/loja"
+      },
+      "issue": {
+        "number": 33,
+        "id": 9033,
+        "title": "Fix shipping cost calculation at checkout",
+        "state": "open",
+        "url": "https://github.com/acme/loja/issues/33"
+      },
+      "labels": {
+        "variant": null,
+        "stages": ["stage-3"],
+        "markers": []
+      },
+      "metadata": {
+        "variant": "condensed",
+        "currentStage": "stage-3",
+        "epic": 31,
+        "round": "R15",
+        "substate": "awaiting-qa"
+      },
+      "parent": 31,
+      "children": [],
+      "comments": [
+        {
+          "type": "facilitator",
+          "author": "rafael",
+          "date": "2026-08-18T10:00:00Z",
+          "body": "Acceptance verdict registered — criteria met one by one. PR/MR #34 merged (implemented by @debora); task awaiting QA validation in the test environment, assigned to @quesia. — facilitator"
+        }
+      ],
+      "board": {
+        "column": "In review"
+      },
+      "gate": {
+        "perStage": {},
+        "noStage": 0,
+        "reconciliation": {
+          "exists": true,
+          "state": "open",
+          "number": 35
+        }
+      },
+      "artifacts": [],
+      "hierarchy": {
+        "type": "sub-issues",
+        "taskCompletion": null,
+        "desync": []
+      },
+      "pagination": {
+        "childrenTruncated": false,
+        "commentsTruncated": false
+      },
+      "errors": []
+    }
+  },
+  "execRoutes": []
+}

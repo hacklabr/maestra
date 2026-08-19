@@ -1,0 +1,9 @@
+{
+  "id": "r15-fluxo-qa",
+  "description": "Round R15 (shipping cost fix) with .maestra/workflow.md in qa mode and a team map carrying a QA specialty (@quesia). Stage for the R15 QA-session scenarios.",
+  "files": {
+    ".maestra/workflow.md": "# Post-PR/MR workflow\n\n- post-pr-acceptance: qa\n- qa-approval-column: Done\n",
+    ".maestra/team.md": "# Team map\n\n- @rafael — Product (PO)\n- @maria — Engineering (senior back-end dev)\n- @debora — Delivery (mid-level back-end dev)\n- @quesia — Delivery (QA)\n",
+    "docs/rounds/R15-2026-08-shipping-cost-fix/scope.md": "# Scope of round R15 — Fix shipping cost calculation at checkout\n\n## Variant\n\ncondensed\n\n## Requirements introduced\n\n- RF-07 — The checkout shows the correct shipping cost for each region, including free-shipping promotions.\n\n## Acceptance criteria\n\n- The checkout shows the updated shipping cost immediately after the address is chosen.\n- Free shipping (promotion FOX) appears for the SE region.\n- The totals recalculate without reloading the page.\n\n## Out of scope for this round\n\n- International shipping.\n"
+  }
+}
