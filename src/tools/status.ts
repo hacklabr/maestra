@@ -4,7 +4,9 @@ import { tool } from "../host-types.js"
 import { resolveForge } from "../platform/adapter.js"
 import { getExec, getFetch, getHostDetect, getMcpScan } from "../platform/runtime.js"
 import { runCli, type ExecFn } from "../platform/exec.js"
+import { hasConfigFile, hasLegacyDotMaestra } from "../platform/config-store.js"
 import type { FetchProbe } from "../platform/detect.js"
+import type { ConfigWriteResult } from "../platform/config-store.js"
 import { PLUGIN_VERSION } from "../version.js"
 
 /**
@@ -84,12 +86,23 @@ export const maestraStatusTool = tool({
     const notes: string[] = []
 
     const host = getHostDetect()()
-    const resolved = await resolveForge(context.directory)
+    const writes: ConfigWriteResult[] = []
+    const resolved = await resolveForge(context.directory, {
+      onWrite: (result) => writes.push(result),
+    })
     const forge = resolved?.forge ?? null
     if (!forge) {
       notes.push(
-        "Issue platform not detected: ask ONCE (GitHub or GitLab? which host?) and persist in .maestra/config.md (ADR-010).",
+        "Issue platform not detected: ask ONCE (GitHub or GitLab? which host?) and persist the answer " +
+          "in config.md on the __maestra_config__ branch (ADR-003; maestra_status or maestra-config migrate).",
       )
+    }
+    for (const write of writes) {
+      if (write.error) {
+        notes.push(`Config persist FAILED on ${write.branch}: ${write.error} — detection still valid for this session.`)
+      } else if (!write.pushed && write.pushNote) {
+        notes.push(`Config committed on ${write.branch} but push degraded (${write.pushNote.reason}): ${write.pushNote.detail}`)
+      }
     }
 
     const cliForge = forge?.kind === "github" ? "gh" : forge?.kind === "gitlab" ? "glab" : null
@@ -118,6 +131,16 @@ export const maestraStatusTool = tool({
 
     const cliOk = cliForge === "gh" ? gh.present && gh.authenticated === true : cliForge === "glab" ? glab.present && glab.authenticated === true : false
 
+    // RF-34/RF-35: config files live on the __maestra_config__ branch; the
+    // flags mean "file present on the resolved branch ref", not on disk.
+    const [teamMd, maestraConfig] = await Promise.all([
+      hasConfigFile(context.directory, "team.md"),
+      hasConfigFile(context.directory, "config.md"),
+    ])
+    if (hasLegacyDotMaestra(context.directory)) {
+      notes.push("legacy .maestra/ found — run maestra-config migrate (config lives on branch __maestra_config__)")
+    }
+
     const report = {
       pluginVersion: PLUGIN_VERSION,
       host: { id: host.id, evidence: host.evidence },
@@ -136,8 +159,8 @@ export const maestraStatusTool = tool({
       repo: {
         referenceDocs: existsSync(join(context.directory, "docs", "reference")),
         rounds: existsSync(join(context.directory, "docs", "rounds")),
-        teamMd: existsSync(join(context.directory, ".maestra", "team.md")),
-        maestraConfig: existsSync(join(context.directory, ".maestra", "config.md")),
+        teamMd,
+        maestraConfig,
       },
       notes,
     }

@@ -1,5 +1,5 @@
 import { mkdtempSync } from "node:fs"
-import { mkdir, writeFile } from "node:fs/promises"
+import { mkdir } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { afterEach, describe, expect, it } from "vitest"
@@ -7,6 +7,7 @@ import { maestraStatusTool } from "../status.js"
 import { defaultExec } from "../../platform/exec.js"
 import { setExec, setFetch, setHostDetect, setMcpScan } from "../../platform/runtime.js"
 import { makeExecStub } from "../../platform/__tests__/helpers.js"
+import { initRepoWithOrphanConfig } from "../../platform/__tests__/git-repo.js"
 
 const ctx = (directory: string) => ({ sessionID: "test", directory }) as never
 
@@ -17,15 +18,16 @@ afterEach(() => {
   setMcpScan(async () => ({ github: "not-found", gitlab: "not-found" }))
 })
 
+/** Real git repo + config.md on the orphan branch (R14 fixture). */
 async function makeRepo(platform: "github" | "gitlab"): Promise<string> {
-  const dir = mkdtempSync(join(tmpdir(), `maestra-status-${platform}-`))
-  await mkdir(join(dir, ".maestra"), { recursive: true })
+  const dir = await initRepoWithOrphanConfig(
+    {
+      "config.md": `- platform: ${platform}\n- host: ${platform === "github" ? "github.com" : "gitlab.com"}\n- project: ${platform === "github" ? "acme/loja" : "grupo/loja"}\n`,
+    },
+    `maestra-status-${platform}-`,
+  )
   await mkdir(join(dir, "docs", "reference"), { recursive: true })
   await mkdir(join(dir, "docs", "rounds"), { recursive: true })
-  await writeFile(
-    join(dir, ".maestra", "config.md"),
-    `- platform: ${platform}\n- host: ${platform === "github" ? "github.com" : "gitlab.com"}\n- project: ${platform === "github" ? "acme/loja" : "grupo/loja"}\n`,
-  )
   return dir
 }
 
@@ -68,11 +70,9 @@ describe("maestra_status", () => {
   })
 
   it("GitLab self-hosted: glab authed with --hostname, Developer → read-write board", async () => {
-    const dir = mkdtempSync(join(tmpdir(), "maestra-status-gls-"))
-    await mkdir(join(dir, ".maestra"), { recursive: true })
-    await writeFile(
-      join(dir, ".maestra", "config.md"),
-      "- platform: gitlab\n- host: gitlab.acme.com\n- project: grupo/loja\n",
+    const dir = await initRepoWithOrphanConfig(
+      { "config.md": "- platform: gitlab\n- host: gitlab.acme.com\n- project: grupo/loja\n" },
+      "maestra-status-gls-",
     )
     const { exec, calls } = makeExecStub([
       [/^gh --version/, { stderr: "command not found", code: 127 }],
@@ -126,5 +126,61 @@ describe("maestra_status", () => {
     expect(report.cli.gh.authenticated).toBe(false)
     expect(report.capabilities.cli).toBe(false)
     expect(report.notes.join(" ")).toContain("NOT authenticated")
+  })
+
+  it("teamMd comes from the orphan branch, not the working tree", async () => {
+    const dir = await initRepoWithOrphanConfig(
+      { "config.md": "- platform: github\n- host: github.com\n- project: acme/loja\n", "team.md": "# Team\n" },
+      "maestra-status-team-",
+    )
+    const { exec } = makeExecStub([
+      [/^gh --version/, { stdout: "gh version 2.96.0\n" }],
+      [/^gh auth status/, { stdout: "✓ Logged in" }],
+      [/^glab --version/, { stderr: "command not found", code: 127 }],
+      [/^gh project list/, { stdout: "1\tFluxo\t…" }],
+    ])
+    setExec(exec)
+
+    const report = parse(await maestraStatusTool.execute({}, ctx(dir)))
+    expect(report.repo).toEqual({ referenceDocs: false, rounds: false, teamMd: true, maestraConfig: true })
+    expect(report.notes.join(" ")).not.toContain("legacy")
+  })
+
+  it("legacy .maestra/ in the tree → note points to maestra-config migrate (RF-37)", async () => {
+    const dir = await makeRepo("github")
+    await mkdir(join(dir, ".maestra"))
+    const { exec } = makeExecStub([
+      [/^gh --version/, { stdout: "gh version 2.96.0\n" }],
+      [/^gh auth status/, { stdout: "✓ Logged in" }],
+      [/^glab --version/, { stderr: "command not found", code: 127 }],
+      [/^gh project list/, { stdout: "1\tFluxo\t…" }],
+    ])
+    setExec(exec)
+
+    const report = parse(await maestraStatusTool.execute({}, ctx(dir)))
+    expect(report.repo.maestraConfig).toBe(true) // read from the branch, not the legacy folder
+    expect(report.notes.join(" ")).toContain("legacy .maestra/ found")
+    expect(report.notes.join(" ")).toContain("maestra-config migrate")
+  })
+
+  it("bootstrap persist surfaces push degradation as a note (never silent)", async () => {
+    // repo WITH config.md absent on the branch and a stubbed remote → detect
+    // bootstraps config.md on the orphan branch; no real remote exists, so
+    // the push degrades with a note.
+    const dir = await initRepoWithOrphanConfig({}, "maestra-status-bootstrap-")
+    await mkdir(join(dir, "docs", "reference"), { recursive: true })
+    const { exec } = makeExecStub([
+      [/git -C .* remote get-url origin/, { stdout: "git@github.com:acme/loja.git\n" }],
+      [/^gh --version/, { stdout: "gh version 2.96.0\n" }],
+      [/^gh auth status/, { stdout: "✓ Logged in" }],
+      [/^glab --version/, { stderr: "command not found", code: 127 }],
+      [/^gh project list/, { stdout: "1\tFluxo\t…" }],
+    ])
+    setExec(exec)
+
+    const report = parse(await maestraStatusTool.execute({}, ctx(dir)))
+    expect(report.platform).toEqual({ kind: "github", host: "github.com", project: "acme/loja" })
+    expect(report.notes.join(" ")).toContain("push degraded")
+    expect(report.repo.maestraConfig).toBe(true) // bootstrapped by this very run
   })
 })

@@ -48,11 +48,16 @@ export async function seedOrphanBranch(directory: string, files: Record<string, 
   await git(directory, ["checkout", "-q", "--orphan", "__maestra_config__"])
   // Tolerate an empty index (fresh repo): the orphan seed wants it empty anyway.
   await gitOk(directory, ["rm", "-rq", "--cached", "."])
+  const names = Object.keys(files)
   for (const [name, content] of Object.entries(files)) {
     writeFileSync(join(directory, name), content, "utf-8")
   }
-  await git(directory, ["add", ...Object.keys(files)])
-  await git(directory, ["commit", "-q", "-m", "test: seed config branch"])
+  if (names.length > 0) {
+    await git(directory, ["add", ...names])
+    await git(directory, ["commit", "-q", "-m", "test: seed config branch"])
+  } else {
+    await git(directory, ["commit", "-q", "--allow-empty", "-m", "test: seed empty config branch"])
+  }
   await git(directory, ["checkout", "-q", "main"])
 }
 
