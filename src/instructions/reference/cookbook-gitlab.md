@@ -1,6 +1,6 @@
 # Cookbook — GitLab (glab CLI + API v4)
 
-> Source: specification.md D6 (ADR-010/011/013/014) · fluxo-de-desenvolvimento.md §4 · jornadas.md P6 · Module version: 1
+> Source: specification.md D6 (ADR-010/011/013/014) · fluxo-de-desenvolvimento.md §4 · jornadas.md P6 · Module version: 2 — 2026-08-18 (R15, issue #49: `reassign-issue` operation)
 > Anti-drift: ONLY place where `glab`/GitLab API commands appear (ADR-012). Instructions
 > reference OPERATIONS (neutral names in `kebab-case`), never CLIs. Divergence with the
 > source is a finding, never a silent adjustment.
@@ -154,6 +154,14 @@ J10 reclassification uses the same form with variant labels.
 ### assign (confirmed assignee)
 ```bash
 glab api projects/<ENC>/issues/<I> -X PUT -f "assignee_ids=<USER_ID>"
+```
+
+### reassign-issue (QA routing — `qa` mode: acceptance hands over to the QA professional; QA rejection returns the task to the implementer)
+```bash
+# 1) resolve the destination user id first (if not yet known):
+glab api "users?username=<qa-user>" --jq '.[0].id'
+# 2) assignee change via API PUT (assignee_ids REPLACES the current assignees):
+glab api projects/<ENC>/issues/<I> -X PUT -f "assignee_ids=<QA_USER_ID>"
 ```
 
 ### close-issue (acceptance with verdict per criterion)
