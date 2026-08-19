@@ -640,3 +640,19 @@
 - Sintoma: Primeira tentativa com payload `{contested_criterion, decided_by, declared_reason, direction, type}` falhou com "Invalid payload for event type override: override_type: Required; from: Required; to: Required; disputed_criterion: Required; date: Required". O schema real exige `override_type`/`from`/`to`/`disputed_criterion`/`date` — o texto de P3/instrumentation descreve os conceitos (direção, critério contestado, decisor) mas não os nomes de campo; `instrumentation.md` segue divergente do schema zod (F024, F031), agora confirmado também para type=override.
 - Tentativas/workaround: 2 tentativas; lido o erro de validação e corrigidos os campos. Reforça F024: alinhar `instrumentation.md` ao schema zod real de TODOS os tipos.
 - Status: open
+
+## F035 — Delegação de implementação dispara aviso `persona::` (caller-identity fails closed)
+- Data: 2026-08-19
+- Categoria: ergonomic-friction
+- Origem: R15 (#49) — delegação de implementação a especialista do catálogo via `task` (subagent_type `maestra/specialist`)
+- Sintoma: ao concluir a delegação, o plugin emitiu `[maestra] Shell spawned WITHOUT persona:: marker — this session CANNOT use ask_peer (caller-identity fails closed)`. O formato `persona::<id>@<panelId>` é o protocolo de PAINÉIS (J9); não há caminho documentado para delegação de IMPLEMENTAÇÃO a especialista do catálogo que não gere o aviso. Aviso aparece só ao final (poluição de log) e deixa ambíguo qual formato o delegador deveria ter usado.
+- Tentativas/workaround: nenhum necessário (ask_peer não era requerido); aviso ignorado. Não bloqueou.
+- Status: open
+
+## F036 — Config legada `.maestra/` pós-cutover R14 induz facilitador a desenhar contra estado obsoleto
+- Data: 2026-08-19
+- Categoria: board-state
+- Origem: R15 (#49) — design técnico da round
+- Sintoma: o checkout principal ainda contém `.maestra/config.md` e `.maestra/team.md` (legados — ADR-003 moveu a config para a branch órfã `__maestra_config__`). O facilitador leu esses arquivos via fs direto no Stage 2 e desenhou `workflow.md` como arquivo da árvore de trabalho, contradizendo a doutrina ADR-003 — detectado só na verificação pré-aceite (leitura do ADR-003 no worktree), custando uma rodada de correção inteira (16 arquivos). O passo de remoção impresso pelo `maestra-config migrate` não foi executado neste clone, e a leitura fs direta (sem pasar pelo store) não dispara o aviso "config legada encontrada".
+- Tentativas/workaround: correção delegada na mesma sessão (commit 0085b49 — allowlist + instruções + evals alinhados à branch órfã); desvio declarado na round.
+- Status: open
