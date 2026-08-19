@@ -45,7 +45,9 @@ src/
 ├── tools/                     # Ferramentas expostas: status, issue_digest,
 │                              # emit_event, ask_peer
 ├── hooks/                     # Hooks pós-escrita (ex: validate-desvios)
-├── cli/                       # maestra-report (audit de presença)
+├── cli/                       # maestra-report (audit de presença) +
+│                              # maestra-config (config na branch órfã
+│                              # __maestra_config__ — ADR-003)
 ├── instructions/
 │   ├── kernel/                # L0 — sempre residente (~2.5k tokens)
 │   ├── journeys/              # L1/L2 — J1..J10 (loaded on demand)
@@ -55,9 +57,11 @@ src/
 docs/
 ├── dogfooding/findings.md     # ← Falhas do fluxo observadas em uso (ver abaixo)
 └── rounds/Rnn-yyyy-mm-<slug>/ # Pastas de round (scope.md, retro.md, etc.)
-.maestra/
-├── config.md                  # Plataforma/host/board detectados
-└── team.md                    # Mapa de facilitadores (seniority coarse)
+__maestra_config__ (branch órfã — ADR-003; NÃO é pasta na árvore)
+├── config.md                  #   Plataforma/host/board detectados
+├── team.md                    #   Mapa de facilitadores (seniority coarse)
+└── labels.md                  #   Mapeamento labels/colunas (ADR-002)
+                              # (ler/gravar: maestra-config read|write <file>)
 scripts/                       # check-*.sh, smoke.sh
 ROADMAP.md                     # Tudo que ficou fora do MVP, com gatilho
 README.md                      # Visão geral + instalação
@@ -136,4 +140,6 @@ Na próxima triagem do Maestra sobre o próprio Maestra, entradas
 - **[ROADMAP.md](ROADMAP.md)** — fora do MVP, com gatilho objetivo por item.
 - **`../fluxo-de-desenvolvimento.md`** — processo normativo (fonte de verdade).
 - **`docs/rounds/`** — rounds anteriores como exemplo de scope/retro.
-- **`.maestra/config.md`** — plataforma/host/board detectados para este repo.
+- **Branch `__maestra_config__`** — plataforma/host/board detectados para este
+  repo (`config.md`, `team.md`, `labels.md`; ADR-003 — ler com
+  `maestra-config read config.md`).

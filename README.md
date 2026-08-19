@@ -115,7 +115,7 @@ Cost: 1 line in the subagent enum (~60 tokens/msg) instead of 12+. Works identic
 - **GitHub** (github.com and Enterprise) — primary dogfooding platform
 - **GitLab** (gitlab.com and self-hosted) — full dual support since the MVP, via canonical epic-as-issue mapping + `relates_to` links + tasklist (ADR-011)
 
-The platform is **not** baked in at install time: it is detected **per repository** (`.maestra/config.md` → remote → probe → single persisted question — ADR-010). The same plugin serves repos on different platforms on the same machine.
+The platform is **not** baked in at install time: it is detected **per repository** (`config.md` on the orphan branch `__maestra_config__` → remote → probe → single persisted question — ADR-010/ADR-003). The same plugin serves repos on different platforms on the same machine.
 
 ## What the plugin exposes
 
@@ -127,6 +127,7 @@ The platform is **not** baked in at install time: it is detected **per repositor
 | `maestra_emit_event` | tool | Emits instrumentation events A–F + `type=override`, with "— facilitator" signature by construction |
 | `desvios.md` hook | hook | Post-write validation of the planned→implemented→reason triplet in `docs/rounds/*/desvios.md`. **Flag, never block** |
 | `maestra-report` | CLI script | Presence-gap audit: epic without event A, closed round without F, override without D, E parity, FM-13 |
+| `maestra-config` | CLI script | Per-repo configuration on the orphan branch `__maestra_config__` (ADR-003): `migrate` (idempotent legacy `.maestra/` migration), `read`/`write` for `config.md`, `team.md`, `labels.md` (commit + best-effort push) |
 
 ## Instructions architecture (L0–L4)
 
