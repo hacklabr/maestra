@@ -2,7 +2,7 @@
 <!-- Conversation route and task distribution — NOT hierarchy.
      Minimal data: coarse seniority only (junior/mid/senior);
      never salary, performance review or sensitive data.
-     Versioned in the repository: visible to whoever has access to it.
+     Lives on the __maestra_config__ branch (ADR-003): visible to whoever has access to the repository remote.
      PARTIAL MAP: 4 of 7 collaborators mapped; 3 pending (no signals yet). -->
 
 ## People
