@@ -656,3 +656,11 @@
 - Sintoma: o checkout principal ainda contém `.maestra/config.md` e `.maestra/team.md` (legados — ADR-003 moveu a config para a branch órfã `__maestra_config__`). O facilitador leu esses arquivos via fs direto no Stage 2 e desenhou `workflow.md` como arquivo da árvore de trabalho, contradizendo a doutrina ADR-003 — detectado só na verificação pré-aceite (leitura do ADR-003 no worktree), custando uma rodada de correção inteira (16 arquivos). O passo de remoção impresso pelo `maestra-config migrate` não foi executado neste clone, e a leitura fs direta (sem pasar pelo store) não dispara o aviso "config legada encontrada".
 - Tentativas/workaround: correção delegada na mesma sessão (commit 0085b49 — allowlist + instruções + evals alinhados à branch órfã); desvio declarado na round.
 - Status: open
+
+## F037 — `npx maestra-config` silenciosamente não faz nada quando o link do bin não existe pós-merge
+- Data: 2026-08-19
+- Categoria: ergonomic-friction
+- Origem: R14 (#48) — teste conjunto pós-instalação (dogfooding da migração)
+- Sintoma: No checkout principal pós-merge, `node dist/cli/migrate-config.js` funciona, mas `npx --no-install maestra-config read config.md` retorna **vazio com exit 0** (silêncio total, nem erro). Causa em duas camadas: (1) `npm install` "up to date in 1s" **não recria links de bin do pacote root** quando não há mudanças a instalar — `node_modules/.bin/maestra-config` ficou inexistente após o merge que adicionou o bin ao package.json; (2) `npx --no-install` com bin inexistente faz no-op silencioso com exit 0 em vez de falhar com "command not found". O CLI em si está correto (invocação direta por node retorna os 211 bytes).
+- Tentativas/workaround: diagnóstico por instrumentação (chamada direta da store via node: len 211; CLI direto: 211 bytes em pipe, arquivo e chamada de função) → isolou a camada npx/npm. Workaround: invocar por `node dist/cli/migrate-config.js` (caminho usado pelo smoke). Candidato a melhoria: documentar invocação direta no README e/ou criar um runner `scripts/` que resolva o caminho do dist.
+- Status: open
