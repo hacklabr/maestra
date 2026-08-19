@@ -10,7 +10,7 @@ minimal
 
 ## Requirements introduced
 
-- RF-39 — O destino da issue após a aceitação do PR é configurável em `.maestra/config.md` (`workflow.post_pr_acceptance: close | qa`), com `close` como padrão quando ausente (comportamento atual preservado); configuração é derivada a cada sessão e nunca é fonte de verdade sobre colunas do board (P6 — colunas sempre verificadas via API).
+- RF-39 — O destino da issue após a aceitação do PR é configurável em `.maestra/workflow.md` (novo arquivo, template `templates/workflow.md`; chaves `post-pr-acceptance: close | qa` e `qa-approval-column: <nome da coluna>`), com `close` como padrão quando ausente (comportamento atual preservado; zero migração). Fora do `config.md` por ADR-002/ADR-004 (parser aceita só 4 chaves). Nomes de coluna são convenção — sempre revalidados contra o board real via API (P6).
 - RF-40 — No modo `qa`: a aceitação do PR registra o veredicto por critério (como hoje) mas NÃO fecha a issue; o substate passa a `awaiting-qa` (novo no vocabulário P1.1), o card permanece na coluna de review e a atribuição passa a um profissional de QA.
 - RF-41 — O roteamento do QA deriva do campo Specialty do `team.md`: candidato único é proposto (corrigível); ausência ou ambiguidade → a Maestra pergunta no ato, nunca assume.
 - RF-42 — A sessão de QA é guiada pela Maestra: entrada por número da issue ("vou fazer o QA da #N"); a Maestra apresenta a tarefa (o que foi feito, critérios de aceitação, onde validar no ambiente de testes), responde dúvidas pelo chat e registra a validação/invalidação com veredicto.
