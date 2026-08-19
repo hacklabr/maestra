@@ -9,7 +9,7 @@
 ## STAGE 1 — Facts and derivation
 
 1. **`maestra_issue_digest(N)` first.** Enumerated facts: labels ∩ flow vocabulary, metadata line, daughters ONE BY ONE (state, assignee, labels), gate/override/event comments, gate arithmetic per stage, existence of the declared artifact in closed artifact tasks, column on the board, reconciliation field, parent (if daughter). The digest enumerates facts; **the derivation is yours** — verified, never inferred (kernel trigger #6).
-2. **Repo reads, in this order:** round folder referenced in the metadata (`scope.md`, `deviations.md` exist? round closed?) → `docs/reference/` (how the product is TODAY) → status of cited technical decision records → `.maestra/team.md` (interlocutor role → persona). **There is no state cache: derivation is always digest + docs, every session** — sessions are ephemeral and the platform is the single source of truth.
+2. **Repo reads, in this order:** round folder referenced in the metadata (`scope.md`, `deviations.md` exist? round closed?) → `docs/reference/` (how the product is TODAY) → status of cited technical decision records → team map on branch `__maestra_config__` (`maestra-config read team.md` — ADR-003; interlocutor role → persona). **There is no state cache: derivation is always digest + docs, every session** — sessions are ephemeral and the platform is the single source of truth.
 3. **Derive the state tuple:**
    - **Variant** ← epic label.
    - **Round** ← metadata + folder presence (number + theme).
@@ -61,7 +61,7 @@ Microcopy §7.2 has the two-phase template (`<derivation>` internal, `<speech>`
 emitted) with the substate→situation translation table — fill the slots there
 and emit only `<speech>`.
 
-If `.maestra/team.md` is missing: **present the state FIRST**; collect the map afterwards (P5 protocol, a single time per repository) — never block the derivation because of the map.
+If the team map is missing on `__maestra_config__`: **present the state FIRST**; collect the map afterwards (P5 protocol, a single time per repository) — never block the derivation because of the map.
 
 Success criterion: confirmation or correction in 1 round; next action always present.
 

@@ -1,6 +1,6 @@
-# Template — Team map (`.maestra/team.md`)
+# Template — Team map (`team.md` on branch `__maestra_config__`)
 
-> Source: docs/referencia/jornadas.md §5 P5 (v2.1) · Module version: 1 — 2026-07-28
+> Source: docs/referencia/jornadas.md §5 P5 (v2.1); location per ADR-003 · Module version: 2 — 2026-08-18
 > Anti-drift: fixed structure for agent reading (routing and P7 distribution). Contains PERSONAL DATA — write with the horizon that, if the repository becomes public, the content becomes public.
 
 ```markdown
@@ -8,7 +8,8 @@
 <!-- Conversation route and task distribution — NOT hierarchy.
      Minimal data: coarse seniority only (junior/mid/senior);
      never salary, performance review or sensitive data.
-     Versioned in the repository: visible to whoever has access to it. -->
+     Lives on the __maestra_config__ branch (ADR-003): visible
+     to whoever has access to the repository's remote. -->
 
 ## People
 

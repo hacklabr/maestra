@@ -19,8 +19,8 @@
 | `retro.md` | Round retro (RECORD) — derived template (Q2) | jornadas J5 Stage 4 + fluxo §9.4/§10 |
 | `panel/position.md` | Per-turn panel position (auxiliary RECORD) — derived template | jornadas J9 (G-08) |
 | `override-comment.md` | P3 register reference (emitted by the tool, never by hand) | jornadas §5 P3 + emit-event.ts |
-| `team.md` | Team map `.maestra/team.md` | jornadas §5 P5 |
-| `config.md` | Config `.maestra/config.md` (exact parser format) | src/platform/config.ts (ADR-014) |
+| `team.md` | Team map `team.md` on branch `__maestra_config__` (ADR-003) | jornadas §5 P5 |
+| `config.md` | Config `config.md` on branch `__maestra_config__` (exact parser format) | src/platform/config.ts (ADR-014 + ADR-003) |
 
 **Derived templates (source does not fix internal format):** `retro.md`, `panel/position.md` — marked as derived in the header; format change requires a register in the Audit Log of jornadas.md.
 

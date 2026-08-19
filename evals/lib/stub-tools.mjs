@@ -4,6 +4,14 @@
  * answer from fixtures and RECORD every call for tier-1 order/hard-fail
  * asserts. Missing read routes fail loud (exit 127 — a fixture bug, never
  * silent data). Mutations succeed generically and are recorded.
+ *
+ * Config on the orphan branch (ADR-003 lockstep): fixture repo file-maps keep
+ * their LEGACY-named keys (`.maestra/config.md|team.md|labels.md`) as the
+ * virtual content SOURCE — the default bash route below serves them as the
+ * content of `__maestra_config__:<name>`, mirroring how the real plugin reads
+ * config via `git show __maestra_config__:<file>` / `maestra-config read`.
+ * A config read for a file absent from the map fails with exit 1, exactly
+ * like production (missing file on the branch).
  */
 
 export const TOOL_SURFACE = [
@@ -98,7 +106,16 @@ export const TOOL_SURFACE = [
   },
 ]
 
-const MUTATION = /(issue\s+(create|edit|close|comment)|issue\s+comment|label|item-edit|item-add|project\s|milestone|api\s+[^\n]*-X\s*(POST|PATCH|PUT|DELETE)|api\s+[^\n]*-f\s|git\s+(worktree\s+add|commit|checkout|switch|add))/i
+const MUTATION = /(issue\s+(create|edit|close|comment)|issue\s+comment|label|item-edit|item-add|project\s|milestone|api\s+[^\n]*-X\s*(POST|PATCH|PUT|DELETE)|api\s+[^\n]*-f\s|git\s+(worktree\s+add|commit|checkout|switch|add)|maestra-config\s+(write|migrate))/i
+
+/** Config reads against the orphan branch (ADR-003): git plumbing or the CLI. */
+const GIT_CONFIG_READ = /git\s+(?:show|cat-file)\b[^;|&]*__maestra_config__:(config\.md|team\.md|labels\.md)\b/
+const CLI_CONFIG_READ = /maestra-config\s+read\s+(config\.md|team\.md|labels\.md)\b/
+
+/** Extract the config file name from a branch-read command, or null. */
+function matchConfigRead(command) {
+  return GIT_CONFIG_READ.exec(command)?.[1] ?? CLI_CONFIG_READ.exec(command)?.[1] ?? null
+}
 
 const SHELL_AGENT = "maestra/specialist"
 const MARKER_PATTERN = /persona::([a-z0-9][a-z0-9-]*)(?:@([\w.-]+))?/
@@ -197,6 +214,22 @@ export function createStubExecutor({ fixture, repoFiles = {} }) {
           }
           return route.stdout ?? JSON.stringify({ stdout: route.stdout ?? "", stderr: "", code: 0 })
         }
+      }
+      // Default config-read route (ADR-003) — BEFORE the generic mutation
+      // success: `labels.md` contains "label" and would otherwise be swallowed
+      // by MUTATION; reads must return real content (or a production-faithful
+      // exit 1), mirroring `git show __maestra_config__:<file>` / the CLI.
+      const configFile = matchConfigRead(command)
+      if (configFile) {
+        const content = files[`.maestra/${configFile}`] ?? files[configFile]
+        if (content === undefined) {
+          return JSON.stringify({
+            stdout: "",
+            stderr: `maestra-config: ${configFile} not found on __maestra_config__`,
+            code: 1,
+          })
+        }
+        return content
       }
       if (MUTATION.test(command)) {
         return JSON.stringify({ stdout: "", stderr: "", code: 0 })

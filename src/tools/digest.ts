@@ -55,8 +55,9 @@ export const maestraIssueDigestTool = tool({
     if (!resolved) {
       return (
         "Error: issue platform not detected for this repository. " +
-        "Ask the human ONCE (GitHub or GitLab? which host?) and persist the answer in .maestra/config.md " +
-        "(platform, host, project) — never ask again (ADR-010)."
+        "Ask the human ONCE (GitHub or GitLab? which host?) and persist the answer in config.md on the " +
+        "__maestra_config__ branch (platform, host, project — via maestra_status or maestra-config migrate; ADR-003) " +
+        "— never ask again (ADR-010)."
       )
     }
     const { adapter, forge } = resolved

@@ -1,6 +1,6 @@
-# Template — Label and column mapping (`.maestra/labels.md`)
+# Template — Label and column mapping (`labels.md` on branch `__maestra_config__`)
 
-> Source: round R12 (issue #44) + ADR-002 · Module version: 1 — 2026-08-06
+> Source: round R12 (issue #44) + ADR-002; location per ADR-003 · Module version: 2 — 2026-08-18
 > Anti-drift: separate from `config.md` by design — the config parser (ADR-014) accepts only 4 keys and silently ignores the rest; this file carries the label/column convention. Platform-neutral (ADR-012): values are repo-specific names; the platform's column model (board field options × column labels) is resolved via the cookbook.
 
 ```markdown

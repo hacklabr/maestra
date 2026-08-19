@@ -29,6 +29,7 @@ import {
   P4_BLACKLIST,
 } from "../lib/transcript-asserts.mjs"
 import { runScenario } from "../providers/maestra-agent.mjs"
+import { createStubExecutor } from "../lib/stub-tools.mjs"
 
 // ---------------------------------------------------------------------------
 // 1. Structure validation: every scenario loads, references existing fixtures
@@ -508,5 +509,70 @@ describe("dry-run with the mock model (no live model needed)", () => {
     expect(t.calls).toHaveLength(2)
     // unmatched read → code 127 was returned to the model (loud fixture gap)
     expect(t.calls[1].command).toContain("issues/42")
+  })
+})
+
+// ---------------------------------------------------------------------------
+// 5. Orphan-branch config stub route (ADR-003 lockstep with fe44fe8):
+//    git show __maestra_config__:<file> and maestra-config read <file> serve
+//    the fixture's .maestra/* keys as virtual branch content.
+// ---------------------------------------------------------------------------
+
+describe("stub bash — config reads on __maestra_config__", () => {
+  const TEAM = "# Team map\n\n- @rafael — Product (PO)\n"
+  const repoFiles = { ".maestra/team.md": TEAM }
+
+  function exec(command: string, repoFilesMap: Record<string, string> = repoFiles, fixture: any = {}) {
+    const stub = createStubExecutor({ fixture, repoFiles: repoFilesMap })
+    return { result: stub.execute("bash", { command }), calls: stub.calls }
+  }
+
+  it("git show serves the .maestra/* fixture key as branch content", () => {
+    expect(exec("git show __maestra_config__:team.md").result).toBe(TEAM)
+  })
+
+  it("git cat-file -p variant works too", () => {
+    expect(exec("git cat-file -p __maestra_config__:team.md").result).toBe(TEAM)
+  })
+
+  it("maestra-config read serves the same content (CLI path)", () => {
+    expect(exec("maestra-config read team.md").result).toBe(TEAM)
+  })
+
+  it("labels.md read is NOT swallowed by the MUTATION regex (contains 'label')", () => {
+    const labels = "# Labels\n"
+    expect(exec("maestra-config read labels.md", { ".maestra/labels.md": labels }).result).toBe(labels)
+    expect(exec("git show __maestra_config__:labels.md", { ".maestra/labels.md": labels }).result).toBe(labels)
+  })
+
+  it("branch-root key (no .maestra/ prefix) is the fallback source", () => {
+    expect(exec("git show __maestra_config__:team.md", { "team.md": TEAM }).result).toBe(TEAM)
+  })
+
+  it("missing file → production-faithful exit 1 with clear stderr", () => {
+    const result = JSON.parse(exec("maestra-config read team.md", {}).result as string)
+    expect(result.code).toBe(1)
+    expect(result.stderr).toContain("not found on __maestra_config__")
+  })
+
+  it("maestra-config write/migrate succeed generically (MUTATION)", () => {
+    for (const command of [
+      "maestra-config write team.md < /tmp/team.md",
+      "maestra-config migrate",
+    ]) {
+      expect(JSON.parse(exec(command, {}, {}).result as string).code).toBe(0)
+    }
+  })
+
+  it("fixture execRoutes take precedence over the default config route", () => {
+    const { result } = exec("git show __maestra_config__:team.md", repoFiles, {
+      execRoutes: [{ match: "git show __maestra_config__", stdout: "OVERRIDDEN" }],
+    })
+    expect(result).toBe("OVERRIDDEN")
+  })
+
+  it("unrelated git reads still fail loud (127)", () => {
+    const result = JSON.parse(exec("git show main:src/index.ts").result as string)
+    expect(result.code).toBe(127)
   })
 })

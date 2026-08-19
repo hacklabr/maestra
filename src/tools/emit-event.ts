@@ -176,7 +176,8 @@ export const maestraEmitEventTool = tool({
     if (!resolved) {
       return (
         "Error: issue platform not detected for this repository. " +
-        "Run maestra_status to diagnose, or set platform/host/project in .maestra/config.md."
+        "Run maestra_status to diagnose, or set platform/host/project in config.md on the " +
+        "__maestra_config__ branch (ADR-003; maestra_status or maestra-config migrate)."
       )
     }
 

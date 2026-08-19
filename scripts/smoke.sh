@@ -148,6 +148,27 @@ run_cell() {
 - **Reason:** time
 MD
 
+  # R14 (ADR-003): real git repo; legacy .maestra/ migrates to the orphan
+  # __maestra_config__ branch through the REAL migrate CLI; the printed
+  # removal commands are then executed here (the human's part — the tool
+  # never rewrites the project branch itself, RF-38).
+  git -C "$repo" init -q -b main
+  git -C "$repo" config user.email "smoke@maestra.local"
+  git -C "$repo" config user.name "maestra smoke"
+  git -C "$repo" config commit.gpgsign false
+  git -C "$repo" add -A
+  git -C "$repo" commit -qm "chore: legacy maestra config"
+  node "$ROOT/dist/cli/migrate-config.js" migrate --directory "$repo" > "$cell/migrate.txt" 2>&1 \
+    && ok "migrate: exit 0 (push degradation tolerated)" || bad "migrate: exit 0 (push degradation tolerated)"
+  check_grep "migrate: orphan branch born" "branch born ORPHAN" "$cell/migrate.txt"
+  check_grep "migrate: prints removal commands" "git rm -r .maestra" "$cell/migrate.txt"
+  check_grep "migrate: push degradation noted (no remote)" "push degraded" "$cell/migrate.txt"
+  git -C "$repo" show __maestra_config__:config.md | grep -q -- "- platform: $platform" \
+    && ok "config lives on the orphan branch" || bad "config lives on the orphan branch"
+  git -C "$repo" rm -rq .maestra
+  git -C "$repo" commit -qm "chore: remove legacy maestra config"
+  [ ! -e "$repo/.maestra" ] && ok "host tree has no .maestra/ after cleanup" || bad "host tree has no .maestra/ after cleanup"
+
   export HOME="$home"
   export PATH="$stubdir:$ORIGINAL_PATH"
 
@@ -186,6 +207,8 @@ MD
   check_json "status: cli authed" "$cell/status.json" "d.capabilities.cli===true"
   check_json "status: host=$host" "$cell/status.json" "d.host.id==='$host'"
   check_json "status: hierarchy=$hierarchy" "$cell/status.json" "d.capabilities.hierarchy==='$hierarchy'"
+  check_json "status: no legacy warning after cleanup" "$cell/status.json" "!String(d.notes).includes('legacy')"
+  check_json "status: maestraConfig flag from branch" "$cell/status.json" "d.repo.maestraConfig===true"
 
   # 3. maestra_issue_digest
   node "$ROOT/scripts/smoke/run-tool.mjs" digest "$repo" 42 > "$cell/digest.json" 2>/dev/null

@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Orphan-branch configuration store (R14, issue #48, ADR-003): per-repo
+  configuration (`config.md`, `team.md`, `labels.md`) now lives on the orphan
+  branch `__maestra_config__` (no shared history with the project), read via
+  git plumbing and written as commits + best-effort push — zero maestra
+  commits on project branches. New `src/platform/config-store.ts`; tools
+  (`maestra_status`, `issue_digest`, `emit_event`, `maestra-report`) read
+  config from the branch and signal legacy `.maestra/` folders. New
+  `maestra-config` CLI: `migrate` (idempotent legacy migration; prints —
+  never executes — the removal commands), `read`/`write` for single-file
+  upsert. Instructions (J1/J2/J12, protocols P5/P6, microcopy, templates,
+  cookbooks) and eval/smoke harness updated in lockstep. Supersedes the
+  "config versioned in the host tree" decision (ADR-014 location).
+
 ## [1.1.0] - 2026-08-05
 
 ### Added
