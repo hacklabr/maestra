@@ -1,5 +1,6 @@
 import { defaultExec, type ExecFn } from "./exec.js"
 import { readFluxoConfig, writeFluxoConfig } from "./config.js"
+import type { ConfigWriteResult } from "./config-store.js"
 import type { ForgeContext, PlatformKind } from "./types.js"
 
 export type FetchProbe = (url: string) => Promise<{ status: number }>
@@ -7,8 +8,10 @@ export type FetchProbe = (url: string) => Promise<{ status: number }>
 export interface DetectOptions {
   exec?: ExecFn
   fetchFn?: FetchProbe
-  /** Persist successful detections to .maestra/config.md (default: true). */
+  /** Persist successful detections to config.md on the __maestra_config__ branch (default: true). */
   persist?: boolean
+  /** Receives the write result (commit/push degradation) when persistence runs. */
+  onWrite?: (result: ConfigWriteResult) => void
 }
 
 const defaultFetch: FetchProbe = async (url) => {
@@ -83,7 +86,7 @@ export async function probeHost(fetchFn: FetchProbe, host: string): Promise<Plat
 
 /**
  * ADR-010 detection hierarchy (first win):
- *  1. explicit `.maestra/config.md`
+ *  1. explicit config.md on the __maestra_config__ branch (ADR-003)
  *  2. `git remote get-url origin` (github.com × gitlab.com)
  *  3. unknown host → single probe, persisted
  *  4. ambiguous → null (the agent asks the human ONCE, then persists)
@@ -112,7 +115,10 @@ export async function detectForge(directory: string, opts: DetectOptions = {}): 
 
   const forge: ForgeContext = { kind, host, project }
   if (persist) {
-    await writeFluxoConfig(directory, { platform: kind, host, project })
+    // Commit on the orphan branch + best-effort push (RF-36); degradations
+    // are surfaced through onWrite, never thrown (ADR-003 bootstrap).
+    const result = await writeFluxoConfig(directory, { platform: kind, host, project })
+    opts.onWrite?.(result)
   }
   return forge
 }

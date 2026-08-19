@@ -1,15 +1,9 @@
-import { mkdtempSync, readFileSync, existsSync } from "node:fs"
-import { writeFile, mkdir } from "node:fs/promises"
-import { tmpdir } from "node:os"
-import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 import { detectForge, parseRemoteHost, parseRemoteProject, probeHost } from "../detect.js"
-import { readFluxoConfig, writeFluxoConfig } from "../config.js"
+import { readFluxoConfig } from "../config.js"
+import { readConfigFile } from "../config-store.js"
 import { makeExecStub } from "./helpers.js"
-
-function tmpDir(): string {
-  return mkdtempSync(join(tmpdir(), "maestra-detect-"))
-}
+import { initRepo, initRepoWithOrphanConfig } from "./git-repo.js"
 
 describe("remote parsing", () => {
   it.each([
@@ -46,35 +40,11 @@ describe("host probing", () => {
   })
 })
 
-describe(".maestra/config.md", () => {
-  it("round-trips all keys", async () => {
-    const dir = tmpDir()
-    await writeFluxoConfig(dir, {
-      platform: "gitlab",
-      host: "gitlab.acme.com",
-      project: "grupo/loja",
-      board: "12",
-    })
-    expect(await readFluxoConfig(dir)).toEqual({
-      platform: "gitlab",
-      host: "gitlab.acme.com",
-      project: "grupo/loja",
-      board: "12",
-    })
-  })
-
-  it("returns null when the file does not exist", async () => {
-    expect(await readFluxoConfig(tmpDir())).toBeNull()
-  })
-})
-
 describe("detectForge hierarchy", () => {
-  it("explicit config wins and never touches git/network", async () => {
-    const dir = tmpDir()
-    await mkdir(join(dir, ".maestra"), { recursive: true })
-    await writeFile(
-      join(dir, ".maestra", "config.md"),
-      "# Config\n\n- platform: gitlab\n- host: gitlab.acme.com\n- project: grupo/loja\n",
+  it("explicit config on the orphan branch wins and never probes the remote or network", async () => {
+    const dir = await initRepoWithOrphanConfig(
+      { "config.md": "# Config\n\n- platform: gitlab\n- host: gitlab.acme.com\n- project: grupo/loja\n" },
+      "maestra-detect-explicit-",
     )
     const { exec, calls } = makeExecStub([])
     const fetchFn = async () => {
@@ -86,20 +56,18 @@ describe("detectForge hierarchy", () => {
     expect(calls).toHaveLength(0)
   })
 
-  it("detects github.com from remote and persists to config.md", async () => {
-    const dir = tmpDir()
+  it("detects github.com from remote and persists to the orphan branch", async () => {
+    const dir = await initRepo("maestra-detect-gh-")
     const { exec } = makeExecStub([[/git -C .* remote get-url origin/, { stdout: "git@github.com:acme/loja.git\n" }]])
 
     const forge = await detectForge(dir, { exec })
     expect(forge).toEqual({ kind: "github", host: "github.com", project: "acme/loja" })
 
-    const persisted = readFileSync(join(dir, ".maestra", "config.md"), "utf-8")
-    expect(persisted).toContain("- platform: github")
-    expect(persisted).toContain("- project: acme/loja")
+    expect(await readFluxoConfig(dir)).toEqual({ platform: "github", host: "github.com", project: "acme/loja" })
   })
 
   it("detects gitlab.com from an https remote with nested groups", async () => {
-    const dir = tmpDir()
+    const dir = await initRepo("maestra-detect-gl-")
     const { exec } = makeExecStub([
       [/remote get-url origin/, { stdout: "https://gitlab.com/grupo/sub/loja.git\n" }],
     ])
@@ -107,8 +75,8 @@ describe("detectForge hierarchy", () => {
     expect(forge).toEqual({ kind: "gitlab", host: "gitlab.com", project: "grupo/sub/loja" })
   })
 
-  it("probes unknown hosts once and persists the result", async () => {
-    const dir = tmpDir()
+  it("probes unknown hosts once and persists the result on the branch", async () => {
+    const dir = await initRepo("maestra-detect-probe-")
     const { exec } = makeExecStub([
       [/remote get-url origin/, { stdout: "git@gitlab.acme.com:grupo/loja.git\n" }],
     ])
@@ -121,23 +89,38 @@ describe("detectForge hierarchy", () => {
     const forge = await detectForge(dir, { exec, fetchFn })
     expect(forge).toEqual({ kind: "gitlab", host: "gitlab.acme.com", project: "grupo/loja" })
     expect(probed).toEqual(["https://gitlab.acme.com/api/v4/metadata"])
-    expect(existsSync(join(dir, ".maestra", "config.md"))).toBe(true)
+    expect(await readConfigFile(dir, "config.md")).toContain("- platform: gitlab")
+  })
+
+  it("reports push degradation through onWrite without throwing", async () => {
+    const dir = await initRepo("maestra-detect-onwrite-")
+    const { exec } = makeExecStub([[/remote get-url origin/, { stdout: "git@github.com:acme/loja.git\n" }]])
+
+    const writes: unknown[] = []
+    const forge = await detectForge(dir, { exec, onWrite: (r) => writes.push(r) })
+    expect(forge).toEqual({ kind: "github", host: "github.com", project: "acme/loja" })
+    expect(writes).toHaveLength(1)
+    // repo has no remote: local commit ok, push degraded with a note
+    const result = writes[0] as { committed: boolean; pushed: boolean; pushNote: { reason: string } }
+    expect(result.committed).toBe(true)
+    expect(result.pushed).toBe(false)
+    expect(result.pushNote.reason).toBe("no-remote")
   })
 
   it("returns null without a remote and writes nothing", async () => {
-    const dir = tmpDir()
+    const dir = await initRepo("maestra-detect-noremote-")
     const { exec } = makeExecStub([[/remote get-url origin/, { stderr: "not a git repository", code: 128 }]])
 
     expect(await detectForge(dir, { exec })).toBeNull()
-    expect(existsSync(join(dir, ".maestra", "config.md"))).toBe(false)
+    expect(await readConfigFile(dir, "config.md")).toBeNull()
   })
 
   it("returns null when the unknown host answers neither probe", async () => {
-    const dir = tmpDir()
+    const dir = await initRepo("maestra-detect-noprobe-")
     const { exec } = makeExecStub([[/remote get-url origin/, { stdout: "git@git.acme.com:grupo/loja.git\n" }]])
     const fetchFn = async () => ({ status: 404 })
 
     expect(await detectForge(dir, { exec, fetchFn })).toBeNull()
-    expect(existsSync(join(dir, ".maestra", "config.md"))).toBe(false)
+    expect(await readConfigFile(dir, "config.md")).toBeNull()
   })
 })
