@@ -121,7 +121,8 @@ export async function main(argv: string[], deps: ReportDeps = {}): Promise<numbe
   if (!resolved) {
     error(
       "maestra-report: issue platform not detected for this repository. " +
-        "Configure .maestra/config.md (platform, host, project) or run maestra_status to diagnose.",
+        "Configure config.md on the __maestra_config__ branch (platform, host, project — " +
+        "ADR-003; maestra_status or maestra-config migrate) or run maestra_status to diagnose.",
     )
     return 1
   }

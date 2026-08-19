@@ -7,21 +7,23 @@ import { maestraIssueDigestTool } from "../digest.js"
 import { setExec } from "../../platform/runtime.js"
 import { defaultExec } from "../../platform/exec.js"
 import { makeExecStub } from "../../platform/__tests__/helpers.js"
+import { initRepoWithOrphanConfig } from "../../platform/__tests__/git-repo.js"
 
 const FIXTURES = join(__dirname, "fixtures")
 const readFixture = (platform: string, name: string) =>
   JSON.parse(readFileSync(join(FIXTURES, platform, name), "utf-8"))
 
+/** Real git repo + config.md on the orphan branch (R14 fixture). */
 async function makeRepo(platform: "github" | "gitlab"): Promise<string> {
-  const dir = mkdtempSync(join(tmpdir(), `maestra-digest-${platform}-`))
-  await mkdir(join(dir, ".maestra"), { recursive: true })
+  const dir = await initRepoWithOrphanConfig(
+    {
+      "config.md": `- platform: ${platform}\n- host: ${platform === "github" ? "github.com" : "gitlab.com"}\n- project: ${platform === "github" ? "acme/loja" : "grupo/loja"}\n`,
+    },
+    `maestra-digest-${platform}-`,
+  )
   await mkdir(join(dir, "docs", "reference"), { recursive: true })
   // Only prd.md exists — the declared mini-briefing.md is intentionally missing (G-05)
   await writeFile(join(dir, "docs", "reference", "prd.md"), "# Living PRD\n")
-  await writeFile(
-    join(dir, ".maestra", "config.md"),
-    `- platform: ${platform}\n- host: ${platform === "github" ? "github.com" : "gitlab.com"}\n- project: ${platform === "github" ? "acme/loja" : "grupo/loja"}\n`,
-  )
   return dir
 }
 
@@ -76,7 +78,8 @@ describe("maestra_issue_digest — degradation", () => {
 
     const result = await maestraIssueDigestTool.execute({ issue: 1 }, ctx(dir))
     expect(String(result)).toContain("platform not detected")
-    expect(String(result)).toContain(".maestra/config.md")
+    expect(String(result)).toContain("__maestra_config__")
+    expect(String(result)).toContain("maestra-config migrate")
   })
 
   it("degrades per-primitive: board failure becomes null column + entry in errors[]", async () => {
