@@ -1,6 +1,6 @@
 {
   "id": "repo-sem-team",
-  "description": "Repo without .maestra/team.md (first repository triage) — triggers the J1 Stage 4 team mapping (FM-04 stage) and ensures nothing from a previous conversation persisted (FM-06 stage).",
+  "description": "Repo without a team map on __maestra_config__ (first repository triage) — triggers the J1 Stage 4 team mapping (FM-04 stage) and ensures nothing from a previous conversation persisted (FM-06 stage).",
   "files": {
     "docs/reference/prd.md": "# Living PRD\n\n## RF-01 — Order listing\n\nThe user sees their orders sorted by date.\n"
   }
