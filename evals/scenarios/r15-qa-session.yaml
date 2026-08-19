@@ -16,7 +16,10 @@
     mockSteps:
       - toolCall: { name: "maestra_status", args: {} }
       - toolCall: { name: "maestra_issue_digest", args: { issue: 33 } }
-      - toolCall: { name: "read", args: { filePath: ".maestra/workflow.md" } }
+      - toolCall:
+          name: "bash"
+          args:
+            command: "maestra-config read workflow.md"
       - toolCall: { name: "read", args: { filePath: "docs/rounds/R15-2026-08-shipping-cost-fix/scope.md" } }
       - text: "QA of #33 (fix the shipping cost at checkout), round R15 (shipping cost). Here's what was done: the calculation now applies the region rules and the free-shipping promotions, merged in PR/MR #34. Acceptance criteria, one by one: (1) the checkout shows the updated shipping cost right after the address is chosen; (2) free shipping (FOX promotion) appears for the SE region; (3) the totals recalculate without reloading the page. Where to validate: the test environment (staging checkout, the FOX/SE case is included). Any questions? I answer here in the chat — when you have the verdict, I register it."
       - toolCall:
@@ -34,7 +37,7 @@
       - text: "QA approved #33. Registering in one act: issue closed with the QA verdict, card moved to Done, and the round enters the final review (#35)."
     expectedCallOrder:
       - "tool:maestra_issue_digest"
-      - "tool:read.*workflow\\.md"
+      - "exec:.*maestra-config read workflow\\.md"
       - "exec:.*issue close"
       - "exec:.*item-edit"
       - "exec:.*--body-file"
@@ -65,7 +68,10 @@
     mockSteps:
       - toolCall: { name: "maestra_status", args: {} }
       - toolCall: { name: "maestra_issue_digest", args: { issue: 33 } }
-      - toolCall: { name: "read", args: { filePath: ".maestra/workflow.md" } }
+      - toolCall:
+          name: "bash"
+          args:
+            command: "maestra-config read workflow.md"
       - toolCall: { name: "read", args: { filePath: "docs/rounds/R15-2026-08-shipping-cost-fix/scope.md" } }
       - text: "QA of #33 (fix the shipping cost at checkout), round R15 (shipping cost). Here's what was done: the calculation now applies the region rules and the free-shipping promotions, merged in PR/MR #34. Acceptance criteria, one by one: (1) the checkout shows the updated shipping cost right after the address is chosen; (2) free shipping (FOX promotion) appears for the SE region; (3) the totals recalculate without reloading the page. Where to validate: the test environment (staging checkout, the FOX/SE case is included). Any questions? I answer here in the chat — when you have the verdict, I register it."
       - toolCall:

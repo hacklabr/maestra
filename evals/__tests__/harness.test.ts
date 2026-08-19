@@ -545,6 +545,13 @@ describe("stub bash — config reads on __maestra_config__", () => {
     expect(exec("git show __maestra_config__:labels.md", { ".maestra/labels.md": labels }).result).toBe(labels)
   })
 
+  it("workflow.md is served through the same route, both forms (ADR-004 — branch-root fixture key, no legacy name)", () => {
+    const WORKFLOW = "# Post-PR/MR workflow\n\n- post-pr-acceptance: qa\n"
+    const files = { "workflow.md": WORKFLOW }
+    expect(exec("maestra-config read workflow.md", files).result).toBe(WORKFLOW)
+    expect(exec("git show __maestra_config__:workflow.md", files).result).toBe(WORKFLOW)
+  })
+
   it("branch-root key (no .maestra/ prefix) is the fallback source", () => {
     expect(exec("git show __maestra_config__:team.md", { "team.md": TEAM }).result).toBe(TEAM)
   })

@@ -10,8 +10,10 @@
  * virtual content SOURCE — the default bash route below serves them as the
  * content of `__maestra_config__:<name>`, mirroring how the real plugin reads
  * config via `git show __maestra_config__:<file>` / `maestra-config read`.
- * A config read for a file absent from the map fails with exit 1, exactly
- * like production (missing file on the branch).
+ * `workflow.md` (ADR-004) follows the same route; it has no legacy name —
+ * fixtures key it at the branch-root name (`workflow.md`). A config read for
+ * a file absent from the map fails with exit 1, exactly like production
+ * (missing file on the branch).
  */
 
 export const TOOL_SURFACE = [
@@ -108,9 +110,9 @@ export const TOOL_SURFACE = [
 
 const MUTATION = /(issue\s+(create|edit|close|comment)|issue\s+comment|label|item-edit|item-add|project\s|milestone|api\s+[^\n]*-X\s*(POST|PATCH|PUT|DELETE)|api\s+[^\n]*-f\s|git\s+(worktree\s+add|commit|checkout|switch|add)|maestra-config\s+(write|migrate))/i
 
-/** Config reads against the orphan branch (ADR-003): git plumbing or the CLI. */
-const GIT_CONFIG_READ = /git\s+(?:show|cat-file)\b[^;|&]*__maestra_config__:(config\.md|team\.md|labels\.md)\b/
-const CLI_CONFIG_READ = /maestra-config\s+read\s+(config\.md|team\.md|labels\.md)\b/
+/** Config reads against the orphan branch (ADR-003; workflow.md — ADR-004): git plumbing or the CLI. */
+const GIT_CONFIG_READ = /git\s+(?:show|cat-file)\b[^;|&]*__maestra_config__:(config\.md|team\.md|labels\.md|workflow\.md)\b/
+const CLI_CONFIG_READ = /maestra-config\s+read\s+(config\.md|team\.md|labels\.md|workflow\.md)\b/
 
 /** Extract the config file name from a branch-read command, or null. */
 function matchConfigRead(command) {

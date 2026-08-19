@@ -740,7 +740,7 @@ Rules: author's intent, curated text — the draft is rewritten for clarity, fai
 
 ## §7.14 QA session conduction (J2 branch B7)
 
-**When:** entry phrase ("vou fazer o QA da #N") or derived substate `awaiting-qa` (mode `qa` in `.maestra/workflow.md` — ADR-004). The facilitator **runs the session**: presentation, doubt answering, verdict registration. Zero questions about facts the digest already has; the session never closes preemptively — **transitions (close/card/metadata) execute only AFTER the human verdict**.
+**When:** entry phrase ("vou fazer o QA da #N") or derived substate `awaiting-qa` (mode `qa` in `workflow.md` on the `__maestra_config__` branch, read via `maestra-config read workflow.md` — ADR-003/ADR-004). The facilitator **runs the session**: presentation, doubt answering, verdict registration. Zero questions about facts the digest already has; the session never closes preemptively — **transitions (close/card/metadata) execute only AFTER the human verdict**.
 
 ### Session presentation (before any transition)
 
@@ -773,7 +773,7 @@ card moved to {APPROVAL_COLUMN}, and the round enters the final review.
 
 | Slot | Type | Condition |
 |---|---|---|
-| `{APPROVAL_COLUMN}` | column | `qa-approval-column` from `.maestra/workflow.md`; absent = the delivered mapping in `labels.md` (revalidated against the real board — P6). |
+| `{APPROVAL_COLUMN}` | column | `qa-approval-column` from `workflow.md` on `__maestra_config__` (`maestra-config read workflow.md`); absent = the delivered mapping in `labels.md` (revalidated against the real board — P6). |
 
 Then, in the same act: close the issue with the QA verdict (criterion by criterion), move the card, update the metadata to `awaiting-reconciliation`.
 
