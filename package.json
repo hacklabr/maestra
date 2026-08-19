@@ -13,7 +13,8 @@
   },
   "bin": {
     "maestra": "./dist/installer/install.js",
-    "maestra-report": "./dist/cli/report.js"
+    "maestra-report": "./dist/cli/report.js",
+    "maestra-config": "./dist/cli/migrate-config.js"
   },
   "files": [
     "dist"
