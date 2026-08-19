@@ -1,6 +1,6 @@
-# Template — Flow configuration (`.maestra/config.md`)
+# Template — Flow configuration (`config.md` on branch `__maestra_config__`)
 
-> Source: src/platform/config.ts (ADR-014 — real format written/read by the code) · Module version: 1 — 2026-07-28
+> Source: src/platform/config.ts (parser format ADR-014; location ADR-003 — real format written/read by the code) · Module version: 2 — 2026-08-18
 > Anti-drift: this file documents the EXACT format that `writeFluxoConfig` persists and `readFluxoConfig` parses. Keys and values outside the pattern are silently ignored by the parser — drift here = invisible configuration.
 
 ```markdown
@@ -18,4 +18,4 @@
 - Only the 4 keys above are parsed: `platform`, `host`, `project`, `board` (format `- key: value`, one per line).
 - `platform` only accepts `github` or `gitlab` — any other value is discarded.
 - Created on the first triage (J1): tool detection persists what it derived; the agent asks **ONCE** only what is missing — once per repository.
-- Versioned in the repository ("no state outside the repository"); manual edit overrides detection.
+- Lives at the root of the orphan branch `__maestra_config__` (ADR-003): written/read by the tools via the config-store, or manually via `maestra-config read/write config.md`. Never a `.maestra/` folder in the project tree (legacy → `maestra-config migrate`). Manual edit overrides detection.

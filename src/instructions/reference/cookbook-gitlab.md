@@ -167,7 +167,7 @@ glab api projects/<ENC>/issues/<I> -X PUT -f "state_event=close"
 glab release create v<X.Y.Z>   # in the repo directory
 ```
 
-## 5. Board setup (1× per project; persist id in `.maestra/config.md` → `board:`)
+## 5. Board setup (1× per project; persist id in `config.md` on `__maestra_config__` → `board:` — write via `maestra-config write config.md`)
 
 ```bash
 # 1) create the board (if it does not exist)

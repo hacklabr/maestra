@@ -111,13 +111,14 @@ Loaded on persona assumption (kernel). Checked **before every message** in Stage
 
 ---
 
-## P5 — Team map (`.maestra/team.md`)
+## P5 — Team map (`team.md` on branch `__maestra_config__`)
 
 - **Content per person:** name, username on the platform, role in the flow (Product/Engineering/Delivery — can be multiple) + **coarse seniority** (junior/mid/senior) + specialty.
 - **Birth:** conversational, **at the end of the first triage, before creating any issue**; roles **proposed** by the agent (history signals; without history, marked guess) — the human **corrects, does not build**, in a single collection round (microcopy §7.5).
+- **Persistence:** the map lives as `team.md` at the root of the orphan branch `__maestra_config__` (ADR-003) — written via `maestra-config write team.md`, read via `maestra-config read team.md`. Never hand-written in the project tree.
 - **Continuous validation:** diff against board collaborators on every triage; new ones → question only about them; departed ones → signal ("@x no longer has access — remove from map?"), **never silently delete** (historical assignees reference the map).
-- **Visibility (personal data):** coarse seniority only — never salary, performance review or sensitive data; the minimum for routing and distribution; the mapping conversation **informs that the map is versioned in the repository** and visible to whoever has access; if the repository ever becomes public, the content becomes public — write the file with that horizon.
-- **Low-risk framing:** facilitator's conversation route, not hierarchy — "it's just so I know who to talk to about what". Trivial later edit ("X is now Engineering" → agent updates the file).
+- **Visibility (personal data):** coarse seniority only — never salary, performance review or sensitive data; the minimum for routing and distribution; the mapping conversation **informs that the map is versioned on the `__maestra_config__` branch** and visible to whoever has access to the repository's remote; if the repository ever becomes public, the content becomes public — write the file with that horizon.
+- **Low-risk framing:** facilitator's conversation route, not hierarchy — "it's just so I know who to talk to about what". Trivial later edit ("X is now Engineering" → agent updates via `maestra-config write team.md`).
 
 Template: `templates/team.md`.
 
@@ -127,7 +128,7 @@ Template: `templates/team.md`.
 
 **Master rule:** the board reflects the real state of work at every moment. Every movement is **executed** in the same act it is **narrated** — narration ("I'll move the card") is never a substitute for execution (the API call must happen in the same turn). If you catch yourself saying "I'll move it after your OK", that is the bug — move it when the OK comes.
 
-**`.maestra/config.md` is configuration (detected platform/host), NEVER source of truth about board columns.** When you need to know what columns exist or their option IDs, query the real board via the platform's API (the command is in the platform cookbook). Config can be stale; the API is always current.
+**`config.md` (branch `__maestra_config__`, ADR-003) is configuration (detected platform/host), NEVER source of truth about board columns.** When you need to know what columns exist or their option IDs, query the real board via the platform's API (the command is in the platform cookbook). Config can be stale; the API is always current.
 
 ### Substate → column mapping
 

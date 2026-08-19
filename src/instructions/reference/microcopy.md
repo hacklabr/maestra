@@ -376,7 +376,7 @@ issue platform gives access to {N_PEOPLE} people. My proposal:
 Confirm or correct? Reply in a single message, like:
 "{RESPONSE_EXAMPLE}".
 
-This gets saved in .maestra/team.md in the repository — visible to whoever
+This gets saved in the maestra team map — visible to whoever
 has access to the project. From now on, every task is born
 assigned. To change later, just say "X is now Engineering".
 ```

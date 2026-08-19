@@ -154,7 +154,7 @@ gh project item-add <PROJECT_NUM> --owner <ORG-or-@me> \
   --url https://github.com/<O>/<R>/issues/<N> --format json --jq .id
 ```
 
-### discover-ids (1× per project; cache in `.maestra/config.md` → `board:`)
+### discover-ids (1× per project; cache in `config.md` on `__maestra_config__` → `board:` — write via `maestra-config write config.md`)
 ```bash
 # project id (PVT_…)
 gh project view <PROJECT_NUM> --owner <ORG> --format json --jq .id

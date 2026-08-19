@@ -12,8 +12,8 @@
 
 `maestra_status` fresh (skip if already run this session and nothing changed). Then inventory, reading — never asking:
 
-- `.maestra/config.md` and `.maestra/team.md` — exist? valid?
-- `.maestra/labels.md` — exists? complete (all stages + all columns mapped)?
+- `config.md` and `team.md` on branch `__maestra_config__` (`maestra-config read <file>` — ADR-003) — exist? valid?
+- `labels.md` (same branch) — exists? complete (all stages + all columns mapped)?
 - `docs/reference/` — exists? which documents?
 - Pre-existing code — source directories, manifests, commit history: is there a codebase to document, or a greenfield repo?
 - **Stack manifests** — `package.json`, `go.mod`, `pyproject.toml`, `pom.xml`, `composer.json`, `Cargo.toml` etc. Extract the REAL build/test/lint/typecheck commands (e.g., the `scripts` section of `package.json`, the `Makefile` targets). Undetectable stack or missing command → explicit `<!-- TODO: preencher -->` placeholder, never an invented generic command.
@@ -31,11 +31,11 @@ Announce the inventory in one message ("what already exists: X; what we will cre
 
 **Missing labels:** any confirmed label that does not exist on the platform is created via the `create-label` operation of the cookbook (idempotent — 409/already-exists means proceed). Board column fields that cannot be created via API: deliver the exact manual step to the human, never leave it implicit.
 
-**Persistence:** the confirmed mapping lands in `.maestra/labels.md` (template in `templates/labels.md`), versioned in the repository. **Never** in `.maestra/config.md` — its parser accepts only the four ADR-014 keys and silently ignores the rest (ADR-002).
+**Persistence:** the confirmed mapping lands in `labels.md` on branch `__maestra_config__` via `maestra-config write labels.md` (template in `templates/labels.md` — ADR-003). **Never** in `config.md` — its parser accepts only the four ADR-014 keys and silently ignores the rest (ADR-002).
 
 ## STAGE 2 — Team and configuration
 
-If `.maestra/team.md` or `.maestra/config.md` are missing or outdated, run the J1 STAGE 4 behavior here (microcopy §7.5, protocols §P5): proposed roles in one message, human corrects, visibility note included, file committed. Valid map → skip in silence. This stage **references** J1 STAGE 4 — it never restates it.
+If the team map or `config.md` are missing or outdated on `__maestra_config__`, run the J1 STAGE 4 behavior here (microcopy §7.5, protocols §P5): proposed roles in one message, human corrects, visibility note included, persisted via `maestra-config write`. Valid map → skip in silence. This stage **references** J1 STAGE 4 — it never restates it.
 
 ## STAGE 3 — `docs/reference/` bootstrap
 
@@ -127,7 +127,7 @@ Partial runs obey the same idempotency and the same no-application rule of STAGE
 ## Journey success criteria
 
 - Zero recreation of existing artifacts (idempotency held, with `preserved:` log); zero questions about what was readable.
-- `.maestra/labels.md` persisted with all stages and columns mapped; missing labels created on the platform.
+- `labels.md` persisted on `__maestra_config__` with all stages and columns mapped; missing labels created on the platform.
 - `docs/reference/` born with the three living documents + ADR folder.
 - Legacy documentation (when applicable) approved by the human before commit.
 - Agent-guidance layer born (AGENTS.md with real stack commands, exemplo-skill, INDEX.md with "Quando ler" filled, `0000-template-adr.md` without numbering conflicts, conventions/) — or each gap explicitly logged as preserved/TODO.

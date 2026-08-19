@@ -54,8 +54,8 @@ Confirmation in one message. Contestation → kernel trigger #1: **evidence re-p
 
 ## STAGE 4 — Team and configuration (conditional)
 
-- **`.maestra/team.md`** missing or outdated (diff against board collaborators): read microcopy §7.5 and `reference/protocols.md` §P5. One message with PROPOSED roles (history signals; without history, guess marked as guess) — the human corrects, does not build, in a single response. Visibility note included; file committed. Without listing permission → minimal roles for the current wave, map marked as partial — **never blocks the epic**. Valid map → stage skipped in silence.
-- **`.maestra/config.md`** missing → persist platform/host/board here (tool detection already derived what it could; ask ONCE only what is missing). Once per repository.
+- **Team map (`team.md` on branch `__maestra_config__`)** missing or outdated (diff against board collaborators): read microcopy §7.5 and `reference/protocols.md` §P5. One message with PROPOSED roles (history signals; without history, guess marked as guess) — the human corrects, does not build, in a single response. Visibility note included; persisted via `maestra-config write team.md` (commit on the orphan branch, push best-effort — ADR-003). Without listing permission → minimal roles for the current wave, map marked as partial — **never blocks the epic**. Valid map → stage skipped in silence.
+- **`config.md` (branch `__maestra_config__`) missing** → persist platform/host/board here (tool detection already derived what it could; ask ONCE only what is missing). Once per repository. Read with `maestra-config read config.md`; legacy `.maestra/` folder in the tree → run `maestra-config migrate` (RF-37 cutover — legacy files are NOT read).
 
 ## STAGE 5 — Dedup, distribution, birth of the epic and first wave
 
