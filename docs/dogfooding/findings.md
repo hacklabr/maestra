@@ -632,3 +632,11 @@
 - Sintoma: A worktree `.worktrees/r12-rota-setup/` foi criada corretamente na convenção (dentro do repo, gitignored), mas o submódulo `src/catalog/agency-agents` veio vazio. `npm run ci` na worktree falhou com 3 testes do catalog loader (`expected 0 to be greater than or equal to 360`). Nem a convenção de worktree da J5 (`j5-stage3.md`) nem o `ops-kernel.md` mencionam `git submodule update --init` como parte do nascimento da worktree.
 - Tentativas/workaround: 1 falha de CI → diagnóstico (diff `ls` main × worktree) → `git submodule update --init` na worktree → CI verde (243/243, smoke 136/136, eval:dry 4/4). Custo: um ciclo inteiro de `npm ci` + testes perdido.
 - Status: open
+
+## F034 — `maestra_emit_event` type=override exigiu 2 tentativas (payload schema não documentado) — família F024/F031
+- Data: 2026-08-18
+- Categoria: tool-retry
+- Origem: R14 (#48) — registro do override de variante (Condensed → Minimal) no nascimento do épico
+- Sintoma: Primeira tentativa com payload `{contested_criterion, decided_by, declared_reason, direction, type}` falhou com "Invalid payload for event type override: override_type: Required; from: Required; to: Required; disputed_criterion: Required; date: Required". O schema real exige `override_type`/`from`/`to`/`disputed_criterion`/`date` — o texto de P3/instrumentation descreve os conceitos (direção, critério contestado, decisor) mas não os nomes de campo; `instrumentation.md` segue divergente do schema zod (F024, F031), agora confirmado também para type=override.
+- Tentativas/workaround: 2 tentativas; lido o erro de validação e corrigidos os campos. Reforça F024: alinhar `instrumentation.md` ao schema zod real de TODOS os tipos.
+- Status: open
