@@ -7,16 +7,26 @@ interface RunResult {
   code: number
   out: string
   err: string
+  /** raw stdout (read subcommand) */
+  raw: string
 }
 
-async function run(argv: string[]): Promise<RunResult> {
+interface RunOpts {
+  /** Injected stdin source for `write` (mirrors `< file` redirection). */
+  stdin?: () => Promise<string>
+}
+
+async function run(argv: string[], opts: RunOpts = {}): Promise<RunResult> {
   const lines: string[] = []
   const errs: string[] = []
+  const raw: string[] = []
   const code = await main(argv, {
     log: (line) => lines.push(line),
     error: (line) => errs.push(line),
+    stdout: (data) => raw.push(data),
+    stdin: opts.stdin,
   })
-  return { code, out: lines.join("\n"), err: errs.join("\n") }
+  return { code, out: lines.join("\n"), err: errs.join("\n"), raw: raw.join("") }
 }
 
 function writeLegacy(dir: string, files: Record<string, string>): void {
@@ -139,13 +149,19 @@ describe("maestra-config migrate", () => {
     expect(err).toContain("not a git repository")
   })
 
-  it("help usage renders and unknown subcommands exit 1", async () => {
+  it("help lists subcommands; bare invocation and unknown subcommands exit 1", async () => {
     const help = await run(["--help"])
     expect(help.code).toBe(0)
-    expect(help.out).toContain("Usage: maestra-config migrate")
+    expect(help.out).toContain("Usage: maestra-config")
+    for (const sub of ["migrate", "read", "write"]) {
+      expect(help.out).toContain(sub)
+    }
+    const bare = await run([])
+    expect(bare.code).toBe(1)
+    expect(bare.out).toContain("Usage: maestra-config")
     const bad = await run(["frobnicate"])
     expect(bad.code).toBe(1)
-    expect(bad.out).toContain("Usage: maestra-config migrate")
+    expect(bad.out).toContain("Usage: maestra-config")
   })
 
   it("keeps the legacy config.md parser byte-compatible end to end", async () => {
@@ -159,5 +175,148 @@ describe("maestra-config migrate", () => {
     expect(await readFluxoConfig(dir)).toEqual({ platform: "github", host: "github.com", project: "acme/loja" })
     // legacy folder content itself was not modified by the tool
     expect(readFileSync(`${dir}/.maestra/config.md`, "utf-8")).toBe(CONFIG)
+  })
+})
+
+const TEAM = "# Team map\n\n- @rafael — Product (PO)\n- @maria — Engineering (senior back-end dev)\n"
+
+describe("maestra-config write", () => {
+  it("creates a TRUE orphan branch from stdin content (merge-base empty)", async () => {
+    const dir = await initRepo("maestra-write-birth-")
+    const { code, out } = await run(["write", "team.md", "--directory", dir], { stdin: async () => TEAM })
+
+    expect(code).toBe(0)
+    expect(out).toContain("committed team.md on __maestra_config__")
+    expect(out).toContain("branch born ORPHAN")
+    expect(out).toContain("push degraded (no-remote)") // tolerated degradation, still exit 0
+
+    expect(await git(dir, ["show", "__maestra_config__:team.md"])).toBe(TEAM)
+    expect(await gitOk(dir, ["merge-base", "main", "__maestra_config__"])).toBeNull()
+    expect((await git(dir, ["rev-list", "--count", "main"])).trim()).toBe("1")
+    expect(existsSync(`${dir}/.maestra`)).toBe(false) // nothing materialized in the tree
+  })
+
+  it("appends with a parent when the branch already exists", async () => {
+    const dir = await initRepo("maestra-write-append-")
+    await run(["write", "team.md", "--directory", dir], { stdin: async () => TEAM })
+
+    const second = await run(["write", "labels.md", "--directory", dir], { stdin: async () => "# Labels\n" })
+
+    expect(second.code).toBe(0)
+    expect(second.out).not.toContain("branch born ORPHAN")
+    expect((await git(dir, ["rev-list", "--count", "__maestra_config__"])).trim()).toBe("2")
+    expect((await git(dir, ["log", "--format=%P", "-1", "__maestra_config__"])).trim()).toMatch(/^[0-9a-f]{40}$/)
+    // first file survives the append
+    expect(await git(dir, ["show", "__maestra_config__:team.md"])).toBe(TEAM)
+  })
+
+  it("overwrites one file without touching the others", async () => {
+    const dir = await initRepo("maestra-write-overwrite-")
+    await run(["write", "team.md", "--directory", dir], { stdin: async () => TEAM })
+    await run(["write", "labels.md", "--directory", dir], { stdin: async () => "# Labels v1\n" })
+    const { code } = await run(["write", "labels.md", "--directory", dir], { stdin: async () => "# Labels v2\n" })
+
+    expect(code).toBe(0)
+    expect(await git(dir, ["show", "__maestra_config__:labels.md"])).toBe("# Labels v2\n")
+    expect(await git(dir, ["show", "__maestra_config__:team.md"])).toBe(TEAM)
+    expect((await git(dir, ["rev-list", "--count", "__maestra_config__"])).trim()).toBe("3")
+  })
+
+  it("identical content is an idempotent no-op (no duplicate commit)", async () => {
+    const dir = await initRepo("maestra-write-idem-")
+    await run(["write", "team.md", "--directory", dir], { stdin: async () => TEAM })
+    const again = await run(["write", "team.md", "--directory", dir], { stdin: async () => TEAM })
+
+    expect(again.code).toBe(0)
+    expect(again.out).toContain("nothing to commit")
+    expect((await git(dir, ["rev-list", "--count", "__maestra_config__"])).trim()).toBe("1")
+  })
+
+  it("rejects path traversal, subdirs and unknown names (allowlist)", async () => {
+    const dir = await initRepo("maestra-write-reject-")
+    for (const bad of ["../evil", "notes.txt", "a/b.md", ".maestra/team.md", "CONFIG.MD"]) {
+      const { code, err } = await run(["write", bad, "--directory", dir], { stdin: async () => "x" })
+      expect(code, `write ${bad} must exit 1`).toBe(1)
+      expect(err).toContain("allowed: config.md, team.md, labels.md")
+    }
+    // and nothing was created on the rejected runs
+    expect(await gitOk(dir, ["rev-parse", "--verify", "--quiet", "refs/heads/__maestra_config__"])).toBeNull()
+  })
+
+  it("rejects empty stdin and a missing file argument", async () => {
+    const dir = await initRepo("maestra-write-emptystdin-")
+    const empty = await run(["write", "team.md", "--directory", dir], { stdin: async () => "" })
+    expect(empty.code).toBe(1)
+    expect(empty.err).toContain("stdin is empty")
+
+    const missing = await run(["write", "--directory", dir], { stdin: async () => TEAM })
+    expect(missing.code).toBe(1)
+    expect(missing.err).toContain("invalid file")
+  })
+
+  it("pushes to a real bare origin; degraded push still exits 0", async () => {
+    const dir = await initRepo("maestra-write-push-")
+    const bare = await initBareRemote()
+    await addRemote(dir, bare)
+
+    const ok = await run(["write", "team.md", "--directory", dir], { stdin: async () => TEAM })
+    expect(ok.code).toBe(0)
+    expect(ok.out).toContain("pushed to origin/__maestra_config__")
+    expect(await git(bare, ["show", `refs/heads/__maestra_config__:team.md`])).toBe(TEAM)
+
+    const dir2 = await initRepo("maestra-write-badpush-")
+    await addRemote(dir2, "/nonexistent/remote.git")
+    const degraded = await run(["write", "team.md", "--directory", dir2], { stdin: async () => TEAM })
+    expect(degraded.code).toBe(0)
+    expect(degraded.out).toContain("push degraded")
+    // local commit survives
+    expect(await git(dir2, ["show", "__maestra_config__:team.md"])).toBe(TEAM)
+  })
+})
+
+describe("maestra-config read", () => {
+  it("round-trips exact content after write (raw stdout, no extra newline)", async () => {
+    const dir = await initRepo("maestra-read-roundtrip-")
+    await run(["write", "team.md", "--directory", dir], { stdin: async () => TEAM })
+
+    const { code, raw } = await run(["read", "team.md", "--directory", dir])
+    expect(code).toBe(0)
+    expect(raw).toBe(TEAM) // exact bytes, trailing newline included
+  })
+
+  it("reads a file migrated by the RF-38 path (write/migrate integration)", async () => {
+    const dir = await initRepo("maestra-read-migrated-")
+    writeLegacy(dir, { "config.md": CONFIG })
+    await commitAll(dir, "chore: legacy maestra config")
+    await run(["migrate", "--directory", dir])
+
+    const { code, raw } = await run(["read", "config.md", "--directory", dir])
+    expect(code).toBe(0)
+    expect(raw).toBe(CONFIG)
+  })
+
+  it("exit 1 + clear stderr when the branch is missing", async () => {
+    const dir = await initRepo("maestra-read-nobranch-")
+    const { code, raw, err } = await run(["read", "config.md", "--directory", dir])
+    expect(code).toBe(1)
+    expect(raw).toBe("")
+    expect(err).toContain("branch __maestra_config__ not found")
+    expect(err).toContain("maestra-config write")
+  })
+
+  it("exit 1 + clear stderr when the file is missing on an existing branch", async () => {
+    const dir = await initRepo("maestra-read-nofile-")
+    await run(["write", "team.md", "--directory", dir], { stdin: async () => TEAM })
+
+    const { code, err } = await run(["read", "labels.md", "--directory", dir])
+    expect(code).toBe(1)
+    expect(err).toContain("labels.md not found on __maestra_config__")
+  })
+
+  it("rejects unknown file names (allowlist, same as write)", async () => {
+    const dir = await initRepo("maestra-read-reject-")
+    const { code, err } = await run(["read", "../evil", "--directory", dir])
+    expect(code).toBe(1)
+    expect(err).toContain("allowed: config.md, team.md, labels.md")
   })
 })
