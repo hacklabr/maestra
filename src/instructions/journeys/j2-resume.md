@@ -2,7 +2,7 @@
 
 > Source: docs/referencia/jornadas.md v2.2 (§5 P1.1 subestados, §6 J2; gaps G-04, G-06, G-07, G-12) · Module version: 4 — 2026-08-05
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T8): digest enumerates → model derives, closed vocabulary P1.1, facts-win-over-field, branches B1–B6, board after confirmation. v2 (journeys v2.2, human decision) — mirror state file eliminated: derivation is ALWAYS digest + platform docs, every session; removed the branch of cache reading. v3 (R02, ADR-001) — STAGE 2 header rewritten: short imperative replaces field enumeration; cross-refs microcopy §7.2 two-phase template; field names stay internal, spoken as consequences. v4 (R03) — branch B1a added: `stage-0` label recognized as flow marker; promotion path to J1 offered. v5 (R10, issue #41) — STAGE 3: dispatch whose next action is implementation lands on the consent gate (J5 STAGE 2, microcopy §7.13); derivation confirmation is state alignment, never execution consent (closes F032).
+> Changelog: v1 — initial version (T8): digest enumerates → model derives, closed vocabulary P1.1, facts-win-over-field, branches B1–B6, board after confirmation. v2 (journeys v2.2, human decision) — mirror state file eliminated: derivation is ALWAYS digest + platform docs, every session; removed the branch of cache reading. v3 (R02, ADR-001) — STAGE 2 header rewritten: short imperative replaces field enumeration; cross-refs microcopy §7.2 two-phase template; field names stay internal, spoken as consequences. v4 (R03) — branch B1a added: `stage-0` label recognized as flow marker; promotion path to J1 offered. v5 (R10, issue #41) — STAGE 3: dispatch whose next action is implementation lands on the consent gate (J5 STAGE 2, microcopy §7.13); derivation confirmation is state alignment, never execution consent (closes F032). v6 (R15, issue #49) — substates `awaiting-qa`/`qa-rejected` added to the P1.1 table; branch B7 (guided QA session, microcopy §7.14) added; dispatch of both substates (B7 session; `qa-rejected` rework lands on the consent gate — F032 applies).
 
 **Trigger:** issue number. **Promise:** "where we are, what is missing, who I am now" — **zero questions about state present on the platform or in the docs**. Interrogating the human about what the platform already knows destroys the value proposition of this door.
 
@@ -28,6 +28,8 @@
 | `awaiting-s1-approval` | (Technical) motivation presented, Stage 1 approval pending — default NOT approved |
 | `awaiting-feedback-decision` | objection formalized, cut/pay/defer decision pending |
 | `in-execution` | Stage 3 implementing (k of m tasks) |
+| `awaiting-qa` | PR/MR accepted in `qa` mode; task with the QA professional, awaiting validation in the test environment |
+| `qa-rejected` | QA found problems; task back with whoever implemented it |
 | `paused` | stopped by invalidation or decision dependency — **always presented WITH what unblocks** |
 | `awaiting-reconciliation` | implementation accepted, final review pending |
 | `closed-reconciled` | round closed with reconciliation |
@@ -44,6 +46,7 @@
 - **B4 — The issue is a daughter** → digest the parent epic, derive from the parent, anchor the conversation on the daughter as focus.
 - **B5 — Orphan** (parent epic closed) → inform; treat as a standalone work focus.
 - **B6 — Closed epic WITHOUT reconciliation** (digest: closed epic + reconciliation task missing or open) → derive the anomalous substate `closed-without-reconciliation` and **name the anomaly without drama**: "this epic was closed without the final review — by the flow rule, the round is not delivered". Offer **retroactive reconciliation**: create the reconciliation task with confirmed assignee (P7) → execute it normally (J5 Stage 5 checklist) → record in `retro.md` that the round closed without reconciliation + emit event F (discovered late). **NEVER reopen the epic silently; NEVER leave it closed pretending everything is fine** — the anomaly is presented to the human with the regularization path.
+- **B7 — QA session** → trigger: derived substate `awaiting-qa`, or entry phrase ("vou fazer o QA da #N"). The facilitator **RUNS the guided session** (microcopy §7.14): present the task — what was done (from scope + technical design, never session memory), acceptance criteria **one by one**, where to validate in the test environment — answer the professional's questions in the chat, then register the verdict. **Approve** → close the issue with the QA verdict + card to the approval column + round `awaiting-reconciliation` (one act, three touchpoints — P1/P6 atomicity). **Reject** → card to **Ready** + reassignment to whoever implemented + substate `qa-rejected` + comment naming what failed. Transitions (close/card/metadata) execute only **AFTER** the human verdict — the session never closes preemptively. Zero questions about facts the digest already has.
 
 ## STAGE 2 — State presentation
 
@@ -76,6 +79,8 @@ Assume the persona and dispatch, reading the corresponding module:
 - Stage 3 → `j5-stage3.md`
 - Technical variant, or substate `awaiting-s1-approval` → `j6-technical.md`
 - Substate `awaiting-feedback-decision` → `j7-feedback.md`
+- Substate `awaiting-qa` → branch B7 (QA session — microcopy §7.14)
+- Substate `qa-rejected` → consent gate (microcopy §7.13) then `j5-stage3.md` — rework is implementation, F032 applies
 
 **Dispatch to implementation lands on the consent gate** (microcopy §7.13): when the next action is implementation (Stage 3 here, Phase 4 in direct mode), the derivation confirmation above was state alignment, NOT execution consent — the 4-step alignment (explain the task, answer questions, present the execution plan, offer adjustment) runs first, and implementation only starts with the developer's explicit consent (F032). Dispatches to Stages 1 and 2 are unchanged.
 
