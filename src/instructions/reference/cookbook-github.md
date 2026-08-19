@@ -1,6 +1,6 @@
 # Cookbook — GitHub (gh CLI + API)
 
-> Source: specification.md D6 · fluxo-de-desenvolvimento.md §4 · jornadas.md P6 · Module version: 1
+> Source: specification.md D6 · fluxo-de-desenvolvimento.md §4 · jornadas.md P6 · Module version: 2 — 2026-08-18 (R15, issue #49: `reassign-issue` operation)
 > Anti-drift: ONLY place where `gh`/GitHub API commands appear (ADR-012). Instructions
 > reference OPERATIONS (neutral names in `kebab-case`), never CLIs. Divergence with the
 > source is a finding, never a silent adjustment.
@@ -134,6 +134,11 @@ gh issue edit <N> --repo <O>/<R> --remove-label "variant-minimal" --add-label "v
 ### assign (confirmed assignee — every task is born with one)
 ```bash
 gh issue edit <N> --repo <O>/<R> --add-assignee <user>
+```
+
+### reassign-issue (QA routing — `qa` mode: acceptance hands over to the QA professional; QA rejection returns the task to the implementer)
+```bash
+gh issue edit <N> --repo <O>/<R> --remove-assignee <implementer> --add-assignee <qa-user>
 ```
 
 ### close-issue (acceptance with verdict per criterion)

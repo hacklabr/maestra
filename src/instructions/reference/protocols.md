@@ -2,7 +2,7 @@
 
 > Source: docs/referencia/jornadas.md §4–§5, v2.2 · Module version: 3 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v0 scaffold (T6) → v1 (T10): P1–P7 + P1.1 complete in quick-reference format. v2 (journeys v2.2, human decision) — protocol P2 (mirror state file) eliminated: risk of becoming a parallel source of truth and a merge-conflict generator; state is always derived from the platform (digest + docs), every session. `.maestra/team.md` and `.maestra/config.md` remain (configuration, not cache). v3 (R02, ADR-001) — P4: short imperative added at the use point — flow state field names never enumerated to a Stage 1 persona; spoken as consequences. v4 (issues #14, #19) — P6 rewritten: substate→column mapping table added (closes F011); "AFTER confirmed derivation" replaced with explicit transition rules (closes F008, F010); PR/MR-open → In review rule (closes F019); baton-pass → Ready rule (closes F016); execution≠narration rule (closes F018); config.md declared NOT source of truth about board (closes F012). P1: metadata atomicity rule strengthened — three touchpoints, one act (closes F004). v5 (issue #18) — P1: daughter task naming convention `{demand name} — {subtitle}` added (closes F015).
+> Changelog: v0 scaffold (T6) → v1 (T10): P1–P7 + P1.1 complete in quick-reference format. v2 (journeys v2.2, human decision) — protocol P2 (mirror state file) eliminated: risk of becoming a parallel source of truth and a merge-conflict generator; state is always derived from the platform (digest + docs), every session. `.maestra/team.md` and `.maestra/config.md` remain (configuration, not cache). v3 (R02, ADR-001) — P4: short imperative added at the use point — flow state field names never enumerated to a Stage 1 persona; spoken as consequences. v4 (issues #14, #19) — P6 rewritten: substate→column mapping table added (closes F011); "AFTER confirmed derivation" replaced with explicit transition rules (closes F008, F010); PR/MR-open → In review rule (closes F019); baton-pass → Ready rule (closes F016); execution≠narration rule (closes F018); config.md declared NOT source of truth about board (closes F012). P1: metadata atomicity rule strengthened — three touchpoints, one act (closes F004). v5 (issue #18) — P1: daughter task naming convention `{demand name} — {subtitle}` added (closes F015). v6 (R15, issue #49) — P1.1: substates `awaiting-qa`/`qa-rejected` added (post-acceptance QA mode); P6: substate→column rows for both, acceptance transitions 5a (`close`) / 5b (`qa`) and QA verdict transitions 6a (approve) / 6b (reject), plus the workflow.md provenance note (ADR-004; location on the `__maestra_config__` branch, read via `maestra-config` — ADR-003).
 
 Reading format: each protocol = master rule + operational rules. Artifact templates in `templates/`; wordings in `reference/microcopy.md`.
 
@@ -40,6 +40,8 @@ The `**Substate:**` field uses **only** the values below — J2 derivation never
 | `awaiting-s1-approval` | (Technical) Motivation presented, S1 approval pending — **default NOT approved** | End of lock turn (J6 Stage 2) |
 | `awaiting-feedback-decision` | Objection formalized, cut/pay/defer decision pending | J7 Stage 1 |
 | `in-execution` | Stage 3 implementing (k of m tasks) | First implementation task started |
+| `awaiting-qa` | PR/MR accepted in `qa` mode; awaiting QA validation in the test environment | Acceptance act when `post-pr-acceptance: qa` (J5 Stage 3, P6 5b) |
+| `qa-rejected` | QA found problems; task back with the implementer | QA session verdict: rejected (J2 branch B7, P6 6b) |
 | `paused` | Stopped by invalidation or decision dependency (flow 9.3) | J8 (invalidation), J7 |
 | `awaiting-reconciliation` | Implementation accepted, final review pending | Closing of the last implementation task |
 | `closed-reconciled` | Round closed with reconciliation | J5 Stage 5 concluded |
@@ -142,6 +144,8 @@ Every `Substate:` value (P1.1) maps to exactly one column. The facilitator never
 | `awaiting-s1-approval` | **Ready** | Motivation presented, waiting for S1 decision |
 | `awaiting-feedback-decision` | **Ready** | Objection formalized, waiting for cut/pay/defer |
 | `in-execution` | **In progress** | Implementation underway |
+| `awaiting-qa` | **In review** (stays) | PR/MR accepted in `qa` mode; assignment moves to the QA professional (P6 5b) |
+| `qa-rejected` | **Ready** | Reassigned to whoever implemented, for correction (P6 6b) |
 | `paused` | **In progress** (stays) | Does not go back, does not advance; comment names the unblock (P1.1) |
 | `awaiting-reconciliation` | **In review** | Implementation accepted, final review pending |
 | `closed-reconciled` | **Done** | Round closed with reconciliation |
@@ -153,8 +157,14 @@ Every `Substate:` value (P1.1) maps to exactly one column. The facilitator never
 2. **Task born in baton-pass / gate wave** (parent epic already `In progress`) → card goes to **Ready** (ready for the next stage to pick up), not Todo.
 3. **Work starts in the session** → **Todo/Ready → In progress**, narrated, in the same act. Worktree creation (kernel #9) is the canonical trigger — if a worktree was created, the card should already be `In progress`.
 4. **Handoff for assessment** (end of asynchronous turn: `awaiting-assessment`, `awaiting-s1-approval`, `awaiting-feedback-decision`) → **In progress → Ready**, narrated, with comment naming what unblocks.
-5. **PR/MR opened** → **In progress → In review**, in the **same act** as the PR/MR creation command. The board transition is part of the PR command, not a separate step. Opening a PR without moving the card leaves the board saying "executing" when the reality is "awaiting review".
+5. **PR/MR opened** → **In progress → In review**, in the **same act** as the PR/MR creation command. The board transition is part of the PR command, not a separate step. Opening a PR/MR without moving the card leaves the board saying "executing" when the reality is "awaiting review".
+5a. **Acceptance, mode `close`** (default; absent key = `close`): current behavior — the issue is closed with the verdict per criterion.
+5b. **Acceptance, mode `qa`**: the verdict comment is registered, the issue is **NOT** closed; substate `awaiting-qa`; the card **stays in In review** (assignment passes to the QA professional — routed from the `team.md` Specialty: a unique candidate is proposed, correctable; absent or ambiguous → ask in the act, never assume).
+6a. **QA approves** (session guided by the facilitator — J2 branch B7): the issue is closed with the QA verdict; the card goes to the approval column configured in `workflow.md` on the `__maestra_config__` branch (`qa-approval-column`, read via `maestra-config read workflow.md`; absent = the delivered mapping in `labels.md`); the round enters `awaiting-reconciliation`. Reconciliation closes → **Done** (rule 6 below, unchanged — QA comes BEFORE reconciliation, which remains the final gate).
+6b. **QA rejects**: the card goes to **Ready**, reassigned to whoever implemented; substate `qa-rejected`; a comment names what failed (never who failed).
 6. **Reconciliation closes** (J5 Stage 5) → **In review → Done** (epic), narrated. The epic only goes to `Done` after reconciliation concludes — never before (round gate, J5 Stage 5).
+
+The post-PR/MR acceptance mode lives in `workflow.md` on the orphan `__maestra_config__` branch (read via `maestra-config read workflow.md` — ADR-003/ADR-004), **never in the working tree** (ADR-003 — config history must not pollute the product branches; a `.maestra/workflow.md` in the checkout is an error to correct) and **never in `config.md`** (ADR-002 — its parser ignores the key, producing invisible configuration); column names are convention, always revalidated against the real board via API in the act.
 
 ### Atomicity (three touchpoints, one act)
 

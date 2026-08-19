@@ -26,11 +26,15 @@ const REMOTE_REF = `refs/remotes/${REMOTE}/${ORPHAN_BRANCH}`
 const CONFIG_FILE_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]*$/
 
 /**
- * The config namespace (RF-34): exactly these three files at the branch
- * root. The CLI allowlist is stricter than the regex — no path traversal,
- * no subdirs, no extra files (the branch root IS the whole namespace).
+ * The config namespace (RF-34): exactly these files at the branch root. The
+ * CLI allowlist is stricter than the regex — no path traversal, no subdirs,
+ * no extra files (the branch root IS the whole namespace).
+ *
+ * `workflow.md` joined in R15 (ADR-004): post-PR/MR acceptance mode. It has
+ * NO legacy `.maestra/` copy — only `read`/`write` reach it; `migrate` keeps
+ * its scope on the 3 R14 legacy files (see migrate-config.ts).
  */
-export const CONFIG_FILE_NAMES = ["config.md", "team.md", "labels.md"] as const
+export const CONFIG_FILE_NAMES = ["config.md", "team.md", "labels.md", "workflow.md"] as const
 export type ConfigFileName = (typeof CONFIG_FILE_NAMES)[number]
 
 export function isConfigFileName(name: string): name is ConfigFileName {

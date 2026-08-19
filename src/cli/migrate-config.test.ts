@@ -176,6 +176,20 @@ describe("maestra-config migrate", () => {
     // legacy folder content itself was not modified by the tool
     expect(readFileSync(`${dir}/.maestra/config.md`, "utf-8")).toBe(CONFIG)
   })
+
+  it("migrate scope stays the 3 legacy files — a stray .maestra/workflow.md is NOT migrated (ADR-004: branch-born only)", async () => {
+    const dir = await initRepo("maestra-migrate-workflow-stray-")
+    writeLegacy(dir, { "config.md": CONFIG, "workflow.md": "# Post-PR/MR workflow\n\n- post-pr-acceptance: qa\n" })
+    await commitAll(dir, "chore: legacy maestra config incl. stray workflow")
+
+    const { code, out } = await run(["migrate", "--directory", dir])
+    expect(code).toBe(0)
+    expect(out).toContain("legacy .maestra/ found: config.md")
+    // the 3-file scope holds: workflow.md never lands on the branch here
+    expect(await gitOk(dir, ["show", "__maestra_config__:workflow.md"])).toBeNull()
+    expect(await git(dir, ["show", "__maestra_config__:config.md"])).toBe(CONFIG)
+    expect((await git(dir, ["rev-list", "--count", "__maestra_config__"])).trim()).toBe("1")
+  })
 })
 
 const TEAM = "# Team map\n\n- @rafael — Product (PO)\n- @maria — Engineering (senior back-end dev)\n"
@@ -275,6 +289,22 @@ describe("maestra-config write", () => {
 })
 
 describe("maestra-config read", () => {
+  it("workflow.md write/read round-trips on the orphan branch (ADR-004 — allowlisted, branch-born)", async () => {
+    const dir = await initRepo("maestra-workflow-roundtrip-")
+    const WORKFLOW = "# Post-PR/MR workflow\n\n- post-pr-acceptance: qa\n- qa-approval-column: Done\n"
+
+    const w = await run(["write", "workflow.md", "--directory", dir], { stdin: async () => WORKFLOW })
+    expect(w.code).toBe(0)
+    expect(w.out).toContain("committed workflow.md on __maestra_config__")
+    expect(w.out).toContain("branch born ORPHAN") // first branch content IS workflow.md
+    expect(await git(dir, ["show", "__maestra_config__:workflow.md"])).toBe(WORKFLOW)
+    expect(await gitOk(dir, ["merge-base", "main", "__maestra_config__"])).toBeNull()
+
+    const r = await run(["read", "workflow.md", "--directory", dir])
+    expect(r.code).toBe(0)
+    expect(r.raw).toBe(WORKFLOW) // exact bytes, trailing newline included
+  })
+
   it("round-trips exact content after write (raw stdout, no extra newline)", async () => {
     const dir = await initRepo("maestra-read-roundtrip-")
     await run(["write", "team.md", "--directory", dir], { stdin: async () => TEAM })

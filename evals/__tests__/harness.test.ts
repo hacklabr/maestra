@@ -36,7 +36,7 @@ import { createStubExecutor } from "../lib/stub-tools.mjs"
 //    and existing assert files. Runs with ZERO live model.
 // ---------------------------------------------------------------------------
 
-const SCENARIO_FILES = ["anti-bypass.yaml", "j8-guard.yaml", "j1-triage.yaml", "j2-resume.yaml", "fm-vinculantes.yaml", "j9-panel-shell.yaml", "r02-welcoming-language.yaml", "dry-run.yaml"]
+const SCENARIO_FILES = ["anti-bypass.yaml", "j8-guard.yaml", "j1-triage.yaml", "j2-resume.yaml", "fm-vinculantes.yaml", "j9-panel-shell.yaml", "r02-welcoming-language.yaml", "r15-qa-session.yaml", "dry-run.yaml"]
 const ASSERT_DIR = join(EVALS_ROOT, "asserts")
 
 describe("eval harness — structure validation", () => {
@@ -48,7 +48,7 @@ describe("eval harness — structure validation", () => {
       for (const test of doc) scenarios.push({ ...test, _file: file })
     }
 
-    expect(scenarios.length).toBeGreaterThanOrEqual(50) // 16 AB + 6 J8 + 8 J1 + 6 J2 + 4 FM + 5 SH + 5 R02 + 2 DRY (≥)
+    expect(scenarios.length).toBeGreaterThanOrEqual(50) // 16 AB + 6 J8 + 8 J1 + 6 J2 + 4 FM + 5 SH + 5 R02 + 2 R15 + 2 DRY (≥)
 
     for (const s of scenarios) {
       expect(s.description, `scenario without description in ${s._file}`).toBeTruthy()
@@ -543,6 +543,13 @@ describe("stub bash — config reads on __maestra_config__", () => {
     const labels = "# Labels\n"
     expect(exec("maestra-config read labels.md", { ".maestra/labels.md": labels }).result).toBe(labels)
     expect(exec("git show __maestra_config__:labels.md", { ".maestra/labels.md": labels }).result).toBe(labels)
+  })
+
+  it("workflow.md is served through the same route, both forms (ADR-004 — branch-root fixture key, no legacy name)", () => {
+    const WORKFLOW = "# Post-PR/MR workflow\n\n- post-pr-acceptance: qa\n"
+    const files = { "workflow.md": WORKFLOW }
+    expect(exec("maestra-config read workflow.md", files).result).toBe(WORKFLOW)
+    expect(exec("git show __maestra_config__:workflow.md", files).result).toBe(WORKFLOW)
   })
 
   it("branch-root key (no .maestra/ prefix) is the fallback source", () => {

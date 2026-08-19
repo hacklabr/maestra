@@ -28,8 +28,10 @@ import {
  *                 the branch + best-effort push. Same orphan-birth invariant,
  *                 same deterministic identity as every store write.
  *
- * File names are allowlisted to config.md|team.md|labels.md (branch root is
- * the whole config namespace). Exit 0 on success and tolerated degradation
+ * File names are allowlisted to config.md|team.md|labels.md|workflow.md
+ * (branch root is the whole config namespace; workflow.md — ADR-004 — is
+ * branch-born only: read/write reach it, migrate does not, it has no legacy
+ * copy). Exit 0 on success and tolerated degradation
  * (push failure is NOT a failure); non-zero only on usage error or real
  * failure (not a repo, missing branch/file for read, unreadable stdin,
  * git plumbing).
@@ -39,6 +41,14 @@ import {
  *   maestra-config read <file> [--directory <path>]
  *   maestra-config write <file> [--directory <path>] < content
  */
+
+/**
+ * Legacy migration scope (RF-38): the 3 R14 files ONLY. `workflow.md` has no
+ * legacy `.maestra/` copy (born on the branch via J12 — ADR-004), so a stray
+ * `.maestra/workflow.md` is NOT migrated — it is stray-file material for the
+ * printed cleanup commands, nothing else.
+ */
+const LEGACY_FILE_NAMES = ["config.md", "team.md", "labels.md"] as const
 
 const LEGACY_DIR = ".maestra"
 
@@ -217,7 +227,7 @@ async function runWrite(
   return 0
 }
 
-/** `migrate` — RF-38 legacy migration (body unchanged in behavior). */
+/** `migrate` — RF-38 legacy migration (the 3 R14 files only; workflow.md has no legacy copy). */
 async function runMigrate(
   args: CliArgs,
   deps: { log: (line: string) => void; error: (line: string) => void },
@@ -229,9 +239,10 @@ async function runMigrate(
     return 1
   }
 
-  // 1. Scan legacy files (read errors are real failures).
+  // 1. Scan legacy files (read errors are real failures). Scope: the 3 R14
+  // legacy names only — workflow.md is branch-born (ADR-004), never migrated.
   const legacy: Record<string, string> = {}
-  for (const name of CONFIG_FILE_NAMES) {
+  for (const name of LEGACY_FILE_NAMES) {
     try {
       legacy[name] = await readFile(join(args.directory, LEGACY_DIR, name), "utf-8")
     } catch {

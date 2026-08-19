@@ -2,7 +2,7 @@
 
 > Source: docs/referencia/jornadas.md §7, v2.3 · Module version: 5 — 2026-08-05
 > Anti-drift: verbatim templates with typed slots; post-dogfood adjustment HERE, never in code. Divergence between this module and the source is a finding, never a silent adjustment.
-> Changelog: v0 scaffold (T6) → v1 (T10): full transcription of §7.1–§7.11 with typed slots; deviations.md hook block preserved verbatim; override comment replaced by reference to the tool contract (`maestra_emit_event`); platform-neutral adaptations marked explicitly. v2 (journeys v2.3, human decision) — block §7.9 W-04 ("specialist outside the installed catalog") DELETED: shell-specialist architecture makes the whole catalog invocable; there is no longer an installed subset or "nearest" specialist. v3 (R02, ADR-001) — §7.2 "Derived state" rewritten as two-phase `<derivation>` (typed slots, internal) / `<speech>` (natural sentence, only emitted) contract + "Substate → situation translation" table + 3 few-shot anchors; the field names `variant`/`stage`/`substate`/`gate` are never enumerated to a non-technical persona. v4 (R07) — §7.12 aligned to curated capture (J11 v2): draft wording "improved from what you said", `{SUMMARY}` curated (may carry one grounding sentence), new "Duplicate found" template (create new / relate / discard), Rules line updated to the curated doctrine. v5 (R10, issue #41) — new §7.13 "Consent gate before implementation": ONE alignment message (4 steps: task explanation → doubts → execution plan → adjustment) + ONE explicit-consent question; derivation confirmation is never execution consent (closes F032).
+> Changelog: v0 scaffold (T6) → v1 (T10): full transcription of §7.1–§7.11 with typed slots; deviations.md hook block preserved verbatim; override comment replaced by reference to the tool contract (`maestra_emit_event`); platform-neutral adaptations marked explicitly. v2 (journeys v2.3, human decision) — block §7.9 W-04 ("specialist outside the installed catalog") DELETED: shell-specialist architecture makes the whole catalog invocable; there is no longer an installed subset or "nearest" specialist. v3 (R02, ADR-001) — §7.2 "Derived state" rewritten as two-phase `<derivation>` (typed slots, internal) / `<speech>` (natural sentence, only emitted) contract + "Substate → situation translation" table + 3 few-shot anchors; the field names `variant`/`stage`/`substate`/`gate` are never enumerated to a non-technical persona. v4 (R07) — §7.12 aligned to curated capture (J11 v2): draft wording "improved from what you said", `{SUMMARY}` curated (may carry one grounding sentence), new "Duplicate found" template (create new / relate / discard), Rules line updated to the curated doctrine. v5 (R10, issue #41) — new §7.13 "Consent gate before implementation": ONE alignment message (4 steps: task explanation → doubts → execution plan → adjustment) + ONE explicit-consent question; derivation confirmation is never execution consent (closes F032). v6 (R15, issue #49) — §7.2: `awaiting-qa`/`qa-rejected` situation translations; new §7.14 "QA session conduction" (presentation template + approve/reject verdict templates; transitions execute only after the human verdict).
 
 ## Usage conventions
 
@@ -28,6 +28,7 @@
 | §7.11 | Reconciliation and deviations |
 | §7.12 | Quick capture (J11) |
 | §7.13 | Consent gate before implementation (J2/J5, both modes) |
+| §7.14 | QA session conduction (J2 branch B7) |
 
 ---
 
@@ -154,6 +155,8 @@ the field is yours.
 | `awaiting-s1-approval` | "(Technical) the motivation is in, waiting on the green light — default not approved" |
 | `awaiting-feedback-decision` | "there's a formalized objection — cut, pay, or defer is pending" |
 | `in-execution` | "we're implementing ({K} of {M} done)" |
+| `awaiting-qa` | "the PR/MR was accepted and the task is with the QA professional in the test environment" |
+| `qa-rejected` | "QA found problems and the task went back to whoever implemented it" |
 | `paused` | "paused until {UNBLOCK_CLAUSE}" — unblock is MANDATORY here |
 | `awaiting-reconciliation` | "implementation accepted, final review pending" |
 
@@ -732,3 +735,60 @@ Rules: author's intent, curated text — the draft is rewritten for clarity, fai
 **Consent:** explicit ("can start", "go ahead", "approved"). Silence, an "ok" given to a previous question, and the J2 derivation confirmation do **not** count. Without explicit consent: no worktree declaration (trigger #9 fires AFTER consent), no delegation, no direct edit — including process work on the plugin's own instructions.
 
 **Adjustment or refusal is process data:** record the reason in the conversation and act on it — the gate exists to be used, not to be a rubber stamp.
+
+---
+
+## §7.14 QA session conduction (J2 branch B7)
+
+**When:** entry phrase ("vou fazer o QA da #N") or derived substate `awaiting-qa` (mode `qa` in `workflow.md` on the `__maestra_config__` branch, read via `maestra-config read workflow.md` — ADR-003/ADR-004). The facilitator **runs the session**: presentation, doubt answering, verdict registration. Zero questions about facts the digest already has; the session never closes preemptively — **transitions (close/card/metadata) execute only AFTER the human verdict**.
+
+### Session presentation (before any transition)
+
+```text
+QA of {ISSUE} ({TASK_TITLE}), round {ROUND_ANCHOR}. Here's what was done: {WHAT_WAS_DONE}
+
+Acceptance criteria, one by one:
+{CRITERIA_LIST}
+
+Where to validate: {TEST_ENVIRONMENT}.
+
+Any questions? I answer here in the chat — when you have the verdict, I register it.
+```
+
+| Slot | Type | Condition |
+|---|---|---|
+| `{ISSUE}` | number | The task under QA. |
+| `{TASK_TITLE}` | text | Short task title. |
+| `{ROUND_ANCHOR}` | Rnn + theme | Session anchor (C4), spoken once. |
+| `{WHAT_WAS_DONE}` | 2–4 sentences | Built FROM the artifacts (scope, technical design) — never session memory. |
+| `{CRITERIA_LIST}` | list | One line per acceptance criterion, human-testable language (P1). |
+| `{TEST_ENVIRONMENT}` | sentence | Where and how to validate (URL/flow + relevant cases). |
+
+### Verdict — approve (one act, three touchpoints)
+
+```text
+QA approved {ISSUE}. Registering in one act: issue closed with the QA verdict,
+card moved to {APPROVAL_COLUMN}, and the round enters the final review.
+```
+
+| Slot | Type | Condition |
+|---|---|---|
+| `{APPROVAL_COLUMN}` | column | `qa-approval-column` from `workflow.md` on `__maestra_config__` (`maestra-config read workflow.md`); absent = the delivered mapping in `labels.md` (revalidated against the real board — P6). |
+
+Then, in the same act: close the issue with the QA verdict (criterion by criterion), move the card, update the metadata to `awaiting-reconciliation`.
+
+### Verdict — reject (names WHAT failed, never who)
+
+```text
+QA found problems in {ISSUE}: {WHAT_FAILED}. The task goes back to {IMPLEMENTER}
+with the failure named in the comment — when the fix is in, we validate again.
+```
+
+| Slot | Type | Condition |
+|---|---|---|
+| `{WHAT_FAILED}` | sentence | What failed, concrete and verifiable (criterion or case) — no blame language. |
+| `{IMPLEMENTER}` | @username | Whoever implemented (from the acceptance record) — the task is reassigned in the same act. |
+
+Then, in the same act: card to **Ready**, reassignment to the implementer, metadata `qa-rejected`, comment naming what failed.
+
+Rules: rejection follows the welcoming-tone doctrine (§7.11) — confession vocabulary forbidden ("unfortunately", "didn't work out", "we had to"); the only cited consequence is concrete and future ("when the fix is in, we validate again"); the failure is named as a fact of the task, never a fault of a person.
