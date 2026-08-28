@@ -29,3 +29,10 @@
 - **Reason:** "drift pré-existente, não é desta round — não viaja no diff dela".
 - **Decision registered at:** [#52 (sessão direta R17)](https://github.com/hacklabr/maestra/issues/52).
 - **Reference document updated:** [esta entrada](#deviation-4--package-lockjson-sincronizado-pelo-npm-install-revertido) (o lockfile da main permanece como está; sync é tarefa de quem tocar o package.json).
+
+## Deviation 5 — Registro de dogfooding escrito contra main desatualizado; numeração reparada na reconciliação
+- **Planned:** appends simples ao `docs/dogfooding/findings.md` (F039 na triagem, F040 no nascimento do épico), como qualquer registro de finding.
+- **Implemented:** reparo na reconciliação — cabeçalho do F039 restaurado (edição minha engoliu-o), meu F040 renumerado para **F045** (colidia com o F040 do R19, já resolved #53), adendo movido para a entrada correta, marcador corrigido, causa-raiz registrada como **F046**.
+- **Reason:** "a sessão leu o findings de um main local atrás do origin — R16/R18/R19 já haviam consumido F040–F044; a regra 'próximo ID livre' não tem guarda contra main desatualizado".
+- **Decision registered at:** [F046](../../dogfooding/findings.md) · evento F (at_reconciliation=1).
+- **Reference document updated:** [`docs/dogfooding/findings.md`](../../dogfooding/findings.md) (F045 nota de renumeração + F046) · [`retro.md`](retro.md) (seção "O que doiu") · commit `ff32862`.
