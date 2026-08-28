@@ -1,6 +1,6 @@
 # Cookbook — GitHub (gh CLI + API)
 
-> Source: specification.md D6 · fluxo-de-desenvolvimento.md §4 · jornadas.md P6 · Module version: 3 — 2026-08-28 (R16, issue #34: issue classification — native `--type` + dimension labels; ADR-005)
+> Source: specification.md D6 · fluxo-de-desenvolvimento.md §4 · jornadas.md P6 · Module version: 4 — 2026-08-28 (R18, issue #54: PR/branch operations for the epic-branch topology — ADR-006; previous: R16, issue #34 — issue classification)
 > Anti-drift: ONLY place where `gh`/GitHub API commands appear (ADR-012). Instructions
 > reference OPERATIONS (neutral names in `kebab-case`), never CLIs. Divergence with the
 > source is a finding, never a silent adjustment.
@@ -170,6 +170,32 @@ gh issue close <N> --repo <O>/<R> --comment "<verdict criterion by criterion —
 gh release create v<X.Y.Z> --repo <O>/<R> --generate-notes
 ```
 
+## 4.5 PR/MR and branch operations (topology — ADR-006)
+
+`pr-topology` in `workflow.md` (read via `maestra-config read workflow.md`; absent = `epic-branch`). The integration branch is the repo's own (`develop`, `main` — convention); the epic branch is `epic/<N>-<slug>` (N = epic issue number).
+
+### open-pr (task PR — base by topology)
+```bash
+gh pr create --repo <O>/<R> --head <task-branch> \
+  --base <epic/N-slug>   <!-- epic-branch topology: the epic branch, when it exists (J5 STAGE 1)
+  --base <develop|main>  <!-- direct topology (or Minimal variant, or single-task epic)
+  --title "<title>" --body-file pr.md
+```
+**GOTCHA:** without `--base`, gh targets the repo's DEFAULT branch — a silent wrong base under the epic-branch topology. Always pass `--base` explicitly.
+
+### open-epic-pr (integration PR of the epic — P6 7a)
+```bash
+gh pr create --repo <O>/<R> --head epic/<N>-<slug> --base <integration-branch> \
+  --title "<epic title> — epic integration" --body-file epic-pr.md
+```
+Opened **in the same act** as the acceptance of the LAST daughter task (substate `awaiting-integration`; epic card → review; in `qa` mode only when every daughter is closed).
+
+### create-epic-branch / delete-branch (lifecycle — lazy birth, death on merge/abandonment)
+```bash
+git branch epic/<N>-<slug> <integration-branch> && git push -u origin epic/<N>-<slug>
+git push origin --delete epic/<N>-<slug>   # on merge/abandonment, same act, narrated
+```
+
 ## 5. Board operations (Projects v2 — 3 to 4 calls with IDs)
 
 ### add-to-board
@@ -233,6 +259,7 @@ from the documented API — confirm on first use with a real repo.
 | Operation | gh | MCP (typical names*) |
 |---|---|---|
 | create-epic/task | `gh issue create` | `github_issue_write` (create) |
+| open-pr / open-epic-pr | `gh pr create --base` | `github_pull_request_write` (create) |
 | comment | `gh issue comment` | `github_add_issue_comment` |
 | link-task | `gh api …/sub_issues` | `github_sub_issue_write` (add) |
 | label | `gh issue edit --add-label` | `github_label_write` / `github_issue_write` (labels) |

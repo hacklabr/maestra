@@ -41,5 +41,5 @@ minimal
 3. Minimal: PR direto para a branch de integração, sem branch de épico, em qualquer configuração — dito sem ambiguidade nas instruções.
 4. `awaiting-integration` consta do vocabulário fechado P1.1 com mapeamento de coluna na tabela P6; transições do épico (PR aberto → review; merge → reconciliação) especificadas no mesmo ato da abertura/merge.
 5. Cookbooks GitHub e GitLab refletem as operações novas (criar branch de épico, PR com base na branch do épico, PR de integração do épico) em vocabulário neutro (ADR-012).
-6. ADR-005 vigente registrando a decisão (incluindo a inversão do padrão e seu custo de upgrade); `templates/workflow.md` e J12 propõem `epic-branch` como padrão.
-7. Nenhuma mudança em `src/` — verificação final contra o diff da round.
+6. ADR-006 vigente registrando a decisão (incluindo a inversão do padrão e seu custo de upgrade); `templates/workflow.md` e J12 propõem `epic-branch` como padrão. *(Correção in-round, 2026-08-28: redação original citava ADR-005 — número tomado pela round paralela R16/#34 em `main`; ver `deviations.md`.)*
+7. Nenhuma mudança em `src/` **fora de `src/instructions/`** (tools/hooks/cli = código do plugin). *(Precisão in-round, 2026-08-28: a redação original dizia "em `src/`" sem qualificar — as instruções do plugin vivem em `src/instructions/` e são a superfície declarada da round; a guarda, herdada do R15, sempre se referiu a código. Verificação: `git diff main...r18-branch-do-epico --stat` sem nenhum path de código.)*
