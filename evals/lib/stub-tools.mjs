@@ -1,6 +1,10 @@
+import { readFileSync } from "node:fs"
+import { join } from "node:path"
+import { PACKAGE_ROOT } from "./load-fixtures.mjs"
+
 /**
  * Deterministic stub tool layer for evals. The model under test gets the SAME
- * tool surface as production (4 plugin tools + bash + read/write); the stubs
+ * tool surface as production (5 plugin tools + bash + read/write); the stubs
  * answer from fixtures and RECORD every call for tier-1 order/hard-fail
  * asserts. Missing read routes fail loud (exit 127 — a fixture bug, never
  * silent data). Mutations succeed generically and are recorded.
@@ -50,6 +54,18 @@ export const TOOL_SURFACE = [
           payload: { type: "object" },
         },
         required: ["epic", "type", "payload"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "maestra_read_instructions",
+      description: "Read the FULL content of ONE plugin instruction file (kernel/journeys/reference/templates) by RELATIVE path, posix separators. Never lists the tree (lazy by design).",
+      parameters: {
+        type: "object",
+        properties: { path: { type: "string" } },
+        required: ["path"],
       },
     },
   },
@@ -129,6 +145,28 @@ const NO_MARKER_WARNING = [
   "Respawn with `persona::<id>@<panelId>` on the first line of the prompt.",
 ].join("\n")
 
+/**
+ * maestra_read_instructions stub: mirrors the plugin tool's contract on the
+ * SOURCE tree (src/instructions — identical content to the installed tree;
+ * the eval harness never installs to a host config dir). Relative posix
+ * path, exactly ONE file, content verbatim; containment is structural (the
+ * path is validated before it ever reaches join()).
+ */
+function stubReadInstructions(rawPath) {
+  const p = String(rawPath ?? "")
+  if (p === "") {
+    return 'Error: "path" must be a non-empty relative path with posix separators, e.g. "kernel/maestra-kernel.md".'
+  }
+  if (p.startsWith("/") || /^[A-Za-z]:[\\/]/.test(p) || p.includes("\\") || p.split("/").includes("..")) {
+    return `Error: path must be RELATIVE (posix separators, no ".."): ${p}`
+  }
+  try {
+    return readFileSync(join(PACKAGE_ROOT, "src", "instructions", p), "utf8")
+  } catch {
+    return `Error: instruction file not found: "${p}"`
+  }
+}
+
 export function createStubExecutor({ fixture, repoFiles = {} }) {
   const files = { ...repoFiles }
   const calls = []
@@ -194,6 +232,11 @@ export function createStubExecutor({ fixture, repoFiles = {} }) {
     if (name === "maestra_emit_event") {
       record({ kind: "tool", name, args })
       return `Event ${args.type} registered on #${args.epic} (github):\n**Event ${args.type}** — facilitator`
+    }
+
+    if (name === "maestra_read_instructions") {
+      record({ kind: "tool", name, args })
+      return stubReadInstructions(args.path)
     }
 
     if (name === "task" || name === "actor") {

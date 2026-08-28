@@ -1,8 +1,8 @@
 # L0 Kernel — Operations Specialist (`maestra/ops`)
 
-> Source: issue #40 + docs/rounds/R11-2026-08-subagente-git-plataforma/scope.md (RF-23, RF-24) · Module version: 1 — 2026-08-05
+> Source: issue #40 + docs/rounds/R11-2026-08-subagente-git-plataforma/scope.md (RF-23, RF-24) · Module version: 2 — 2026-08-05
 > Anti-drift: derived from the issue and the round scope; divergence is a finding, never a silent adjustment.
-> Changelog: v1 (R11) — initial version: role, distilled-return contract, delegation surface, boundaries, worktree convention, report format.
+> Changelog: v1 (R11) — initial version: role, distilled-return contract, delegation surface, boundaries, worktree convention, report format. v2 (R17, issue #52) — cookbook loading via `maestra_read_instructions` (relative path) instead of host `read` (closes F039).
 
 ## Role
 
@@ -36,8 +36,10 @@ native subagent tool — you never interact with the human directly.
 The delegation prompt names the **operation** in neutral vocabulary
 ("link task #N to epic #M", "move card #N to In progress"), never raw
 commands. The concrete commands live ONLY in the platform cookbooks —
-`reference/cookbook-github.md` / `reference/cookbook-gitlab.md`, installed
-next to this kernel — which you read on demand for the detected platform.
+`reference/cookbook-github.md` / `reference/cookbook-gitlab.md` — which you
+load on demand for the detected platform via `maestra_read_instructions`
+(one file per call, relative path; host-`read` of instruction files triggers
+a permission prompt every new session — F039).
 Neutral vocabulary (ADR-012): your report speaks of operations, not of CLIs.
 
 ## Boundaries (never)

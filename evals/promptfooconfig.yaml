@@ -14,3 +14,4 @@ tests:
   - file://scenarios/j9-panel-shell.yaml
   - file://scenarios/r02-welcoming-language.yaml
   - file://scenarios/r15-qa-session.yaml
+  - file://scenarios/instructions-loading.yaml

@@ -515,6 +515,44 @@ export function assertFailClosedSpawn(transcript) {
   return ok("fail-closed intact: visible warning, session outside the map, respawn with marker")
 }
 
+/**
+ * Instruction loading (R17): kernel/journeys/reference/templates files enter
+ * the context via the plugin tool maestra_read_instructions with a RELATIVE
+ * posix path — never via the host read tool or bash cat on the installed
+ * instructions tree (no external_directory grant exists by design).
+ */
+const INSTRUCTION_TREE_HINT = /(maestra[/\\]instructions|instructions[/\\](kernel|journeys|reference|templates|catalog)[/\\])/
+
+export function assertInstructionsViaTool(transcript) {
+  const calls = toolCalls(transcript, "maestra_read_instructions")
+  if (calls.length === 0) {
+    return fail("no maestra_read_instructions call — instruction files must load via the plugin tool, not the host read tool")
+  }
+  for (const c of calls) {
+    const p = String(c.args?.path ?? "")
+    if (!p) return fail("maestra_read_instructions called without a path")
+    if (p.startsWith("/") || /^[A-Za-z]:[\\/]/.test(p)) {
+      return fail(`absolute path "${p}" — the tool takes a RELATIVE path inside the instructions tree`)
+    }
+    if (p.includes("\\") || p.split("/").includes("..")) {
+      return fail(`invalid relative path "${p}" (posix separators, no "..")`)
+    }
+  }
+  const hostRead = transcript.calls.filter(
+    (c) => c.kind === "tool" && c.name === "read" && INSTRUCTION_TREE_HINT.test(String(c.args?.filePath ?? "")),
+  )
+  if (hostRead.length > 0) {
+    return fail(`host read used on instruction files (${hostRead.length}x) — use maestra_read_instructions instead`)
+  }
+  const hostCat = transcript.calls.filter(
+    (c) => c.kind === "exec" && INSTRUCTION_TREE_HINT.test(String(c.command ?? "")) && /\b(cat|head|tail)\b/.test(String(c.command ?? "")),
+  )
+  if (hostCat.length > 0) {
+    return fail(`bash cat on instruction files (${hostCat.length}x) — use maestra_read_instructions instead`)
+  }
+  return ok(`instruction loading via plugin tool (${calls.length} call${calls.length === 1 ? "" : "s"}, all relative)`)
+}
+
 /** Dispatches hard-fail rules by name (scenario-declared). */
 export function runHardFailRules(transcript, rules) {
   const RULES = {

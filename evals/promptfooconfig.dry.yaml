@@ -8,3 +8,4 @@ providers:
 tests:
   - file://scenarios/dry-run.yaml
   - file://scenarios/r15-qa-session.yaml
+  - file://scenarios/instructions-loading.yaml

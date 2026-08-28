@@ -1,4 +1,4 @@
-import type { AgentRenderContext, HostId } from "./maestra-agent.js"
+import type { HostId } from "./maestra-agent.js"
 
 /**
  * The ops subagent: ONE installable subagent that executes git and
@@ -12,10 +12,12 @@ import type { AgentRenderContext, HostId } from "./maestra-agent.js"
  * (task × actor — ops never spawns other subagents). Lean bootstrap: the
  * body points to the ops kernel and the platform cookbooks, never restates
  * their content (F027 lesson: no logic duplication in generated code).
+ * Pointers go through `maestra_read_instructions` with relative paths
+ * (R17) — no absolute host paths, no external_directory grant.
  */
 export const OPS_AGENT_FILENAME = "ops.md"
 
-export function buildOpsAgentMarkdown(host: HostId, ctx: AgentRenderContext): string {
+export function buildOpsAgentMarkdown(host: HostId): string {
   const denyKey = host === "opencode" ? "task" : "actor"
   return [
     "---",
@@ -27,8 +29,6 @@ export function buildOpsAgentMarkdown(host: HostId, ctx: AgentRenderContext): st
     "  bash: allow",
     `  ${denyKey}:`,
     '    "*": deny',
-    "  external_directory:",
-    `    "${ctx.instructionsDir}/**": allow`,
     "---",
     "",
     "# Operations Specialist (kernel L0)",
@@ -39,11 +39,13 @@ export function buildOpsAgentMarkdown(host: HostId, ctx: AgentRenderContext): st
     "error trails never leave this subagent. You NEVER make flow decisions,",
     "NEVER touch labels/metadata/gates, and NEVER emit events A–F.",
     "",
-    `Full kernel: ${ctx.instructionsDir}/kernel/ops-kernel.md`,
+    "Load instruction files via the `maestra_read_instructions` tool (relative paths).",
+    "",
+    `Full kernel: \`maestra_read_instructions({path: "kernel/ops-kernel.md"})\``,
     "",
     "Concrete CLI commands live ONLY in the platform cookbooks:",
-    `- ${ctx.instructionsDir}/reference/cookbook-github.md`,
-    `- ${ctx.instructionsDir}/reference/cookbook-gitlab.md`,
+    '- `maestra_read_instructions({path: "reference/cookbook-github.md"})`',
+    '- `maestra_read_instructions({path: "reference/cookbook-gitlab.md"})`',
     "",
     "The delegation prompt names the operation, never the raw command.",
     "",
