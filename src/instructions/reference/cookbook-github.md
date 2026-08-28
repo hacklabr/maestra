@@ -1,6 +1,6 @@
 # Cookbook — GitHub (gh CLI + API)
 
-> Source: specification.md D6 · fluxo-de-desenvolvimento.md §4 · jornadas.md P6 · Module version: 2 — 2026-08-18 (R15, issue #49: `reassign-issue` operation)
+> Source: specification.md D6 · fluxo-de-desenvolvimento.md §4 · jornadas.md P6 · Module version: 3 — 2026-08-28 (R16, issue #34: issue classification — native `--type` + dimension labels; ADR-005)
 > Anti-drift: ONLY place where `gh`/GitHub API commands appear (ADR-012). Instructions
 > reference OPERATIONS (neutral names in `kebab-case`), never CLIs. Divergence with the
 > source is a finding, never a silent adjustment.
@@ -11,6 +11,7 @@
 | Capability | Situation | How to degrade |
 |---|---|---|
 | Native sub-issues | **POST requires `sub_issue_id` = databaseId, NOT the number** (the number fails with 422) | Resolve the id first (`--jq .id`) — see `link-task` |
+| Native issue types | Org-level feature; enabled in hacklabr — `Bug`/`Feature`/`Task`, one per issue (ADR-005) | Org/repo without types or permission failure → create WITHOUT `--type`, narrate in 1 line — classification never blocks |
 | Board write (Projects v2) | Requires **`project`** scope on the token; current environment has `read:project` | P6: narrate the intended column and proceed — board is a touchpoint, not a gate |
 | Board read | `read:project` is enough | — |
 | Add-to-board | **NOT automatic** (requires `item-add` or a project workflow) | Always `item-add` when creating an epic/task |
@@ -26,9 +27,10 @@
 ### create-epic
 ```bash
 gh issue create --repo <O>/<R> --title "<verb + object, ≤60c>" \
-  --body-file epic.md --label "variant-condensed" --assignee <user>
+  --body-file epic.md --label "variant-condensed" --assignee <user> \
+  --type <Bug|Feature|Task>
 ```
-Body = two P1 layers (`## Summary` + metadata line + `---` + `## Details for execution`).
+Body = two P1 layers (`## Summary` + metadata line + `---` + `## Details for execution`). Type derived at triage (J1) — see `set-type` for degradation when the org/repo has no issue types.
 
 ### create-label
 ```bash
@@ -36,11 +38,16 @@ gh label create <name> --repo <O>/<R> --color <hex-without-#> --force   # --forc
 ```
 Flow set: `variant-full|condensed|minimal|technical`, `stage-1|2|3`,
 `override-registered`, `doc-bug`, `product-feedback`.
+Dimension set (R16, informational — ADR-005): `gestão`, `melhoria`,
+`performance`, `devops`, `documentação` — created **on demand, only when first
+needed** (idempotent recipe): check first with
+`gh label list --repo <O>/<R> --search <name>`; create only when missing
+(`--force` keeps re-runs safe).
 
 ### create-task (daughter issue)
 ```bash
 gh issue create --repo <O>/<R> --title "<title>" --body-file task.md \
-  --label "stage-1" --assignee <confirmed-user>
+  --label "stage-1" --assignee <confirmed-user> --type <Bug|Feature|Task>
 ```
 Then link (operation `link-task`) and add to the board (`add-to-board`).
 
@@ -131,6 +138,18 @@ gh issue edit <N> --repo <O>/<R> --add-label "override-registered"
 gh issue edit <N> --repo <O>/<R> --remove-label "variant-minimal" --add-label "variant-condensed"
 ```
 
+### set-type (issue classification — triage derivation and capture-promotion correction; ADR-005)
+```bash
+# at creation: --type <Bug|Feature|Task> on gh issue create (see create-epic/create-task)
+# correction — J11 promotion confirms/corrects the capture guess in the act:
+gh issue edit <N> --repo <O>/<R> --type <Bug|Feature|Task>
+# dimension labels (free-form, multiple per issue — applied at triage when they fit the work):
+gh issue edit <N> --repo <O>/<R> --add-label "performance" --add-label "devops"
+```
+Informational only — nothing consumes type/dimension (digest vocabulary unchanged).
+Org/repo without issue types or permission failure → create/edit WITHOUT `--type`,
+narrate in 1 line; classification never blocks.
+
 ### assign (confirmed assignee — every task is born with one)
 ```bash
 gh issue edit <N> --repo <O>/<R> --add-assignee <user>
@@ -204,6 +223,7 @@ from the documented API — confirm on first use with a real repo.
 |---|---|---|
 | `move-card`, `add-to-board` | `INSUFFICIENT_SCOPES` / 403 | Narrate the intended column in 1 sentence + proceed; **never blocks** |
 | `link-task` | 422 (wrong id — number instead of databaseId) | Redo with `--jq .id`; report exactly |
+| `create-epic`/`create-task` with `--type`, `set-type` | org/repo without issue types; permission failure | Create/edit WITHOUT `--type`, narrate in 1 sentence; **never blocks** (ADR-005) |
 | any write | 403/404 | Report what was created and what is missing; idempotent resumption (digest re-reads what exists) |
 | `read-collaborators` | 403 | Partial team map (P5 minimum for the wave); never blocks the epic |
 | everything (gh missing/unauth) | `gh auth status` fails | GitHub MCP (if configured) or ready commands for the human; **never a half-done epic** |

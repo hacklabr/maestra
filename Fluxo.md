@@ -88,7 +88,7 @@ flowchart LR
 | **Handoff** | Passagem de bastão entre etapas ou pessoas — ponto típico de perda de contexto, mitigado pelos artefatos. |
 | **Issue** | Registro de trabalho no GitHub (tarefa, bug, feedback). Unidade básica de rastreamento deste fluxo. |
 | **Jornada** | Sequência de passos que um usuário percorre para atingir um objetivo no produto. |
-| **Label** | Etiqueta do GitHub usada para classificar issues: variante do fluxo, etapa, tipo de feedback. |
+| **Label** | Etiqueta do GitHub usada para classificar issues: variante do fluxo, etapa, tipo de feedback. Labels de **dimensão** (ex.: `gestão`, `performance`) classificam a natureza do trabalho — múltiplas por issue, informativas (ADR-005). |
 | **Milestone** | Marco do GitHub que agrupa as issues de um ciclo de entrega. |
 | **MVP** (Minimum Viable Product) | Menor versão do produto que entrega valor e permite validar hipóteses. Separado das fases seguintes no PRD. |
 | **Paridade** | Garantia de que, após uma refatoração, o comportamento observável do sistema permanece idêntico ao anterior. |
@@ -105,6 +105,7 @@ flowchart LR
 | **Stakeholder** | Qualquer parte interessada no produto: cliente, usuário, patrocinador, áreas da empresa. |
 | **Sub-issue** | Issue filha vinculada nativamente a outra issue no GitHub — base da hierarquia épico/tarefas. |
 | **TDD** (Technical Design Document) | Documento de desenho técnico produzido na Etapa 2. **Atenção:** neste documento, TDD *não* significa Test-Driven Development. |
+| **Tipo de issue** | Campo nativo do GitHub que classifica a issue como Bug, Feature ou Task — um por issue. Definido na triagem (derivado do texto da demanda); na captura rápida, um palpite curado confirmado na promoção. Informativo — nada no fluxo o consome (ADR-005). |
 | **Tech Lead** | Persona de liderança técnica: dona do "como". Lidera a Etapa 2. |
 | **User story** | Descrição curta de uma necessidade do usuário ("como [papel], quero [ação] para [benefício]"). |
 | **Variante** | Nível de profundidade do fluxo para uma demanda: Completo, Condensado, Mínimo ou Técnico. |
@@ -133,6 +134,8 @@ Toda demanda que chega passa por uma triagem rápida (alvo: 5 minutos) **antes d
 **Quem faz:** uma pessoa da Etapa 1. Se a origem for claramente técnica (refatoração), a triagem é feita em conjunto com uma pessoa da Etapa 2.
 
 **Onde fica registrado:** na **issue-mãe (épico)** criada no ato da triagem, que recebe a label da variante (ex.: `variante-completo`, `variante-condensado`, `variante-minimo`, `variante-tecnica`) — ver seção 4. Triagem sem registro não aconteceu.
+
+**Classificação da issue (tipo + dimensão):** toda issue classificada na triagem nasce com **tipo** no campo nativo da plataforma (Bug/Feature/Task — derivado do texto da demanda, confirmável como os demais critérios; um por issue) e com **labels de dimensão** quando fizer sentido ao trabalho descrito (`gestão`, `melhoria`, `performance`, `devops`, `documentação` — múltiplas por issue, criadas sob demanda de forma idempotente). Issues criadas manualmente seguem a mesma convenção. A classificação é puramente informativa: nada no fluxo a consome — sem mapeamento para colunas do board, sem leitura pelo digest (ver ADR-005).
 
 ```mermaid
 flowchart TD
