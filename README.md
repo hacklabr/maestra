@@ -127,7 +127,7 @@ The platform is **not** baked in at install time: it is detected **per repositor
 | `maestra_emit_event` | tool | Emits instrumentation events A–F + `type=override`, with "— facilitator" signature by construction |
 | `desvios.md` hook | hook | Post-write validation of the planned→implemented→reason triplet in `docs/rounds/*/desvios.md`. **Flag, never block** |
 | `maestra-report` | CLI script | Presence-gap audit: epic without event A, closed round without F, override without D, E parity, FM-13 |
-| `maestra-config` | CLI script | Per-repo configuration on the orphan branch `__maestra_config__` (ADR-003): `migrate` (idempotent legacy `.maestra/` migration), `read`/`write` for `config.md`, `team.md`, `labels.md` (commit + best-effort push) |
+| `maestra-config` | CLI script | Per-repo configuration on the orphan branch `__maestra_config__` (ADR-003): `migrate` (idempotent legacy `.maestra/` migration), `read`/`write` for `config.md`, `team.md`, `labels.md`, `workflow.md` (commit + best-effort push) |
 
 ## Instructions architecture (L0–L4)
 

@@ -60,7 +60,8 @@ docs/
 __maestra_config__ (branch órfã — ADR-003; NÃO é pasta na árvore)
 ├── config.md                  #   Plataforma/host/board detectados
 ├── team.md                    #   Mapa de facilitadores (seniority coarse)
-└── labels.md                  #   Mapeamento labels/colunas (ADR-002)
+├── labels.md                  #   Mapeamento labels/colunas (ADR-002)
+└── workflow.md                #   Fluxo pós-aceitação do PR (ADR-004)
                               # (ler/gravar: maestra-config read|write <file>)
 scripts/                       # check-*.sh, smoke.sh
 ROADMAP.md                     # Tudo que ficou fora do MVP, com gatilho
@@ -141,5 +142,5 @@ Na próxima triagem do Maestra sobre o próprio Maestra, entradas
 - **`../fluxo-de-desenvolvimento.md`** — processo normativo (fonte de verdade).
 - **`docs/rounds/`** — rounds anteriores como exemplo de scope/retro.
 - **Branch `__maestra_config__`** — plataforma/host/board detectados para este
-  repo (`config.md`, `team.md`, `labels.md`; ADR-003 — ler com
-  `maestra-config read config.md`).
+  repo (`config.md`, `team.md`, `labels.md`, `workflow.md`; ADR-003/ADR-004 —
+  ler com `maestra-config read config.md`).
