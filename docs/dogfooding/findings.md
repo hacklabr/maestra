@@ -697,6 +697,14 @@
 - Tentativas/workaround: duplicatas detectadas manualmente depois, pelo humano. Nenhum gate do fluxo detecta a duplicação.
 - Status: triaged→#53
 
+## F041 — Worktree novo não inicializa submódulo (catálogo agency-agents) e quebra a suíte de testes
+- Data: 2026-08-28
+- Categoria: ergonomic-friction
+- Origem: R19, issue #53, Stage 3 (J5) — primeira verificação no worktree recém-criado
+- Sintoma: `git worktree add` não inicializa submódulos; no worktree novo, `src/catalog/agency-agents/` ficou vazio e `npm run ci` falhou em `src/catalog/loader.test.ts` (personas não encontradas — 3 testes) antes de qualquer erro real do código em verificação. A declaração de worktree (kernel trigger #9, J5, ops-kernel) não menciona `git submodule update --init`.
+- Tentativas/workaround: `git submodule update --init` no worktree resolveu; suíte verde na sequência (300/300, re-run dos arquivos afetados 40/40).
+- Status: open
+
 ## F041 — Shell `maestra/specialist` spawnado sem marcador `persona::` — ask_peer desabilitado e sessão invisível aos pares
 - Data: 2026-08-28
 - Categoria: instruction-ambiguous
