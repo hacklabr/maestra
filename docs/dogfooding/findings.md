@@ -615,6 +615,7 @@
 - Origem: R06, issue #28, reconciliação — emissão do Event F
 - Sintoma: Primeira tentativa com `deviations_during`/`deviations_at_reconciliation` (nomes inferidos do texto renderizado do evento) falhou com "Invalid payload for event type F: during: Required; at_reconciliation: Required". O schema real exige `during` e `at_reconciliation`. O texto renderizado do evento ("deviations during=0, at-reconciliation=0") induz nomes errados, e o `instrumentation.md` já é sabido divergente do schema (F024) — mesma família, agora confirmada também para o type=F.
 - Tentativas/workaround: 2 tentativas; lido o erro de validação e corrigidos os campos. Reforça a urgência de alinhar `instrumentation.md` ao schema zod real (F024, candidato a doc-bug).
+- Adendo (2026-08-28, R17 close): terceira confirmação da família — type=F também exige o campo `round` ("Invalid payload for event type F: round: Required"); além de `during`/`at_reconciliation`, o campo `round` é obrigatório e não está documentado no instrumentation.md.
 - Status: open
 
 ## F032 — Retomada por issue confirma estado e sai implementando, sem alinhamento nem consentimento
