@@ -135,7 +135,7 @@
 - Tentativas/workaround: Lido o erro, corrigidos os nomes dos campos para o schema real, emissão bem-sucedida. A divergência documentação × código (trigger #16) deve ser formalizada como `doc-bug`.
 - Status: open
 
-<!-- Próximo ID: F041. Registre novas entradas abaixo, em ordem cronológica. -->
+<!-- Próximo ID: F043. Registre novas entradas abaixo, em ordem cronológica. -->
 
 ## F020 — Onda de Stage 3 (#7, #8, #9) criada com metadado `epic: 3` mas sem link de sub-issue
 - Data: 2026-07-28
@@ -695,7 +695,7 @@
 - Origem: relato do humano (uso do Maestra em sessões de projetos) — triagem da demanda nesta data
 - Sintoma: Durante sessões do Maestra, desvios de rota (doc-bugs, tasks de desvio, novas ondas, revert-demands) exigem criar issues novas; nessas criações o facilitador não busca issues relacionadas/duplicatas antes de criar, e a issue criada às vezes já existe no banco ou há similar. A busca prévia hoje só é exigida em dois pontos: J1 Stage 5 Step 0 (dedup de ÉPICOS na triagem) e J11 (captura rápida — create/relate/discard). Os demais pontos de criação — `create-epic`/`create-task` do cookbook §1, `doc-bug` (trigger #16), baton-pass de ondas (J3 Stage 3/4, J4/J6), desvios do J5 — não têm regra de dedup; e o cookbook não documenta operação de busca de similares (só `read-open-load`/`read-hierarchy`).
 - Tentativas/workaround: duplicatas detectadas manualmente depois, pelo humano. Nenhum gate do fluxo detecta a duplicação.
-- Status: triaged→#53
+- Status: resolved (#53 — trigger #19, merge 4d21562 / PR #56)
 
 ## F041 — Worktree novo não inicializa submódulo (catálogo agency-agents) e quebra a suíte de testes
 - Data: 2026-08-28
@@ -703,6 +703,14 @@
 - Origem: R19, issue #53, Stage 3 (J5) — primeira verificação no worktree recém-criado
 - Sintoma: `git worktree add` não inicializa submódulos; no worktree novo, `src/catalog/agency-agents/` ficou vazio e `npm run ci` falhou em `src/catalog/loader.test.ts` (personas não encontradas — 3 testes) antes de qualquer erro real do código em verificação. A declaração de worktree (kernel trigger #9, J5, ops-kernel) não menciona `git submodule update --init`.
 - Tentativas/workaround: `git submodule update --init` no worktree resolveu; suíte verde na sequência (300/300, re-run dos arquivos afetados 40/40).
+- Status: open
+
+## F042 — vitest no main escaneia `.worktrees/` de sessões paralelas e quebra o `npm run ci` do repo
+- Data: 2026-08-28
+- Categoria: ergonomic-friction
+- Origem: R19, issue #53, reconciliação — verificação no main mergeado (4d21562)
+- Sintoma: `npm run ci` na árvore main falhou na etapa de testes com 3 falhas — todas de arquivos sob `.worktrees/r18-branch-do-epico/` (worktree de sessão paralela em andamento, incluindo o mesmo submódulo não inicializado do F041). O vitest não exclui `.worktrees/` por padrão; worktrees aninhados são tratados como testes do repo. A suíte própria do main está verde.
+- Tentativas/workaround: `npx vitest run --exclude "**/.worktrees/**"` → 300/300. Candidato: `test.exclude` no vitest config.
 - Status: open
 
 ## F041 — Shell `maestra/specialist` spawnado sem marcador `persona::` — ask_peer desabilitado e sessão invisível aos pares
