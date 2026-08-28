@@ -1,6 +1,6 @@
 # Cookbook — GitLab (glab CLI + API v4)
 
-> Source: specification.md D6 (ADR-010/011/013/014) · fluxo-de-desenvolvimento.md §4 · jornadas.md P6 · Module version: 3 — 2026-08-28 (R16, issue #34: issue classification note — native type + dimension adaptation pending)
+> Source: specification.md D6 (ADR-010/011/013/014) · fluxo-de-desenvolvimento.md §4 · jornadas.md P6 · Module version: 4 — 2026-08-28 (R19, issue #53: pre-creation dedup gate — `search-similar` op + §1 precondition; kernel trigger #19; prior: R16 issue classification note)
 > Anti-drift: ONLY place where `glab`/GitLab API commands appear (ADR-012). Instructions
 > reference OPERATIONS (neutral names in `kebab-case`), never CLIs. Divergence with the
 > source is a finding, never a silent adjustment.
@@ -31,6 +31,13 @@
 > real GitLab pilot (per ROADMAP). Until then, create issues WITHOUT type;
 > dimension labels work as plain repo labels when the repo adopts them
 > (create-label below is already idempotent on 409).
+
+> **Precondition (kernel trigger #19):** every creation below is preceded by
+> `search-similar` (§3) — no demand-representing issue is born without the
+> board having been searched (open + closed). Candidate found → the human
+> decides create new / relate / increment BEFORE the creation; nothing found →
+> proceed. Wave daughters under a confirmed P7 wave are exempt (the plan's
+> dedup covers them).
 
 ### create-epic
 ```bash
@@ -102,6 +109,14 @@ Daughters are also identified by the P1 line (`**Epic:** #N`) — canonical cros
 > `pagination.daughtersTruncated: true` — treat as a signal, do not read beyond.
 
 ## 3. Read operations
+
+### search-similar (kernel trigger #19 — pre-creation duplicate/related check)
+```bash
+glab api "projects/<ENC>/search?scope=issues&search=<terms>" \
+  --jq '.[] | "\(.iid)\t\(.state)\t\(.title)"'
+# project search covers open and closed; refine terms while noise dominates signal
+```
+Scope: the session's repo only. **Distilled return:** ≤3 candidates (iid + title) or "nothing found" — never the full listing. Related non-duplicates become cross-references in the created body. Delegable to `maestra/ops` (J11 v5 pattern).
 
 ### read-issue
 ```bash

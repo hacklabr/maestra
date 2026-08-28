@@ -1,6 +1,6 @@
 # Cookbook — GitHub (gh CLI + API)
 
-> Source: specification.md D6 · fluxo-de-desenvolvimento.md §4 · jornadas.md P6 · Module version: 3 — 2026-08-28 (R16, issue #34: issue classification — native `--type` + dimension labels; ADR-005)
+> Source: specification.md D6 · fluxo-de-desenvolvimento.md §4 · jornadas.md P6 · Module version: 4 — 2026-08-28 (R19, issue #53: pre-creation dedup gate — `search-similar` op + §1 precondition; kernel trigger #19)
 > Anti-drift: ONLY place where `gh`/GitHub API commands appear (ADR-012). Instructions
 > reference OPERATIONS (neutral names in `kebab-case`), never CLIs. Divergence with the
 > source is a finding, never a silent adjustment.
@@ -23,6 +23,13 @@
 (on GitHub: options of the **Status** single-select field of Projects v2).
 
 ## 1. Creation operations
+
+> **Precondition (kernel trigger #19):** every creation below is preceded by
+> `search-similar` (§3) — no demand-representing issue is born without the
+> board having been searched (open + closed). Candidate found → the human
+> decides create new / relate / increment BEFORE the creation; nothing found →
+> proceed. Wave daughters under a confirmed P7 wave are exempt (the plan's
+> dedup covers them).
 
 ### create-epic
 ```bash
@@ -88,6 +95,14 @@ Progress roll-up is native (sub-issues field in UI/API) — **no manual tasklist
 > `pagination.daughtersTruncated: true` — treat as a signal, do not read beyond.
 
 ## 3. Read operations
+
+### search-similar (kernel trigger #19 — pre-creation duplicate/related check)
+```bash
+gh search issues --repo <O>/<R> "<key terms of the title/demand>" --limit 20 \
+  --json number,title,state --jq '.[] | "\(.number)\t\(.state)\t\(.title)"'
+# no --state flag = open AND closed; refine terms (EN/PT synonyms) while noise dominates signal
+```
+Scope: the session's repo only. **Distilled return:** ≤3 candidates (number + title) or "nothing found" — never the full listing. Related non-duplicates become cross-references in the created body. Delegable to `maestra/ops` (J11 v5 pattern).
 
 ### read-issue
 ```bash
