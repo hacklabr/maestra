@@ -177,8 +177,12 @@ MD
     && ok "installer ran ($host)" || bad "installer ran ($host)"
   check_file "agent md generated" "$home/.config/$configdir/agents/maestra.md"
   check_grep "dialect baked ($dialect)" "$dialect" "$home/.config/$configdir/agents/maestra.md"
-  check_grep "external_directory allow" 'external_directory' "$home/.config/$configdir/agents/maestra.md"
-  check_grep "instructions path in frontmatter" "$home/.config/$configdir/maestra/instructions" "$home/.config/$configdir/agents/maestra.md"
+  # R17: kernel loads via the plugin tool (relative path); no out-of-workspace
+  # read grant, no absolute instructions path in the generated markdown.
+  check_grep "kernel loads via plugin tool" 'maestra_read_instructions' "$home/.config/$configdir/agents/maestra.md"
+  check_grep "kernel pointer (relative)" 'kernel/maestra-kernel.md' "$home/.config/$configdir/agents/maestra.md"
+  ! grep -q 'external_directory' "$home/.config/$configdir/agents/maestra.md" && ok "no external_directory grant (tool replaces it)" || bad "no external_directory grant (tool replaces it)"
+  ! grep -q 'maestra/instructions' "$home/.config/$configdir/agents/maestra.md" && ok "no absolute instructions path in agent md" || bad "no absolute instructions path in agent md"
   check_file "issue-writer agent md generated" "$home/.config/$configdir/agents/maestra-issue-writer.md"
   check_grep "issue-writer dialect baked ($dialect)" "$dialect" "$home/.config/$configdir/agents/maestra-issue-writer.md"
   check_grep "issue-writer points to its kernel" 'kernel/issue-writer-kernel.md' "$home/.config/$configdir/agents/maestra-issue-writer.md"

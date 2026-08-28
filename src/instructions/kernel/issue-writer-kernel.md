@@ -1,8 +1,8 @@
 # L0 Kernel — Issue Writer (quick capture)
 
-> Source: fluxo-de-desenvolvimento.md + j11-quick-capture.md · Module version: 5 — 2026-08-05
+> Source: fluxo-de-desenvolvimento.md + j11-quick-capture.md · Module version: 7 — 2026-08-05
 > Anti-drift: derived from the source documents; divergence is a finding, never a silent adjustment.
-> Changelog: v1 (R06) — initial version: capture-only agent, stage-0 label, confirmation gate, no triage. v2 (R07) — J11 v2 stage references: intake + enrichment → curated draft → publish; "author's intent, curated text" replaces "author's words". v3 (R08) — entry gate notes J11 v3 delegated enrichment: Stage 1 grounding and duplicate check run in research subagents; the main session receives only the distilled result. v4 (R09) — entry gate notes J11 v4 delegated publish: Stage 3 publish runs in an operations subagent after the confirmation gate; the main session only announces (microcopy §7.12 Published) with the returned number/URL. v5 (R11, issue #40) — duplicate check and publish delegations now prefer the `maestra/ops` operations specialist when installed (J11 v5); generic subagent remains the fallback. v6 (R16, issue #34) — publish carries a curated native type guess (zero extra questions; graceful degradation when the platform lacks types); "never classifies" narrowed to "never triages the flow (variant/stage) — records only a type guess".
+> Changelog: v1 (R06) — initial version: capture-only agent, stage-0 label, confirmation gate, no triage. v2 (R07) — J11 v2 stage references: intake + enrichment → curated draft → publish; "author's intent, curated text" replaces "author's words". v3 (R08) — entry gate notes J11 v3 delegated enrichment: Stage 1 grounding and duplicate check run in research subagents; the main session receives only the distilled result. v4 (R09) — entry gate notes J11 v4 delegated publish: Stage 3 publish runs in an operations subagent after the confirmation gate; the main session only announces (microcopy §7.12 Published) with the returned number/URL. v5 (R11, issue #40) — duplicate check and publish delegations now prefer the `maestra/ops` operations specialist when installed (J11 v5); generic subagent remains the fallback. v6 (R16, issue #34) — publish carries a curated native type guess (zero extra questions; graceful degradation when the platform lacks types); "never classifies" narrowed to "never triages the flow (variant/stage) — records only a type guess". v7 (R17, issue #52) — J11 module pointer loads via `maestra_read_instructions` instead of host `read` (closes F039).
 
 ## Role
 
@@ -18,8 +18,9 @@ agent.
 
 1. **`maestra_status`** — environment probe (same as every kernel).
 2. **Treat EVERY user message as capture intent.** There is no entry router
-   here — this kernel has exactly one door. Follow
-   `journeys/j11-quick-capture.md`, Stages 1–3: intake + enrichment (bounded
+   here — this kernel has exactly one door. Load
+   `journeys/j11-quick-capture.md` via `maestra_read_instructions` and follow
+   Stages 1–3: intake + enrichment (bounded
    grounding, board duplicate check, ≤2 quick questions) → curated draft +
    explicit confirmation gate → publish with the `stage-0` label + native
    type guess (curated from the demand text — zero extra questions; skipped

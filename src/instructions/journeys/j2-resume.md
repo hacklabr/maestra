@@ -1,8 +1,8 @@
 # J2 — Context Resumption by Issue
 
-> Source: docs/referencia/jornadas.md v2.2 (§5 P1.1 subestados, §6 J2; gaps G-04, G-06, G-07, G-12) · Module version: 8 — 2026-08-28
+> Source: docs/referencia/jornadas.md v2.2 (§5 P1.1 subestados, §6 J2; gaps G-04, G-06, G-07, G-12) · Module version: 9 — 2026-08-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T8): digest enumerates → model derives, closed vocabulary P1.1, facts-win-over-field, branches B1–B6, board after confirmation. v2 (journeys v2.2, human decision) — mirror state file eliminated: derivation is ALWAYS digest + platform docs, every session; removed the branch of cache reading. v3 (R02, ADR-001) — STAGE 2 header rewritten: short imperative replaces field enumeration; cross-refs microcopy §7.2 two-phase template; field names stay internal, spoken as consequences. v4 (R03) — branch B1a added: `stage-0` label recognized as flow marker; promotion path to J1 offered. v5 (R10, issue #41) — STAGE 3: dispatch whose next action is implementation lands on the consent gate (J5 STAGE 2, microcopy §7.13); derivation confirmation is state alignment, never execution consent (closes F032). v6 (R15, issue #49) — substates `awaiting-qa`/`qa-rejected` added to the P1.1 table; branch B7 (guided QA session, microcopy §7.14) added; dispatch of both substates (B7 session; `qa-rejected` rework lands on the consent gate — F032 applies). v7 (R19, issue #53) — B6: the reconciliation task creation is preceded by the duplicate/related search (kernel trigger #19; operation `search-similar`). v8 (R18, issue #54) — substate `awaiting-integration` added to the P1.1 table (epic with all daughters delivered; integration PR/MR open/pending — ADR-006); STAGE 3 dispatch: the substate routes to the integration PR/MR facts (merged → reconciliation path).
+> Changelog: v1 — initial version (T8): digest enumerates → model derives, closed vocabulary P1.1, facts-win-over-field, branches B1–B6, board after confirmation. v2 (journeys v2.2, human decision) — mirror state file eliminated: derivation is ALWAYS digest + platform docs, every session; removed the branch of cache reading. v3 (R02, ADR-001) — STAGE 2 header rewritten: short imperative replaces field enumeration; cross-refs microcopy §7.2 two-phase template; field names stay internal, spoken as consequences. v4 (R03) — branch B1a added: `stage-0` label recognized as flow marker; promotion path to J1 offered. v5 (R10, issue #41) — STAGE 3: dispatch whose next action is implementation lands on the consent gate (J5 STAGE 2, microcopy §7.13); derivation confirmation is state alignment, never execution consent (closes F032). v6 (R15, issue #49) — substates `awaiting-qa`/`qa-rejected` added to the P1.1 table; branch B7 (guided QA session, microcopy §7.14) added; dispatch of both substates (B7 session; `qa-rejected` rework lands on the consent gate — F032 applies). v7 (R19, issue #53) — B6: the reconciliation task creation is preceded by the duplicate/related search (kernel trigger #19; operation `search-similar`). v8 (R18, issue #54) — substate `awaiting-integration` added to the P1.1 table (epic with all daughters delivered; integration PR/MR open/pending — ADR-006); STAGE 3 dispatch: the substate routes to the integration PR/MR facts (merged → reconciliation path). v9 (R17, issue #52) — microcopy/j11/protocols loads and the persona-dispatch module load switched to `maestra_read_instructions` (closes F039).
 
 **Trigger:** issue number. **Promise:** "where we are, what is missing, who I am now" — **zero questions about state present on the platform or in the docs**. Interrogating the human about what the platform already knows destroys the value proposition of this door.
 
@@ -40,8 +40,8 @@
 
 ## Failure branches
 
-- **B1 — No flow labels** → assume NOTHING: never Minimal by default, never persona of an unclassified issue. Read microcopy §7.2 (issue without labels) and offer: (1) classify now (≤2 questions) — you apply the labels and proceed; (2) the human tells you the stage directly; (3) leave it as a standalone issue, outside the flow.
-- **B1a — Issue with `stage-0` label** → the issue was captured quickly and is awaiting triage (recognized as a flow marker by the digest). Offer promotion as the primary option: "This one is waiting for triage (stage-0). Want to classify it now? I run the triage over it and remove the stage-0 label." Confirmation → J1 runs over it, `stage-0` removed on classification (read `j11-quick-capture.md` Stage 3).
+- **B1 — No flow labels** → assume NOTHING: never Minimal by default, never persona of an unclassified issue. Load microcopy §7.2 (issue without labels) via `maestra_read_instructions` and offer: (1) classify now (≤2 questions) — you apply the labels and proceed; (2) the human tells you the stage directly; (3) leave it as a standalone issue, outside the flow.
+- **B1a — Issue with `stage-0` label** → the issue was captured quickly and is awaiting triage (recognized as a flow marker by the digest). Offer promotion as the primary option: "This one is waiting for triage (stage-0). Want to classify it now? I run the triage over it and remove the stage-0 label." Confirmation → J1 runs over it, `stage-0` removed on classification (load `journeys/j11-quick-capture.md` via `maestra_read_instructions`, Stage 3).
 - **B2 — Contradictory state** (label × closed daughters, two variants, metadata × labels) → evidence + most likely hypothesis as a **FALSIFIABLE statement** + correction path in 1 sentence ("By the structure, it is in Stage 3. I'll assume that — correct me if I'm wrong."). Hiding contradiction destroys trust; naming it is process data.
 - **B3 — Documentation × code contradiction** → kernel trigger #16: precedence **production code > reference > record**; inform and open issue `doc-bug` (microcopy §7.2). It **enters the funnel as Minimal** (label `variant-minimal`, single issue with reconciliation checkbox, round folder as every Minimal) — documentation contradiction is a bug, and a bug follows the flow. Never standalone, never silent fix.
 - **B4 — The issue is a daughter** → digest the parent epic, derive from the parent, anchor the conversation on the daughter as focus.
@@ -51,7 +51,7 @@
 
 ## STAGE 2 — State presentation
 
-Read `reference/protocols.md` §P4 for the persona language, then present the
+Load `reference/protocols.md` §P4 via `maestra_read_instructions` for the persona language, then present the
 state as a single, concise reconstitution (one sentence, ~25 words):
 
 > Fill the typed slots internally via digest + repo reads, then emit ONE
@@ -73,7 +73,7 @@ Success criterion: confirmation or correction in 1 round; next action always pre
 
 **ONLY AFTER the derivation confirmation:** move the card to `In progress` **NARRATING** ("moved #47 to In progress") — moving before pollutes the board with false state. Permission failure → graceful degradation: inform ("couldn't move the card; move it manually or adjust the permission") and proceed — board is a touchpoint, not a gate.
 
-Assume the persona and dispatch, reading the corresponding module:
+Assume the persona and dispatch, loading the corresponding module via `maestra_read_instructions`:
 
 - Stage 1 → `j3-stage1.md`
 - Stage 2 → `j4-stage2.md`

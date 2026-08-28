@@ -11,6 +11,7 @@ import {
   assertFailClosedSpawn,
   assertFalseableSummary,
   assertForbiddenPatterns,
+  assertInstructionsViaTool,
   assertNoCloseDelivered,
   assertNoFieldEnumeration,
   assertNoJargon,
@@ -36,7 +37,7 @@ import { createStubExecutor } from "../lib/stub-tools.mjs"
 //    and existing assert files. Runs with ZERO live model.
 // ---------------------------------------------------------------------------
 
-const SCENARIO_FILES = ["anti-bypass.yaml", "j8-guard.yaml", "j1-triage.yaml", "j2-resume.yaml", "fm-vinculantes.yaml", "j9-panel-shell.yaml", "r02-welcoming-language.yaml", "r15-qa-session.yaml", "dry-run.yaml"]
+const SCENARIO_FILES = ["anti-bypass.yaml", "j8-guard.yaml", "j1-triage.yaml", "j2-resume.yaml", "fm-vinculantes.yaml", "j9-panel-shell.yaml", "r02-welcoming-language.yaml", "r15-qa-session.yaml", "instructions-loading.yaml", "dry-run.yaml"]
 const ASSERT_DIR = join(EVALS_ROOT, "asserts")
 
 describe("eval harness — structure validation", () => {
@@ -48,7 +49,7 @@ describe("eval harness — structure validation", () => {
       for (const test of doc) scenarios.push({ ...test, _file: file })
     }
 
-    expect(scenarios.length).toBeGreaterThanOrEqual(50) // 16 AB + 6 J8 + 8 J1 + 6 J2 + 4 FM + 5 SH + 5 R02 + 2 R15 + 2 DRY (≥)
+    expect(scenarios.length).toBeGreaterThanOrEqual(50) // 16 AB + 6 J8 + 8 J1 + 6 J2 + 4 FM + 5 SH + 5 R02 + 2 R15 + 1 IL + 2 DRY (≥)
 
     for (const s of scenarios) {
       expect(s.description, `scenario without description in ${s._file}`).toBeTruthy()
@@ -114,6 +115,36 @@ describe("tier-1 assert functions", () => {
     })
     expect(assertCallOrder(t, ["tool:maestra_status", "tool:maestra_issue_digest"]).pass).toBe(true)
     expect(assertCallOrder(t, ["tool:maestra_issue_digest", "tool:maestra_status"]).pass).toBe(false)
+  })
+
+  it("assertInstructionsViaTool: relative plugin-tool loads pass; host reads on the tree fail", () => {
+    const good = transcript({
+      calls: [
+        { kind: "tool", name: "maestra_read_instructions", args: { path: "kernel/maestra-kernel.md" } },
+        { kind: "tool", name: "maestra_read_instructions", args: { path: "journeys/j1-triage.md" } },
+      ],
+    })
+    expect(assertInstructionsViaTool(good).pass).toBe(true)
+
+    const noCall = transcript({ calls: [{ kind: "tool", name: "maestra_status", args: {} }] })
+    expect(assertInstructionsViaTool(noCall).pass).toBe(false)
+
+    const absolute = transcript({
+      calls: [{ kind: "tool", name: "maestra_read_instructions", args: { path: "/home/x/.config/opencode/maestra/instructions/kernel/maestra-kernel.md" } }],
+    })
+    expect(assertInstructionsViaTool(absolute).pass).toBe(false)
+
+    const hostRead = transcript({
+      calls: [
+        { kind: "tool", name: "read", args: { filePath: "/home/x/.config/opencode/maestra/instructions/kernel/maestra-kernel.md" } },
+      ],
+    })
+    expect(assertInstructionsViaTool(hostRead).pass).toBe(false)
+
+    const hostCat = transcript({
+      calls: [{ kind: "exec", command: "cat ~/.config/opencode/maestra/instructions/journeys/j1-triage.md" }],
+    })
+    expect(assertInstructionsViaTool(hostCat).pass).toBe(false)
   })
 
   it("assertQuestionCaps: per-turn and total limits", () => {

@@ -71,18 +71,18 @@ function installForHost(host: HostSpec): void {
   const agentsDir = join(host.configDir, "agents")
   mkdirSync(agentsDir, { recursive: true })
   const agentPath = join(agentsDir, "maestra.md")
-  writeFileSync(agentPath, buildAgentMarkdown(host.id, { instructionsDir }), "utf-8")
+  writeFileSync(agentPath, buildAgentMarkdown(host.id), "utf-8")
 
   // Direct-mode agent (modo direto): top-level primary agent that runs the
   // Minimal flow in a single session. Same directory as maestra.md — NOT
   // inside the maestra/ subdirectory.
   const directAgentPath = join(agentsDir, "maestra-direct.md")
-  writeFileSync(directAgentPath, buildDirectAgentMarkdown(host.id, { instructionsDir }), "utf-8")
+  writeFileSync(directAgentPath, buildDirectAgentMarkdown(host.id), "utf-8")
 
   // Issue-writer agent (capture-only): publishes quick-capture issues
   // (label stage-0) without traversing the standard kernel's entry router.
   const issueWriterAgentPath = join(agentsDir, "maestra-issue-writer.md")
-  writeFileSync(issueWriterAgentPath, buildIssueWriterAgentMarkdown(host.id, { instructionsDir }), "utf-8")
+  writeFileSync(issueWriterAgentPath, buildIssueWriterAgentMarkdown(host.id), "utf-8")
 
   // ONE shell specialist subagent (design A): agents/maestra/especialista.md →
   // spawnable as "maestra/especialista"; persona injected in the task/actor
@@ -96,7 +96,7 @@ function installForHost(host: HostSpec): void {
   // Ops subagent: git + issue-platform CLI mechanics, delegated by the
   // facilitator; returns distilled results only.
   const opsPath = join(subagentsDir, OPS_AGENT_FILENAME)
-  writeFileSync(opsPath, buildOpsAgentMarkdown(host.id, { instructionsDir }), "utf-8")
+  writeFileSync(opsPath, buildOpsAgentMarkdown(host.id), "utf-8")
 
   console.log(`[maestra] ${host.id}: instructions → ${instructionsDir}`)
   console.log(`[maestra] ${host.id}: catalog      → ${catalogDir} (greppable)`)

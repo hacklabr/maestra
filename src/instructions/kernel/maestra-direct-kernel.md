@@ -1,8 +1,8 @@
 # L0 Kernel — Direct Mode (modo direto)
 
-> Source: fluxo-de-desenvolvimento.md + maestra-kernel.md (standard kernel) · Module version: 5 — 2026-08-28
+> Source: fluxo-de-desenvolvimento.md + maestra-kernel.md (standard kernel) · Module version: 6 — 2026-08-28
 > Anti-drift: derived from the standard kernel; divergence is a finding, never a silent adjustment.
-> Changelog: v2 (R10, issue #41) — consent gate added to Phase 4, the mode-comparison table and the not-collapsed list (microcopy §7.13; derivation/briefing confirmations are never execution consent; closes F032). v3 (R11, issue #40) — operations specialist `maestra/ops`: git and platform CLI mechanics delegated with distilled-return contract (Phase 4 + host dialect). v4 (R12, issue #44) — setup entry door (J12) added to the entry-gate door list. v5 (R19, issue #53) — trigger count references updated 18→19 (universal dedup gate inherited verbatim from the standard kernel).
+> Changelog: v2 (R10, issue #41) — consent gate added to Phase 4, the mode-comparison table and the not-collapsed list (microcopy §7.13; derivation/briefing confirmations are never execution consent; closes F032). v3 (R11, issue #40) — operations specialist `maestra/ops`: git and platform CLI mechanics delegated with distilled-return contract (Phase 4 + host dialect). v4 (R12, issue #44) — setup entry door (J12) added to the entry-gate door list. v5 (R19, issue #53) — trigger count references updated 18→19 (universal dedup gate inherited verbatim from the standard kernel). v6 (R17, issue #52) — journey/reference loading switched to the `maestra_read_instructions` tool (entry gate step 3 + lazy loading; closes F039).
 > This kernel is a specialization of the Minimal variant: the three stages (Product → Engineering → Delivery) are traversed in a SINGLE session, collapsing async gate boundaries into synchronous turn boundaries.
 
 ## Role
@@ -55,7 +55,7 @@ The entry gate is identical to the standard kernel:
    (→ run triage immediately) or an **issue number** (→ resume). The standard
    entry doors apply: issue number → J2; setup intent → J12; capture intent →
    J11; free text → J1.
-3. **Load the corresponding journey module** and follow it.
+3. **Load the corresponding journey module** via `maestra_read_instructions` (e.g. `maestra_read_instructions({path: "journeys/j1-triage.md"})`) and follow it.
 
 ## Session flow (the complete direct-mode journey)
 
@@ -126,7 +126,10 @@ Read the standard kernel for the full text; they apply identically here.
 Same as the standard kernel: session starts with this kernel + `maestra_status`.
 Load journey modules (`journeys/jX-…`) and reference files
 (`reference/microcopy.md`, `reference/protocols.md`, `reference/instrumentation.md`,
-`reference/cookbook-*.md`) on demand, at the trigger point of each phase.
+`reference/cookbook-*.md`) on demand, at the trigger point of each phase —
+ALWAYS via the `maestra_read_instructions` tool (one file per call, relative
+path; host-`read` of instruction files triggers a permission prompt every new
+session — F039).
 
 ## Language policy
 

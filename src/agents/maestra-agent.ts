@@ -1,10 +1,5 @@
 export type HostId = "opencode" | "mimocode"
 
-export interface AgentRenderContext {
-  /** Absolute path to the installed instructions directory. */
-  instructionsDir: string
-}
-
 /**
  * Host dialect is baked at INSTALL time (spec D4: one host per machine).
  * OpenCode: subagents via `task` (resume by task_id slug).
@@ -46,37 +41,49 @@ const QUESTION: Record<HostId, string> = {
 }
 
 /**
+ * Instruction-loading pointer (R17): agents load kernel/journeys/reference
+ * files via the plugin tool `maestra_read_instructions` with RELATIVE paths.
+ * The old bootstrap pointed at absolute paths under the host config dir and
+ * required an external_directory permission grant to excuse out-of-workspace
+ * host reads — the tool resolves the installed tree itself, so neither the
+ * absolute pointer nor the grant survives.
+ */
+function loadVia(relPath: string): string {
+  return `maestra_read_instructions({path: "${relPath}"})`
+}
+
+/**
  * Generates the `maestra` primary agent markdown for a given host.
- * The external_directory permission grants read access to the instructions
- * directory (outside the workspace) without interactive prompts — VERIFY in
- * the dual-host smoke test (T12).
+ * Instruction loading goes through `maestra_read_instructions` (see
+ * loadVia) — verified in the dual-host smoke test (T12).
  *
  * This renders a LEAN BOOTSTRAP SCAFFOLD: it points to the full kernel and
  * MUST NOT duplicate the entry router. The full kernel
- * (`instructions/kernel/maestra-kernel.md`) is the single source of the entry
- * router (entry doors) and the entry gate — duplicating them here would
+ * (`kernel/maestra-kernel.md`) is the single source of the entry router
+ * (entry doors) and the entry gate — duplicating them here would
  * reintroduce the F027 recurrence (a stale, cognitively-primary mini-router
  * in code diverging from the authoritative router in the .md, causing
  * misrouting such as capture-intent requests landing on J1 instead of J11).
  */
-export function buildAgentMarkdown(host: HostId, ctx: AgentRenderContext): string {
+export function buildAgentMarkdown(host: HostId): string {
   return [
     "---",
     "description: Development workflow facilitator (triage → three stages → reconciliation)",
     "mode: primary",
-    "permission:",
-    "  external_directory:",
-    `    "${ctx.instructionsDir}/**": allow`,
     "---",
     "",
     "# Workflow Facilitator (kernel L0)",
     "",
-    `Full kernel: ${ctx.instructionsDir}/kernel/maestra-kernel.md`,
+    "Load instruction files (kernel, journeys, reference, templates) ONLY via the",
+    "`maestra_read_instructions` tool with relative paths — never the host read tool",
+    "(the tool resolves the installed tree; no out-of-workspace reads are needed).",
+    "",
+    `Full kernel: \`${loadVia("kernel/maestra-kernel.md")}\``,
     "",
     "Every session begins with the entry gate defined in the full kernel:",
     "1. Run `maestra_status`.",
-    "2. Read the full kernel — it defines the entry router (entry doors) and the mandatory entry gate.",
-    "3. Identify the entry door against that router and load the corresponding journey module.",
+    "2. Load the full kernel via the pointer above — it defines the entry router (entry doors) and the mandatory entry gate.",
+    `3. Identify the entry door against that router and load the corresponding journey module the same way, e.g. \`${loadVia("journeys/j1-triage.md")}\`.`,
     "",
     "Do NOT route against this placeholder — the full kernel is the single source of the entry router.",
     "No read, bash, codebase exploration, or platform operation may precede the entry gate.",
@@ -94,14 +101,11 @@ export function buildAgentMarkdown(host: HostId, ctx: AgentRenderContext): strin
  * boundaries collapsed into synchronous turn boundaries). Same lean-bootstrap
  * pattern as `buildAgentMarkdown`, but pointing to the direct kernel.
  */
-export function buildDirectAgentMarkdown(host: HostId, ctx: AgentRenderContext): string {
+export function buildDirectAgentMarkdown(host: HostId): string {
   return [
     "---",
     "description: Direct workflow mode (Minimal flow in a single session)",
     "mode: primary",
-    "permission:",
-    "  external_directory:",
-    `    "${ctx.instructionsDir}/**": allow`,
     "---",
     "",
     "# Direct-Mode Facilitator (kernel L0 — modo direto)",
@@ -113,12 +117,12 @@ export function buildDirectAgentMarkdown(host: HostId, ctx: AgentRenderContext):
     "don't need async fragmentation; use the standard `maestra` agent when stages",
     "must be split across sessions.",
     "",
-    `Full kernel: ${ctx.instructionsDir}/kernel/maestra-direct-kernel.md`,
+    `Full kernel: \`${loadVia("kernel/maestra-direct-kernel.md")}\``,
     "",
     "## Entry points",
     "",
-    `- Free text (new demand) → read ${ctx.instructionsDir}/journeys/j1-triage.md`,
-    `- Issue number → read ${ctx.instructionsDir}/journeys/j2-resume.md`,
+    `- Free text (new demand) → \`${loadVia("journeys/j1-triage.md")}\``,
+    `- Issue number → \`${loadVia("journeys/j2-resume.md")}\``,
     "",
     "## Host dialect",
     "",
@@ -136,14 +140,11 @@ export function buildDirectAgentMarkdown(host: HostId, ctx: AgentRenderContext):
  * kernel reference it, never restate it (F027 lesson: no router/capture
  * duplication in code).
  */
-export function buildIssueWriterAgentMarkdown(host: HostId, ctx: AgentRenderContext): string {
+export function buildIssueWriterAgentMarkdown(host: HostId): string {
   return [
     "---",
     "description: Quick issue capture (stage-0) without traversing the kernel",
     "mode: primary",
-    "permission:",
-    "  external_directory:",
-    `    "${ctx.instructionsDir}/**": allow`,
     "---",
     "",
     "# Issue Writer (kernel L0 — quick capture)",
@@ -154,12 +155,12 @@ export function buildIssueWriterAgentMarkdown(host: HostId, ctx: AgentRenderCont
     "NEVER triage, classify, assign variants, write metadata lines, emit",
     "events A–F, or create round folders — those belong to the `maestra` agent.",
     "",
-    `Full kernel: ${ctx.instructionsDir}/kernel/issue-writer-kernel.md`,
+    `Full kernel: \`${loadVia("kernel/issue-writer-kernel.md")}\``,
     "",
     "## Entry point",
     "",
     "Every user message is a capture demand:",
-    `- Any message → read ${ctx.instructionsDir}/journeys/j11-quick-capture.md`,
+    `- Any message → \`${loadVia("journeys/j11-quick-capture.md")}\``,
     "",
     "## Host dialect",
     "",

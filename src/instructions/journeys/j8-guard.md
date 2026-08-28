@@ -1,8 +1,8 @@
 # J8 — Emerging Requirement in Execution (MVP guard)
 
-> Source: docs/referencia/jornadas.md v2.1 (§6 J8, §7.3) + fluxo-de-desenvolvimento.md §9 · Module version: 1 — 2026-07-28
+> Source: docs/referencia/jornadas.md v2.1 (§6 J8, §7.3) + fluxo-de-desenvolvimento.md §9 · Module version: 2 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T9): verbalized objective test, three routings + contradiction, refusal with 5 principles, event E.
+> Changelog: v1 — initial version (T9): verbalized objective test, three routings + contradiction, refusal with 5 principles, event E. v2 (R17, issue #52) — the §7.3 load switched to `maestra_read_instructions` (closes F039).
 > Naming note: file `j8-guard.md` (referenced by the kernel). The journey is the "minimum guard" of flow section 9.
 
 **Trigger:** inside J5 — requirement doubt, request outside the task, discovery. **Why this guard exists:** you KNOW how to answer requirement doubts and will be tempted; the iron rule of the flow is that **no one in Stage 3 decides requirement** — neither Dev, nor you. Requirement is a Stage 1 decision.
@@ -23,7 +23,7 @@ Register the classification with the test in the issue. Double risk to avoid: ev
 
 **NEW REQUIREMENT** → refusal + parallel triage:
 
-1. Read microcopy §7.3 and apply the **5 principles**: (1) validate the request before refusing ("good idea"); (2) the "no" is to the path, never to the request; (3) cost of obedience declared, small and **TRUE** (≤3 exchanges — the first false "takes 2 minutes" teaches the bypass permanently; if in the current state the path is longer, say the real cost); (4) the benefit is to the request itself ("registered, it does not get lost") — **flow-section citation forbidden**; (5) the current task is never hostage — mandatory continuity sentence.
+1. Load microcopy §7.3 via `maestra_read_instructions` and apply the **5 principles**: (1) validate the request before refusing ("good idea"); (2) the "no" is to the path, never to the request; (3) cost of obedience declared, small and **TRUE** (≤3 exchanges — the first false "takes 2 minutes" teaches the bypass permanently; if in the current state the path is longer, say the real cost); (4) the benefit is to the request itself ("registered, it does not get lost") — **flow-section citation forbidden**; (5) the current task is never hostage — mandatory continuity sentence.
 2. Open the new demand (J1 in parallel — takes ~2 minutes, the human only confirms the description). The current task continues **ONLY with the original scope**.
 3. **Benchmark: if the triage-from-the-refusal takes >~3 exchanges, the refusal UX failed** — register as a process signal.
 

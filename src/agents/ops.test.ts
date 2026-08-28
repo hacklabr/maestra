@@ -2,10 +2,8 @@ import { describe, expect, it } from "vitest"
 import { buildOpsAgentMarkdown, OPS_AGENT_FILENAME } from "./ops.js"
 
 describe("buildOpsAgentMarkdown (ops subagent — git + platform CLI mechanics)", () => {
-  const ctx = { instructionsDir: "/x" }
-
   it("OpenCode: subagent mode, 1-line description, task nesting denied", () => {
-    const md = buildOpsAgentMarkdown("opencode", ctx)
+    const md = buildOpsAgentMarkdown("opencode")
 
     expect(md).toContain("mode: subagent")
     expect(md).toContain("task:")
@@ -18,41 +16,42 @@ describe("buildOpsAgentMarkdown (ops subagent — git + platform CLI mechanics)"
   })
 
   it("Mimo: actor nesting denied instead of task (per-host dialect)", () => {
-    const md = buildOpsAgentMarkdown("mimocode", ctx)
+    const md = buildOpsAgentMarkdown("mimocode")
 
     expect(md).toContain("mode: subagent")
     expect(md).toContain("actor:")
     expect(md).not.toContain("task:")
   })
 
-  it("grants edit/write/bash and external_directory on the instructions dir", () => {
-    const md = buildOpsAgentMarkdown("opencode", ctx)
+  it("grants edit/write/bash; NO external_directory — the tool replaces out-of-workspace reads (R17)", () => {
+    const md = buildOpsAgentMarkdown("opencode")
 
     expect(md).toContain("edit: allow")
     expect(md).toContain("write: allow")
     expect(md).toContain("bash: allow")
-    expect(md).toContain("external_directory:")
-    expect(md).toContain('"/x/**": allow')
+    expect(md).not.toContain("external_directory")
+    expect(md).not.toContain(".config")
+    expect(md).not.toContain("maestra/instructions")
   })
 
-  it("points to the ops kernel without restating it (lean bootstrap)", () => {
+  it("points to the ops kernel via the plugin tool, without restating it (lean bootstrap)", () => {
     for (const host of ["opencode", "mimocode"] as const) {
-      const md = buildOpsAgentMarkdown(host, ctx)
-      expect(md).toContain("Full kernel: /x/kernel/ops-kernel.md")
+      const md = buildOpsAgentMarkdown(host)
+      expect(md).toContain('Full kernel: `maestra_read_instructions({path: "kernel/ops-kernel.md"})`')
     }
   })
 
-  it("points to the platform cookbooks — commands live ONLY there", () => {
+  it("points to the platform cookbooks via the plugin tool — commands live ONLY there", () => {
     for (const host of ["opencode", "mimocode"] as const) {
-      const md = buildOpsAgentMarkdown(host, ctx)
-      expect(md).toContain("/x/reference/cookbook-github.md")
-      expect(md).toContain("/x/reference/cookbook-gitlab.md")
+      const md = buildOpsAgentMarkdown(host)
+      expect(md).toContain('maestra_read_instructions({path: "reference/cookbook-github.md"})')
+      expect(md).toContain('maestra_read_instructions({path: "reference/cookbook-gitlab.md"})')
       expect(md).toContain("names the operation, never the raw command")
     }
   })
 
   it("states the distilled-results contract and the NEVER list", () => {
-    const md = buildOpsAgentMarkdown("opencode", ctx)
+    const md = buildOpsAgentMarkdown("opencode")
 
     expect(md).toContain("distilled results")
     expect(md).toContain("NEVER make flow decisions")

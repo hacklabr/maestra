@@ -3,6 +3,7 @@ import { maestraStatusTool } from "./tools/status.js"
 import { maestraIssueDigestTool } from "./tools/digest.js"
 import { askPeerTool, setSdkClient } from "./tools/ask-peer.js"
 import { maestraEmitEventTool } from "./tools/emit-event.js"
+import { maestraReadInstructionsTool } from "./tools/read-instructions.js"
 import { createDesviosHook } from "./hooks/desvios.js"
 import { createPeerTrackerHook } from "./hooks/peer-tracker.js"
 import { createPersonaExpansionHook, resolveCatalogRoot } from "./hooks/persona-expansion.js"
@@ -23,6 +24,7 @@ export const maestra: Plugin = async (input): Promise<Hooks> => {
       maestra_issue_digest: maestraIssueDigestTool,
       ask_peer: askPeerTool,
       maestra_emit_event: maestraEmitEventTool,
+      maestra_read_instructions: maestraReadInstructionsTool,
     },
 
     "tool.execute.before": async (hookInput, output) => {

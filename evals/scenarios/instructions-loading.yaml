@@ -1,0 +1,29 @@
+# Instruction loading (R17 — instructions without host prompt/read grants).
+# The kernel/journeys/reference/templates enter the context via the plugin
+# tool maestra_read_instructions (RELATIVE path), never via the host read
+# tool on the installed tree. Mock-based (mock: true): deterministic in every
+# config — proves tool surface, stub route, call order and the relative-path
+# contract without a live model.
+
+- description: "IL-01: entry gate — kernel loaded FIRST via maestra_read_instructions with a relative path"
+  vars:
+    fixture: fixtures/github/epic-labels-contraditorias.json
+    repo: fixtures/repo/rodada-aberta.json
+    mock: true
+    entry: "12"
+    mockSteps:
+      - toolCall: { name: "maestra_read_instructions", args: { path: "kernel/maestra-kernel.md" } }
+      - toolCall: { name: "maestra_status", args: {} }
+      - text: "Kernel loaded via maestra_read_instructions and environment probed. Epic #12, Condensed variant, round R02 (report export): metadata says Stage 1 but Stage 1/2 tasks are closed — by structure it is in Stage 3. The final review is pending (#27). Next: @joao runs the reconciliation. Correct?"
+    expectedCallOrder:
+      - "tool:maestra_read_instructions"
+      - "tool:maestra_status"
+    requiredPatterns:
+      - "Stage 3"
+  assert:
+    - type: javascript
+      value: file://asserts/instructions-via-tool.mjs
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
