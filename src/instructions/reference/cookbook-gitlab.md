@@ -1,6 +1,6 @@
 # Cookbook — GitLab (glab CLI + API v4)
 
-> Source: specification.md D6 (ADR-010/011/013/014) · fluxo-de-desenvolvimento.md §4 · jornadas.md P6 · Module version: 4 — 2026-08-28 (R19, issue #53: pre-creation dedup gate — `search-similar` op + §1 precondition; kernel trigger #19; prior: R16 issue classification note)
+> Source: specification.md D6 (ADR-010/011/013/014) · fluxo-de-desenvolvimento.md §4 · jornadas.md P6 · Module version: 5 — 2026-08-28 (R18, issue #54: MR/branch operations for the epic-branch topology — ADR-006 · R19, issue #53: pre-creation dedup gate — `search-similar` op + §1 precondition; kernel trigger #19; previous: R16, issue #34 — issue classification note)
 > Anti-drift: ONLY place where `glab`/GitLab API commands appear (ADR-012). Instructions
 > reference OPERATIONS (neutral names in `kebab-case`), never CLIs. Divergence with the
 > source is a finding, never a silent adjustment.
@@ -194,6 +194,32 @@ glab api projects/<ENC>/issues/<I> -X PUT -f "state_event=close"
 ### create-release (Stage 3.4)
 ```bash
 glab release create v<X.Y.Z>   # in the repo directory
+```
+
+## 4.5 MR and branch operations (topology — ADR-006)
+
+`pr-topology` in `workflow.md` (read via `maestra-config read workflow.md`; absent = `epic-branch`). The integration branch is the repo's own (`develop`, `main` — convention); the epic branch is `epic/<N>-<slug>` (N = epic issue number).
+
+### open-mr (task MR — target by topology)
+```bash
+glab mr create --source-branch <task-branch> \
+  --target-branch <epic/N-slug>   <!-- epic-branch topology: the epic branch, when it exists (J5 STAGE 1)
+  --target-branch <develop|main>  <!-- direct topology (or Minimal variant, or single-task epic)
+  --title "<title>" --description "$(cat mr.md)"
+```
+**GOTCHA:** without `--target-branch`, glab targets the project's DEFAULT branch — a silent wrong target under the epic-branch topology. Always pass it explicitly.
+
+### open-epic-mr (integration MR of the epic — P6 7a)
+```bash
+glab mr create --source-branch epic/<N>-<slug> --target-branch <integration-branch> \
+  --title "<epic title> — epic integration" --description "$(cat epic-mr.md)"
+```
+Opened **in the same act** as the acceptance of the LAST daughter task (substate `awaiting-integration`; in `qa` mode only when every daughter is closed).
+
+### create-epic-branch / delete-branch (lifecycle)
+```bash
+git branch epic/<N>-<slug> <integration-branch> && git push -u origin epic/<N>-<slug>
+git push origin --delete epic/<N>-<slug>   # on merge/abandonment, same act, narrated
 ```
 
 ## 5. Board setup (1× per project; persist id in `config.md` on `__maestra_config__` → `board:` — write via `maestra-config write config.md`)

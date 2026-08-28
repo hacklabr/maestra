@@ -61,7 +61,8 @@ __maestra_config__ (branch órfã — ADR-003; NÃO é pasta na árvore)
 ├── config.md                  #   Plataforma/host/board detectados
 ├── team.md                    #   Mapa de facilitadores (seniority coarse)
 ├── labels.md                  #   Mapeamento labels/colunas (ADR-002)
-└── workflow.md                #   Fluxo pós-aceitação do PR (ADR-004)
+└── workflow.md                #   Fluxo pós-aceitação do PR + topologia de
+                              #   PR/MR (ADR-004/ADR-006)
                               # (ler/gravar: maestra-config read|write <file>)
 scripts/                       # check-*.sh, smoke.sh
 ROADMAP.md                     # Tudo que ficou fora do MVP, com gatilho
