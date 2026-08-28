@@ -1,8 +1,8 @@
 # Microcopy Library (L3 — language layer)
 
-> Source: docs/referencia/jornadas.md §7, v2.3 · Module version: 5 — 2026-08-05
+> Source: docs/referencia/jornadas.md §7, v2.3 · Module version: 7 — 2026-08-28
 > Anti-drift: verbatim templates with typed slots; post-dogfood adjustment HERE, never in code. Divergence between this module and the source is a finding, never a silent adjustment.
-> Changelog: v0 scaffold (T6) → v1 (T10): full transcription of §7.1–§7.11 with typed slots; deviations.md hook block preserved verbatim; override comment replaced by reference to the tool contract (`maestra_emit_event`); platform-neutral adaptations marked explicitly. v2 (journeys v2.3, human decision) — block §7.9 W-04 ("specialist outside the installed catalog") DELETED: shell-specialist architecture makes the whole catalog invocable; there is no longer an installed subset or "nearest" specialist. v3 (R02, ADR-001) — §7.2 "Derived state" rewritten as two-phase `<derivation>` (typed slots, internal) / `<speech>` (natural sentence, only emitted) contract + "Substate → situation translation" table + 3 few-shot anchors; the field names `variant`/`stage`/`substate`/`gate` are never enumerated to a non-technical persona. v4 (R07) — §7.12 aligned to curated capture (J11 v2): draft wording "improved from what you said", `{SUMMARY}` curated (may carry one grounding sentence), new "Duplicate found" template (create new / relate / discard), Rules line updated to the curated doctrine. v5 (R10, issue #41) — new §7.13 "Consent gate before implementation": ONE alignment message (4 steps: task explanation → doubts → execution plan → adjustment) + ONE explicit-consent question; derivation confirmation is never execution consent (closes F032). v6 (R15, issue #49) — §7.2: `awaiting-qa`/`qa-rejected` situation translations; new §7.14 "QA session conduction" (presentation template + approve/reject verdict templates; transitions execute only after the human verdict).
+> Changelog: v0 scaffold (T6) → v1 (T10): full transcription of §7.1–§7.11 with typed slots; deviations.md hook block preserved verbatim; override comment replaced by reference to the tool contract (`maestra_emit_event`); platform-neutral adaptations marked explicitly. v2 (journeys v2.3, human decision) — block §7.9 W-04 ("specialist outside the installed catalog") DELETED: shell-specialist architecture makes the whole catalog invocable; there is no longer an installed subset or "nearest" specialist. v3 (R02, ADR-001) — §7.2 "Derived state" rewritten as two-phase `<derivation>` (typed slots, internal) / `<speech>` (natural sentence, only emitted) contract + "Substate → situation translation" table + 3 few-shot anchors; the field names `variant`/`stage`/`substate`/`gate` are never enumerated to a non-technical persona. v4 (R07) — §7.12 aligned to curated capture (J11 v2): draft wording "improved from what you said", `{SUMMARY}` curated (may carry one grounding sentence), new "Duplicate found" template (create new / relate / discard), Rules line updated to the curated doctrine. v5 (R10, issue #41) — new §7.13 "Consent gate before implementation": ONE alignment message (4 steps: task explanation → doubts → execution plan → adjustment) + ONE explicit-consent question; derivation confirmation is never execution consent (closes F032). v6 (R15, issue #49) — §7.2: `awaiting-qa`/`qa-rejected` situation translations; new §7.14 "QA session conduction" (presentation template + approve/reject verdict templates; transitions execute only after the human verdict). v7 (R19, issue #53) — §7.12 "Duplicate found" declared journey-agnostic: universal-use note added (kernel trigger #19 — closed candidates count; third option spoken per context).
 
 ## Usage conventions
 
@@ -692,6 +692,13 @@ How do you want to proceed?
 | `{CANDIDATE}` | issue ref | The open issue found by the duplicate check. |
 | `{CANDIDATE_TITLE}` | text | The candidate issue's current title. |
 
+> **Universal use (kernel trigger #19):** this block serves ANY journey that
+> found a duplicate candidate before creation — not capture only. Closed
+> candidates count ("already on the board" includes delivered). The third
+> option is spoken per context: capture says **Discard**; epic triage says
+> **increment of it**; mid-session creations say **discard** when the
+> candidate already covers the demand.
+
 ### Published
 
 ```text
@@ -702,7 +709,7 @@ Published {ISSUE} on the board — awaiting triage. When you want to classify it
 |---|---|---|
 | `{ISSUE}` | number | The newly created issue number. |
 
-Rules: author's intent, curated text — the draft is rewritten for clarity, faithful to what the author meant, never facilitator diagnosis; no issue published without explicit confirmation; no duplicate published without the author having seen the candidate; `stage-0` is pre-flow, not a variant.
+Rules: author's intent, curated text — the draft is rewritten for clarity, faithful to what the author meant, never facilitator diagnosis; no issue published without explicit confirmation; no duplicate published without the author having seen the candidate; `stage-0` is pre-flow, not a variant. The Duplicate found block is journey-agnostic (kernel trigger #19).
 
 ---
 

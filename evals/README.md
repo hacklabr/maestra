@@ -61,6 +61,7 @@ never retry to mask instructions regression.
 | 14 | Vague deviation rejected | AB-14 (+ desvios.md hook, unit) | requiredPatterns in files |
 | 15 | Executed evidence | AB-15 | hard-fail `evidence-before-verdict` |
 | 16 | Contradiction → doc-bug | AB-16 | order + label |
+| 19 | No issue born without prior duplicate/related search | AB-19 | order search→create |
 
 Additional scenarios: `j1-triagem.yaml` (calibration: ≤3/turn, ≤5 total, ≤3
 Minimal, PO rule of thumb, dedup, **Full Q2 + funnel slice with P7 wave**),

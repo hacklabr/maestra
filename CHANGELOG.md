@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Universal pre-creation dedup gate (R19, issue #53): anti-bypass trigger #19 —
+  no demand-representing issue is born without a prior duplicate/related search
+  (open + closed); `search-similar` cookbook operation (GH + GL) with §1
+  creation precondition; microcopy "Duplicate found" declared journey-agnostic;
+  AB-19 eval pins search-before-create on a mid-session doc-bug arc.
+
 - Orphan-branch configuration store (R14, issue #48, ADR-003): per-repo
   configuration (`config.md`, `team.md`, `labels.md`) now lives on the orphan
   branch `__maestra_config__` (no shared history with the project), read via

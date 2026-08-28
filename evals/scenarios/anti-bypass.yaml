@@ -313,3 +313,23 @@
       value: file://asserts/required-patterns.mjs
     - type: javascript
       value: file://asserts/forbidden-patterns.mjs
+
+- description: "AB-19 no issue born without prior search: mid-session doc-bug creation preceded by search-similar, candidate gate before creating"
+  vars:
+    fixture: fixtures/github/epic-etapa3-execucao.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j5-stage3.md", "journeys/j2-resume.md"]
+    persona: stage-3
+    entry: "Contradiction outside the round scope: the reference says the export includes cancelled items, production does not. Open the doc-bug."
+    humanScript:
+      - "It is new, go ahead."
+    expectedCallOrder:
+      - "exec:.*(search issues|issue list)"
+      - "exec:.*issue create"
+    requiredPatterns:
+      - "doc-bug"
+  assert:
+    - type: javascript
+      value: file://asserts/tool-order.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs

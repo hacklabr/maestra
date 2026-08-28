@@ -2,7 +2,7 @@
 
 > Source: docs/referencia/jornadas.md v2.1 (§2 calibração, §3 tabela de perguntas, §6 J1) + fluxo-de-desenvolvimento.md §3 · Module version: 1 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T8): tree 3.2, hierarchy derive>confirm>ask, limits, disguise, dedup (G-10), team.md + config.md, P7, first wave. v2 (issue #16) — Stage 5: structural parent-child link made mandatory (not just textual metadata); wave completeness rule added ("born complete, never incremental") (closes F014, F020). v3 (R16, issue #34) — issue classification: native type + dimension labels at triage (RF-45..48).
+> Changelog: v1 — initial version (T8): tree 3.2, hierarchy derive>confirm>ask, limits, disguise, dedup (G-10), team.md + config.md, P7, first wave. v2 (issue #16) — Stage 5: structural parent-child link made mandatory (not just textual metadata); wave completeness rule added ("born complete, never incremental") (closes F014, F020). v3 (R16, issue #34) — issue classification: native type + dimension labels at triage (RF-45..48). v4 (R19, issue #53) — Step 0 declared an instance of the universal dedup gate (kernel trigger #19): references `search-similar` (cookbook §3) and extends the search to closed epics (demands already delivered). · Module version: 4 — 2026-08-28
 
 **Trigger:** free text describing a demand. **Target:** 5 minutes. **Outcome:** variant classified by objective criteria + epic registered — triage without a register did not happen.
 
@@ -59,7 +59,7 @@ Confirmation in one message. Contestation → kernel trigger #1: **evidence re-p
 
 ## STAGE 5 — Dedup, distribution, birth of the epic and first wave
 
-**Step 0 — Demand dedup:** before creating anything, search similar open epics (title/summary of the understood demand × open epics with variant label — search operation in the cookbook). Candidate found → present BEFORE creating: "I found epic #X (round Rnn) that looks like the same demand — is it an increment of it or a new demand?" Increment = **new round linked to the same epic**, never a duplicated epic. Success criterion: zero duplicated epic created without the human having seen the candidate and confirmed "it is new".
+**Step 0 — Demand dedup (instance of the universal gate, kernel trigger #19):** before creating anything, run `search-similar` (cookbook §3) — title/summary of the understood demand × open epics with variant label, plus closed epics that may have already delivered it. Candidate found → present BEFORE creating: "I found epic #X (round Rnn) that looks like the same demand — is it an increment of it or a new demand?" Increment = **new round linked to the same epic**, never a duplicated epic. Success criterion: zero duplicated epic created without the human having seen the candidate and confirmed "it is new".
 
 **Distribution (P7):** read microcopy §7.6. Suggest with visible justification per task: specialty/seniority from team.md + scope/boundaries of the task + **current load of open tasks per person** (consult before suggesting — operation in the cookbook). The human confirms or reassigns in **ONE consolidated message**. **No issue is created before confirmation.**
 
