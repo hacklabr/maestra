@@ -43,7 +43,7 @@ src/
 ├── host.ts                    # Heurística de host (opencode/mimocode)
 ├── adapter.ts                 # Adapter da plataforma de issues (GH/GL)
 ├── tools/                     # Ferramentas expostas: status, issue_digest,
-│                              # emit_event, ask_peer
+│                              # emit_event, ask_peer, read_instructions
 ├── hooks/                     # Hooks pós-escrita (ex: validate-desvios)
 ├── cli/                       # maestra-report (audit de presença) +
 │                              # maestra-config (config na branch órfã
@@ -113,7 +113,7 @@ Ao detectar **qualquer** das situações abaixo durante uma sessão, registre
 
 | Categoria | Registrar quando |
 |---|---|
-| `tool-retry` | Ferramenta (`maestra_status`, `maestra_issue_digest`, `maestra_emit_event`, `ask_peer`) falhou ou exigiu ≥2 tentativas |
+| `tool-retry` | Ferramenta (`maestra_status`, `maestra_issue_digest`, `maestra_emit_event`, `ask_peer`, `maestra_read_instructions`) falhou ou exigiu ≥2 tentativas |
 | `board-state` | Card/label/variante/etapa divergente do esperado pelo fluxo |
 | `instruction-ambiguous` | Facilitador desobedeceu ou interpretou errado instrução do kernel/jornada/cookbook |
 | `doc-contradiction` | Comportamento real do plugin divergente de `fluxo-de-desenvolvimento.md` / `jornadas.md` / `README.md` |

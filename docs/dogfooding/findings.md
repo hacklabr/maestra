@@ -135,7 +135,7 @@
 - Tentativas/workaround: Lido o erro, corrigidos os nomes dos campos para o schema real, emissão bem-sucedida. A divergência documentação × código (trigger #16) deve ser formalizada como `doc-bug`.
 - Status: open
 
-<!-- Próximo ID: F043. Registre novas entradas abaixo, em ordem cronológica. -->
+<!-- Próximo ID: F047. Registre novas entradas abaixo, em ordem cronológica. (Ver F042/F046: IDs duplicados F040/F041/F042 pré-existentes aguardam decisão de renumeração.) -->
 
 ## F020 — Onda de Stage 3 (#7, #8, #9) criada com metadado `epic: 3` mas sem link de sub-issue
 - Data: 2026-07-28
@@ -676,17 +676,19 @@
 ## F039 — Aprovação manual de leitura fora do workspace a cada nova sessão (kernel/jornadas em `~/.config/`)
 - Data: 2026-08-28
 - Categoria: ergonomic-friction
-- Origem: sessão ad-hoc (demanda de nova feature) — uso diário do plugin, todas as sessões
+- Origem: sessão R17 (#52) — uso diário do plugin, todas as sessões
 - Sintoma: O gate de entrada e o lazy loading instruem o agente a `read` dos arquivos de instrução em `~/.config/opencode/maestra/instructions/` (kernel, jornadas, reference/), que ficam fora do workspace do projeto. O host (OpenCode/Mimo) solicita aprovação de leitura por arquivo fora do workspace, e a aprovação não persiste entre sessões — o humano precisa aceitar múltiplos prompts no primeiro minuto de TODA sessão maestra. Atrito recorrente e sistemático no entry gate do próprio fluxo.
 - Tentativas/workaround: humano aprova manualmente a cada sessão. Demanda aberta nesta data para uma ferramenta do plugin que devolva o conteúdo desses arquivos (leitura via tool do plugin não dispara prompt de permissão do host), eliminando o atrito na raiz.
-- Status: open (origem da demanda triada nesta data)
+- Status: resolved (R17, PR #57, merge 33843c0 — tool `maestra_read_instructions` + instruções/pointers rewireados; validação de uso na primeira sessão pós-reinstalação)
 
-## F040 — Recipes de board do cookbook-github divergem do comportamento real do gh CLI 2.97 (jq array-root + item-edit)
+## F045 — Recipes de board do cookbook-github divergem do comportamento real do gh CLI 2.97 (jq array-root + item-edit)
 - Data: 2026-08-28
 - Categoria: doc-contradiction
 - Origem: R17 (#52) — nascimento do épico: add-to-board + move-card
+- Nota: renumerado de F040→F045 na reconciliação R17 — colidia com o F040 do R19 (issues duplicadas, resolved #53); mesma família de colisão que o meta-registro F042 (R16) documenta.
 - Sintoma: (1) `gh project list/item-list --format json --jq '.[]…'/'.items[]…'` falha ou retorna vazio nesta versão do gh (2.97.0) — o JSON raiz é array e o `--jq` do gh reporta "expected an object but got: array" (project list) ou silencia (item-list); os recipes do `reference/cookbook-github.md` §5 (add-to-board, discover-ids, move-card) usam exatamente esses jq. (2) `item-edit --field <nome> --value` exige `--url` + número posicional do projeto; a combinação `--project-id + --id + --field/--value` (análoga ao recipe documentado) é rejeitada — o caminho documentado por IDs (`--field-id` + `--single-select-option-id`) não foi testado nesta sessão. Move-card custou 3 tentativas.
 - Tentativas/workaround: `item-add` com `--owner` funcionou (recipe ok); extração de IDs via python sobre JSON bruto funcionou; move final com `gh project item-edit 23 --owner … --url … --field "Status" --value …`. Cookbook precisa de recipes revistos contra o gh vigente (ou de wrapper que não dependa de --jq do gh).
+- Adendo (2026-08-28, merge local R17): segunda confirmação na mesma sessão — o `item-list` expõe o Status como campo PLANO no item (`"status": "Todo"`), não sob `fieldValues[]` como o recipe do discover-ids sugere; a lookup do card no merge exigiu 2 tentativas pela mesma causa.
 - Status: open
 
 ## F040 — Issues duplicadas criadas em desvios de rota: sem busca de similares fora de J1/J11
@@ -743,4 +745,12 @@
 - Origem: R18 (#54) — primeiro preenchimento do `deviations.md` da round
 - Sintoma: o facilitador escreveu as entradas com rótulos de campo em PT ("**Planejado:**", "**Razão:**") seguindo o idioma da conversa; o hook pós-escrita rejeitou a entrada 2× ("missing Planned, Implemented, Reason…") até que os rótulos canônicos EN do template fossem usados. Segunda rejeição foi por link: URL crua no campo "Decision registered at" não é reconhecida — o hook exige sintaxe markdown `[texto](url)`. O conteúdo estava completo desde a primeira tentativa; só a forma divergiu do canon.
 - Tentativas/workaround: releitura do template → rótulos EN; conversão das URLs para links markdown → hook silencia. Candidato a melhoria: mensagem do hook nomear o formato esperado (rótulos canônicos EN + link markdown) para resolver em 1 tentativa.
+- Status: open
+
+## F046 — findings.md lido de main local desatualizado: IDs duplicados e marcador defasado (causa-raiz das colisões)
+- Data: 2026-08-28
+- Categoria: instruction-ambiguous
+- Origem: R17 (#52), reconciliação — descoberta ao corrigir dano de edição
+- Sintoma: a sessão R17 leu `docs/dogfooding/findings.md` de um checkout main **atrás do origin** (arquivo terminava em F038, marcador dizia F030) enquanto R16/R18/R19 já haviam registrado F040–F044 no origin. A regra "ID incremental: próximo ID livre indicado no cabeçalho" foi seguida contra estado desatualizado → novo F040 colidindo com o do R19 (corrigido para F045 na reconciliação) e apêndice de F039 colidindo com espaço de numeração já consumido. O pull que atualizou o main local aconteceu (via ops, na criação da worktree) DEPOIS dos primeiros registros da sessão, sem re-verificação do arquivo. Família do meta-registro F042 (R16): a regra de numeração não tem guarda contra main desatualizado nem contra registro concorrente.
+- Tentativas/workaround: dano da sessão corrigido na reconciliação (cabeçalho F039 restaurado; F040→F045 renumerado com nota; adendo movido). Duplicatas pré-existentes (F040/F041/F042 duplos da era R16/R19) permanecem — renumeração exige decisão autorizada (nota no F042). Candidatos: (a) regra "fetch antes do primeiro registro de finding"; (b) guarda de ID no hook de escrita.
 - Status: open

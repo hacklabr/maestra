@@ -134,6 +134,7 @@ Manually created issues are welcome to follow the same convention. Orgs/repos wi
 | `maestra_issue_digest` | tool | Factual parser of the workflow conventions (labels, epic→tasks hierarchy, gate/override comments, gate fields, reconciliation). **Enumerates facts; never derives state** |
 | `ask_peer` | tool | Specialist↔specialist consultation within the sequential discussion panel (anti-cycle via busy-check; facilitator excluded by caller-identity) |
 | `maestra_emit_event` | tool | Emits instrumentation events A–F + `type=override`, with "— facilitator" signature by construction |
+| `maestra_read_instructions` | tool | Full content of ONE plugin instruction file (kernel/journeys/reference/templates/catalog) by relative path — prompt-free replacement for host `read` on the installed instructions tree (R17, closes F039); fail-closed containment (absolute/`..`/symlink-escape rejected) |
 | `desvios.md` hook | hook | Post-write validation of the planned→implemented→reason triplet in `docs/rounds/*/desvios.md`. **Flag, never block** |
 | `maestra-report` | CLI script | Presence-gap audit: epic without event A, closed round without F, override without D, E parity, FM-13 |
 | `maestra-config` | CLI script | Per-repo configuration on the orphan branch `__maestra_config__` (ADR-003): `migrate` (idempotent legacy `.maestra/` migration), `read`/`write` for `config.md`, `team.md`, `labels.md`, `workflow.md` (commit + best-effort push) |

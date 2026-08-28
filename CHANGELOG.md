@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Prompt-free instruction loading (R17, issue #52): new `maestra_read_instructions`
+  tool serves the full content of exactly one instruction file (relative path) from
+  the installed tree `<host-config>/maestra/instructions/` — allowlist with
+  fail-closed containment (absolute paths, `..` and symlink escapes rejected).
+  Kernels (v9/v6/v7/v2), journeys (j1/j2/j3/j8) and the agent bootstrap pointers
+  now load via the tool instead of host `read` (`external_directory` permission
+  grants removed from the generated agent markdown); smoke assertions flipped to
+  the new contract; eval IL-01 added. Closes dogfooding finding F039
+  (per-session read-permission prompts on out-of-workspace instruction files).
+
 - Universal pre-creation dedup gate (R19, issue #53): anti-bypass trigger #19 —
   no demand-representing issue is born without a prior duplicate/related search
   (open + closed); `search-similar` cookbook operation (GH + GL) with §1
