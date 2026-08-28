@@ -58,7 +58,7 @@
 - Origem: R03, issue #22, emissão de override register + Event D
 - Sintoma: O `reference/instrumentation.md` documenta os campos do payload de `type=override` como `type`, `contested_criterion`, `stated_reason` (linhas 197-203) e do `type=D` como `contested_criterion` (linhas 114-116). O schema zod real da ferramenta exige `override_type`, `disputed_criterion`, `declared_reason`. O Facilitador tentou primeiro com os nomes documentados e recebeu erro de validação ("Invalid payload for event type override: override_type: Required; disputed_criterion: Required; declared_reason: Required"). Causa 2 chamadas falhas antes de corrigir. O `instrumentation.md` é declarado como cópia do schema da ferramenta ("these formats are a copy of the tool's zod schema — if the tool changes, this file changes with it"), mas divergiu.
 - Tentativas/workaround: Lido o erro, corrigidos os nomes dos campos para o schema real, emissão bem-sucedida. A divergência documentação × código (trigger #16) deve ser formalizada como `doc-bug`.
-- Status: open | triaged→Rnn | resolved
+- Status: open (recorrência em R16, 2026-08-28 — mesma divergência `instrumentation.md` × schema zod ao registrar override de merge local; 2ª ocorrência registrada)
 ```
 
 ---
@@ -135,7 +135,7 @@
 - Tentativas/workaround: Lido o erro, corrigidos os nomes dos campos para o schema real, emissão bem-sucedida. A divergência documentação × código (trigger #16) deve ser formalizada como `doc-bug`.
 - Status: open
 
-<!-- Próximo ID: F030. Registre novas entradas abaixo, em ordem cronológica. -->
+<!-- Próximo ID: F041. Registre novas entradas abaixo, em ordem cronológica. -->
 
 ## F020 — Onda de Stage 3 (#7, #8, #9) criada com metadado `epic: 3` mas sem link de sub-issue
 - Data: 2026-07-28
@@ -663,4 +663,60 @@
 - Origem: R14 (#48) — teste conjunto pós-instalação (dogfooding da migração)
 - Sintoma: No checkout principal pós-merge, `node dist/cli/migrate-config.js` funciona, mas `npx --no-install maestra-config read config.md` retorna **vazio com exit 0** (silêncio total, nem erro). Causa em duas camadas: (1) `npm install` "up to date in 1s" **não recria links de bin do pacote root** quando não há mudanças a instalar — `node_modules/.bin/maestra-config` ficou inexistente após o merge que adicionou o bin ao package.json; (2) `npx --no-install` com bin inexistente faz no-op silencioso com exit 0 em vez de falhar com "command not found". O CLI em si está correto (invocação direta por node retorna os 211 bytes).
 - Tentativas/workaround: diagnóstico por instrumentação (chamada direta da store via node: len 211; CLI direto: 211 bytes em pipe, arquivo e chamada de função) → isolou a camada npx/npm. Workaround: invocar por `node dist/cli/migrate-config.js` (caminho usado pelo smoke). Candidato a melhoria: documentar invocação direta no README e/ou criar um runner `scripts/` que resolva o caminho do dist.
+- Status: open
+
+## F038 — `Closes #N` no corpo do commit não fecha issues nos merges; 4 cards "In Progress" por 30 dias com trabalho já mergeado
+- Data: 2026-08-28
+- Categoria: board-state
+- Origem: análise manual do board (Project #23) — issues #16, #19, #20, #21
+- Sintoma: os merges dos PRs #23–#26 (2026-07-29) implementaram duplas de issues (#14+#19, #17+#21, #18+#20, #15+#16) com `Closes #N` no **corpo do commit**, mas apenas a issue primária de cada dupla foi fechada; as secundárias (#16, #19, #20, #21) permaneceram OPEN com cards "In Progress" por ~30 dias enquanto o trabalho já estava em main (changelogs dos arquivos citam as próprias issues até hoje). Board divergiu da realidade — exatamente a violação de P6 ("três touchpoints, um ato") que a #19 corrige — e a divergência só foi detectada em análise manual do board, não por nenhum gate do fluxo.
+- Tentativas/workaround: fechamento manual das 4 issues com comentário apontando o commit implementador (81b94c4, b7a7fa7, 3afed29, a63c406); cards movidos a Done pela automação do Project (item closed → Done) no mesmo ato do close. Candidato a melhoria: (a) enumeração de TODAS as issues fechadas na **descrição do PR** (não só no corpo do commit) na etapa de aceitação (J5); (b) verificação pós-merge de que issues referenciadas por `Closes` foram efetivamente fechadas.
+- Status: open
+
+## F039 — Aprovação manual de leitura fora do workspace a cada nova sessão (kernel/jornadas em `~/.config/`)
+- Data: 2026-08-28
+- Categoria: ergonomic-friction
+- Origem: sessão ad-hoc (demanda de nova feature) — uso diário do plugin, todas as sessões
+- Sintoma: O gate de entrada e o lazy loading instruem o agente a `read` dos arquivos de instrução em `~/.config/opencode/maestra/instructions/` (kernel, jornadas, reference/), que ficam fora do workspace do projeto. O host (OpenCode/Mimo) solicita aprovação de leitura por arquivo fora do workspace, e a aprovação não persiste entre sessões — o humano precisa aceitar múltiplos prompts no primeiro minuto de TODA sessão maestra. Atrito recorrente e sistemático no entry gate do próprio fluxo.
+- Tentativas/workaround: humano aprova manualmente a cada sessão. Demanda aberta nesta data para uma ferramenta do plugin que devolva o conteúdo desses arquivos (leitura via tool do plugin não dispara prompt de permissão do host), eliminando o atrito na raiz.
+- Status: open (origem da demanda triada nesta data)
+
+## F040 — Recipes de board do cookbook-github divergem do comportamento real do gh CLI 2.97 (jq array-root + item-edit)
+- Data: 2026-08-28
+- Categoria: doc-contradiction
+- Origem: R17 (#52) — nascimento do épico: add-to-board + move-card
+- Sintoma: (1) `gh project list/item-list --format json --jq '.[]…'/'.items[]…'` falha ou retorna vazio nesta versão do gh (2.97.0) — o JSON raiz é array e o `--jq` do gh reporta "expected an object but got: array" (project list) ou silencia (item-list); os recipes do `reference/cookbook-github.md` §5 (add-to-board, discover-ids, move-card) usam exatamente esses jq. (2) `item-edit --field <nome> --value` exige `--url` + número posicional do projeto; a combinação `--project-id + --id + --field/--value` (análoga ao recipe documentado) é rejeitada — o caminho documentado por IDs (`--field-id` + `--single-select-option-id`) não foi testado nesta sessão. Move-card custou 3 tentativas.
+- Tentativas/workaround: `item-add` com `--owner` funcionou (recipe ok); extração de IDs via python sobre JSON bruto funcionou; move final com `gh project item-edit 23 --owner … --url … --field "Status" --value …`. Cookbook precisa de recipes revistos contra o gh vigente (ou de wrapper que não dependa de --jq do gh).
+- Status: open
+
+## F040 — Issues duplicadas criadas em desvios de rota: sem busca de similares fora de J1/J11
+- Data: 2026-08-28
+- Categoria: instruction-ambiguous
+- Origem: relato do humano (uso do Maestra em sessões de projetos) — triagem da demanda nesta data
+- Sintoma: Durante sessões do Maestra, desvios de rota (doc-bugs, tasks de desvio, novas ondas, revert-demands) exigem criar issues novas; nessas criações o facilitador não busca issues relacionadas/duplicatas antes de criar, e a issue criada às vezes já existe no banco ou há similar. A busca prévia hoje só é exigida em dois pontos: J1 Stage 5 Step 0 (dedup de ÉPICOS na triagem) e J11 (captura rápida — create/relate/discard). Os demais pontos de criação — `create-epic`/`create-task` do cookbook §1, `doc-bug` (trigger #16), baton-pass de ondas (J3 Stage 3/4, J4/J6), desvios do J5 — não têm regra de dedup; e o cookbook não documenta operação de busca de similares (só `read-open-load`/`read-hierarchy`).
+- Tentativas/workaround: duplicatas detectadas manualmente depois, pelo humano. Nenhum gate do fluxo detecta a duplicação.
+- Status: triaged→#53
+
+## F041 — Shell `maestra/specialist` spawnado sem marcador `persona::` — ask_peer desabilitado e sessão invisível aos pares
+- Data: 2026-08-28
+- Categoria: instruction-ambiguous
+- Origem: R16 (#34) — delegação de implementação (Fase 4, modo direto)
+- Sintoma: A delegação ao shell `maestra/specialist` injetou a persona inline no corpo do prompt (padrão "persona is injected on demand in the delegation prompt", documentado no README), mas o plugin emitiu aviso de que o shell foi spawnado SEM o marcador `persona::<id>@<panelId>` na primeira linha — nessa condição a sessão NÃO pode usar `ask_peer` (caller-identity fails closed) e não é encontrada por pares. O formato do marcador não está documentado no kernel (seção Host dialect) nem no README; o facilitador seguiu a instrução documentada e ainda assim ativou a degradação. **Recorrência do F035** (mesmo sintoma em R15) — a raiz (formato do marcador não documentado no ponto de delegação) segue aberta.
+- Tentativas/workaround: inofensivo para delegação de implementação (sem necessidade de ask_peer); o trabalho foi concluído. Para trabalho de painel (J9), a mesma delegação silenciaria a voz do especialista no consensus turn.
+- Status: open (recorrência de F035)
+
+## F042 — Numeração duplicada no registry: duas entradas distintas com ID F040
+- Data: 2026-08-28
+- Categoria: doc-contradiction
+- Origem: análise do próprio findings.md durante a sessão R16 (#34)
+- Sintoma: `grep '^## F0'` mostra DOIS cabeçalhos `## F040` — "Recipes de board do cookbook-github divergem…" e "Issues duplicadas criadas em desvios de rota…". A segunda entrada (triaged→#53) deveria ser F041. A regra "ID incremental: próximo ID livre" falhou na escrita da segunda entrada; entradas posteriores (F041/F042 desta sessão) foram numeradas assumindo a colisão como fato consumado.
+- Tentativas/workaround: numeração das entradas novas seguiu o máximo + 1 a partir das existentes; a colisão permanece (arquivo é append-only — renumeração exige decisão de edição pontual autorizada).
+- Status: open
+
+## F043 — `npm run ci` vermelho em clone/worktree fresco: submódulo do catálogo não é inicializado pelo npm install
+- Data: 2026-08-28
+- Categoria: ergonomic-friction
+- Origem: R16 (#34) — verificação em primeira pessoa no worktree `.worktrees/r16-…`
+- Sintoma: `npm run ci` falha em 3 testes de `src/catalog/loader.test.ts` ("expected undefined to be defined", totalPersonas < 360) em qualquer clone/worktree novo — o submódulo `src/catalog/agency-agents` não vem inicializado e o `npm install` não o inicializa. O mesmo ocorre no checkout principal deste clone (submódulo `-6a3689f` não inicializado). O checklist de comandos do AGENTS.md/README não menciona `git submodule update --init`.
+- Tentativas/workaround: `git submodule update --init` no worktree → loader.test.ts 6/6 verde e `npm run ci` verde de ponta a ponta. Candidato a melhoria: init do submódulo no prepare/postinstall do npm, ou nota de pré-requisito no README/AGENTS.md.
 - Status: open

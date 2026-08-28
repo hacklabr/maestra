@@ -1,6 +1,6 @@
 # Template — Two-layer issue (P1)
 
-> Source: docs/referencia/jornadas.md §5 P1 (+ P1.1), v2.1 · Module version: 1 — 2026-07-28
+> Source: docs/referencia/jornadas.md §5 P1 (+ P1.1), v2.1 · Module version: 2 — 2026-08-28 (R16, issue #34: classification note — native type + dimension labels live in platform fields, not the body)
 > Anti-drift: human layer immutable in spirit (never rewritten — only corrected/appended); execution layer free. The `## Details for execution` boundary has a FIXED name.
 > Platform-neutral (ADR-012): "issue" = issue/ticket of the detected platform.
 
@@ -45,5 +45,6 @@
 
 **Update rules:**
 - The metadata line is updated on every transition (variant, stage, substate, round) — in the same act as any override (P3 atomicity).
+- Classification fields (P1): the native issue type (set at triage/capture per J1/J11) and dimension labels (applied at triage when they fit the work) live in the platform's fields, NEVER in this body — informational, outside the parser vocabulary (ADR-005).
 - `Substate` uses only the P1.1 values (`triage`, `in-artifacts`, `awaiting-assessment`, `awaiting-s1-approval`, `awaiting-feedback-decision`, `in-execution`, `paused`, `awaiting-reconciliation`, `closed-reconciled`). `closed-without-reconciliation` is never written — it is derived (J2, branch B6).
 - Later comments (decisions, feedback, overrides) follow the same pattern: human sentence first, technical detail later.

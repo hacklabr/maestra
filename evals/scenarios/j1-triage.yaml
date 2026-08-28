@@ -15,6 +15,7 @@
     requiredPatterns:
       - "Minimal"
       - "no criteria|none of the criteria"
+      - "\\btype\\b"   # R16/RF-45: triage derives and announces the native issue type
     expectEvent: "A"
     hardFail: ["assignee-after-confirmation"]
   assert:

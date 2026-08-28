@@ -117,6 +117,15 @@ Cost: 1 line in the subagent enum (~60 tokens/msg) instead of 12+. Works identic
 
 The platform is **not** baked in at install time: it is detected **per repository** (`config.md` on the orphan branch `__maestra_config__` → remote → probe → single persisted question — ADR-010/ADR-003). The same plugin serves repos on different platforms on the same machine.
 
+## Issue classification convention
+
+Every issue classified at triage (J1) carries two **informational** axes — nothing in the flow consumes them (no board-column mapping, no report changes; the digest's parser vocabulary is untouched). See `docs/decisions/adr/ADR-005` in the repo.
+
+- **Type** — the platform's **native issue type field** (GitHub: Bug/Feature/Task; values are the org's own), one per issue. At triage the facilitator derives it from the demand text and confirms it like any other criterion; quick capture (J11) records a curated guess with zero extra questions, confirmed or corrected at promotion.
+- **Dimensions** — free-form repo labels, multiple per issue (initial set: `gestão`, `melhoria`, `performance`, `devops`, `documentação`), applied at triage when they fit the work; created on demand, idempotently.
+
+Manually created issues are welcome to follow the same convention. Orgs/repos without native issue types degrade gracefully: the issue is created without a type and the facilitator narrates it in one line — classification never blocks the flow.
+
 ## What the plugin exposes
 
 | Item | Type | Purpose |

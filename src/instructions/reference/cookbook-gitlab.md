@@ -1,6 +1,6 @@
 # Cookbook — GitLab (glab CLI + API v4)
 
-> Source: specification.md D6 (ADR-010/011/013/014) · fluxo-de-desenvolvimento.md §4 · jornadas.md P6 · Module version: 2 — 2026-08-18 (R15, issue #49: `reassign-issue` operation)
+> Source: specification.md D6 (ADR-010/011/013/014) · fluxo-de-desenvolvimento.md §4 · jornadas.md P6 · Module version: 3 — 2026-08-28 (R16, issue #34: issue classification note — native type + dimension adaptation pending)
 > Anti-drift: ONLY place where `glab`/GitLab API commands appear (ADR-012). Instructions
 > reference OPERATIONS (neutral names in `kebab-case`), never CLIs. Divergence with the
 > source is a finding, never a silent adjustment.
@@ -25,6 +25,12 @@
 (assigning the `status::*` label already makes the issue appear in the corresponding list).
 
 ## 1. Creation operations
+
+> **Issue classification (R16, ADR-005):** native type + dimension labels are
+> **NOT yet adapted** for GitLab — out of scope in R16, tracked for the first
+> real GitLab pilot (per ROADMAP). Until then, create issues WITHOUT type;
+> dimension labels work as plain repo labels when the repo adopts them
+> (create-label below is already idempotent on 409).
 
 ### create-epic
 ```bash
