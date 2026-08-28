@@ -736,3 +736,11 @@
 - Sintoma: `npm run ci` falha em 3 testes de `src/catalog/loader.test.ts` ("expected undefined to be defined", totalPersonas < 360) em qualquer clone/worktree novo — o submódulo `src/catalog/agency-agents` não vem inicializado e o `npm install` não o inicializa. O mesmo ocorre no checkout principal deste clone (submódulo `-6a3689f` não inicializado). O checklist de comandos do AGENTS.md/README não menciona `git submodule update --init`.
 - Tentativas/workaround: `git submodule update --init` no worktree → loader.test.ts 6/6 verde e `npm run ci` verde de ponta a ponta. Candidato a melhoria: init do submódulo no prepare/postinstall do npm, ou nota de pré-requisito no README/AGENTS.md.
 - Status: open
+
+## F044 — Hook de validação do deviations.md rejeita rótulos de campo fora do canon EN do template
+- Data: 2026-08-28
+- Categoria: instruction-ambiguous
+- Origem: R18 (#54) — primeiro preenchimento do `deviations.md` da round
+- Sintoma: o facilitador escreveu as entradas com rótulos de campo em PT ("**Planejado:**", "**Razão:**") seguindo o idioma da conversa; o hook pós-escrita rejeitou a entrada 2× ("missing Planned, Implemented, Reason…") até que os rótulos canônicos EN do template fossem usados. Segunda rejeição foi por link: URL crua no campo "Decision registered at" não é reconhecida — o hook exige sintaxe markdown `[texto](url)`. O conteúdo estava completo desde a primeira tentativa; só a forma divergiu do canon.
+- Tentativas/workaround: releitura do template → rótulos EN; conversão das URLs para links markdown → hook silencia. Candidato a melhoria: mensagem do hook nomear o formato esperado (rótulos canônicos EN + link markdown) para resolver em 1 tentativa.
+- Status: open
