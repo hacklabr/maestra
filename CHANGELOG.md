@@ -5,9 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.3.0] - 2026-08-28
 
 ### Added
+
+- Issue classification (R16, issue #34): native issue type + dimension labels
+  at issue creation (RF-45..48) — classification wired into J1 triage and
+  scope templates.
 
 - Prompt-free instruction loading (R17, issue #52): new `maestra_read_instructions`
   tool serves the full content of exactly one instruction file (relative path) from
@@ -25,6 +29,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   creation precondition; microcopy "Duplicate found" declared journey-agnostic;
   AB-19 eval pins search-before-create on a mid-session doc-bug arc.
 
+### Changed
+
+- Epic-branch PR topology (R18, issue #54, ADR-006): `pr-topology` now
+  defaults to `epic-branch` — daughter-task PRs/MRs target the epic branch
+  (`epic/<n>-<slug>`, lazy birth at the first consent gate with ≥2 open
+  implementation tasks) instead of publishing piecemeal to the integration
+  branch; the epic's integration PR/MR (epic branch → integration branch)
+  opens in the same act as the last daughter's acceptance (new substate
+  `awaiting-integration`, P6 7a) and its merge moves the epic to
+  `awaiting-reconciliation` + deletes the branch (P6 7b). Opt-out:
+  `pr-topology: direct` restores direct-to-integration task PRs.
+
+## [1.2.0] - 2026-08-19
+
+### Added
+
 - Orphan-branch configuration store (R14, issue #48, ADR-003): per-repo
   configuration (`config.md`, `team.md`, `labels.md`) now lives on the orphan
   branch `__maestra_config__` (no shared history with the project), read via
@@ -37,6 +57,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   upsert. Instructions (J1/J2/J12, protocols P5/P6, microcopy, templates,
   cookbooks) and eval/smoke harness updated in lockstep. Supersedes the
   "config versioned in the host tree" decision (ADR-014 location).
+
+- Post-PR QA workflow (R15, issue #49): close|qa modes,
+  awaiting-qa/qa-rejected substates, J2 B7 guided QA session, workflow.md on
+  `__maestra_config__` (ADR-004), reassign-issue (GH/GL cookbooks).
 
 ## [1.1.0] - 2026-08-05
 
