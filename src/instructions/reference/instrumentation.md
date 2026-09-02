@@ -112,7 +112,7 @@ modelo-dados-ou-contrato · decisao-tecnica-duradoura · comportamento-em-uso ·
 |---|---|---|
 | `from` | non-empty string | Value indicated by criteria/state. |
 | `to` | non-empty string | Value decided by the human. |
-| `contested_criterion` | non-empty string | The disputed objective criterion (e.g., "estimate > 5 days"). |
+| `contested_criterion` | non-empty string | The disputed objective criterion (e.g., "one capability with several behaviors"). |
 
 **Body (verbatim):**
 
@@ -123,8 +123,8 @@ modelo-dados-ou-contrato · decisao-tecnica-duradoura · comportamento-em-uso ·
 **Example:**
 
 ```json
-{ "type": "D", "payload": { "from": "Condensed", "to": "Minimal", "contested_criterion": "estimate > 5 days" } }
-→ **Event D** — override: Condensed → Minimal; contested criterion: "estimate > 5 days" — facilitator
+{ "type": "D", "payload": { "from": "Condensed", "to": "Minimal", "contested_criterion": "one capability with several behaviors" } }
+→ **Event D** — override: Condensed → Minimal; contested criterion: "one capability with several behaviors" — facilitator
 ```
 
 ---
@@ -218,7 +218,7 @@ modelo-dados-ou-contrato · decisao-tecnica-duradoura · comportamento-em-uso ·
 ```json
 { "type": "override", "payload": {
   "type": "variant", "from": "Condensed", "to": "Minimal",
-  "contested_criterion": "estimate > 5 days",
+  "contested_criterion": "one capability with several behaviors",
   "stated_reason": "scope is already closed with the client, there is nothing to detail in the PRD",
   "decided_by": "rafael", "date": "2026-07-28" } }
 ```
@@ -227,7 +227,7 @@ modelo-dados-ou-contrato · decisao-tecnica-duradoura · comportamento-em-uso ·
 **Override register** — facilitator
 - Type: variant
 - From: Condensed → To: Minimal
-- Objective criterion contested: estimate > 5 days
+- Objective criterion contested: one capability with several behaviors
 - Stated reason: scope is already closed with the client, there is nothing to detail in the PRD
 - Decided by: @rafael on 2026-07-28
 ```
