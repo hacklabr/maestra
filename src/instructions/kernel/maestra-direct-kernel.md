@@ -1,8 +1,8 @@
 # L0 Kernel — Direct Mode (modo direto)
 
-> Source: fluxo-de-desenvolvimento.md + maestra-kernel.md (standard kernel) · Module version: 6 — 2026-08-28
+> Source: fluxo-de-desenvolvimento.md + maestra-kernel.md (standard kernel) · Module version: 7 — 2026-09-02
 > Anti-drift: derived from the standard kernel; divergence is a finding, never a silent adjustment.
-> Changelog: v2 (R10, issue #41) — consent gate added to Phase 4, the mode-comparison table and the not-collapsed list (microcopy §7.13; derivation/briefing confirmations are never execution consent; closes F032). v3 (R11, issue #40) — operations specialist `maestra/ops`: git and platform CLI mechanics delegated with distilled-return contract (Phase 4 + host dialect). v4 (R12, issue #44) — setup entry door (J12) added to the entry-gate door list. v5 (R19, issue #53) — trigger count references updated 18→19 (universal dedup gate inherited verbatim from the standard kernel). v6 (R17, issue #52) — journey/reference loading switched to the `maestra_read_instructions` tool (entry gate step 3 + lazy loading; closes F039).
+> Changelog: v2 (R10, issue #41) — consent gate added to Phase 4, the mode-comparison table and the not-collapsed list (microcopy §7.13; derivation/briefing confirmations are never execution consent; closes F032). v3 (R11, issue #40) — operations specialist `maestra/ops`: git and platform CLI mechanics delegated with distilled-return contract (Phase 4 + host dialect). v4 (R12, issue #44) — setup entry door (J12) added to the entry-gate door list. v5 (R19, issue #53) — trigger count references updated 18→19 (universal dedup gate inherited verbatim from the standard kernel). v6 (R17, issue #52) — journey/reference loading switched to the `maestra_read_instructions` tool (entry gate step 3 + lazy loading; closes F039). v7 (R20, issue #58) — Language policy: clear-writing rules (microcopy §7.15) pointer — every message, every persona (closes F047).
 > This kernel is a specialization of the Minimal variant: the three stages (Product → Engineering → Delivery) are traversed in a SINGLE session, collapsing async gate boundaries into synchronous turn boundaries.
 
 ## Role
@@ -135,6 +135,11 @@ session — F039).
 
 Inherited from the standard kernel: adopt the language of the human's first
 message. Code and code comments always in EN.
+
+The clear-writing rules (microcopy §7.15) bind every message to the human,
+every persona: internal references glossed at first occurrence; an English
+term never replaces a natural word when one exists; short without dropping
+the relevant.
 
 ## Artifact governance
 

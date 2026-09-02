@@ -1,0 +1,72 @@
+# R20 — clear-writing non-regression (issue #58, origin F047, microcopy §7.15).
+# Golden inputs T1–T4 pin rule 1 (internal references glossed at first
+# occurrence) at tier-1 and leave rules 2–3 to the tier-2 rubric (items 11–13).
+#
+# Mock-driven (vars.mock — R02 doctrine): the golden speech is what the model
+# must produce. T1/T4 are VIOLATION goldens — the inverted assert passes only
+# when the detector fires, proving the guard catches the real F047 sample.
+
+# T1 — mid-implementation report with bare internal IDs (the F047 BEFORE text).
+- description: "R20 T1: bare internal refs (F047 BEFORE sample) — detector must fire"
+  vars:
+    fixture: fixtures/github/epic-etapa3-execucao.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j5-stage3.md"]
+    entry: "12"
+    mock: true
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "maestra_issue_digest", args: { issue: 12 } }
+      - text: "F045 (novo): recipes de board do cookbook divergem do gh 2.97 — 3 tentativas no move-card. Candidato a round futura."
+  assert:
+    - type: javascript
+      value: file://asserts/internal-refs-explained-violation.mjs
+
+# T2 — the glossed AFTER text (F047) — every ref explained at first occurrence.
+- description: "R20 T2: glossed internal refs (F047 AFTER sample) — detector stays quiet"
+  vars:
+    fixture: fixtures/github/epic-etapa3-execucao.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j5-stage3.md"]
+    entry: "12"
+    mock: true
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "maestra_issue_digest", args: { issue: 12 } }
+      - text: "Achei um problema novo e registrei (F045 — registro nº 45 do nosso caderno de falhas): o manual de comandos do plugin ensina uma receita para mover cards no quadro que não funciona na versão atual da ferramenta de linha de comando do GitHub (gh 2.97) — levou 3 tentativas até descobrir o caminho certo. Fica anotado como candidato para um próximo ciclo de trabalho; nada quebra por isso agora."
+  assert:
+    - type: javascript
+      value: file://asserts/internal-refs-explained.mjs
+
+# T3 — untranslated English jargon in a PT-BR message (finding, move-card).
+# Tier-1 passes (refs ARE glossed); the violation is semantic — rubric item 12.
+- description: "R20 T3: untranslated English jargon in PT-BR (finding, move-card) — rubric violation"
+  vars:
+    fixture: fixtures/github/epic-etapa3-execucao.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j5-stage3.md"]
+    entry: "12"
+    mock: true
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "maestra_issue_digest", args: { issue: 12 } }
+      - text: "Encontrei um finding novo e registrei no caderno (F046 — registro nº 46): a receita de move-card do manual falhou três vezes na versão atual da ferramenta de linha de comando do GitHub (gh 2.97). Anotado como candidato para o próximo ciclo; nada quebra agora."
+  assert:
+    - type: javascript
+      value: file://asserts/internal-refs-explained.mjs
+
+# T4 — dense sentence stacking three codes with no gloss — detector must fire.
+- description: "R20 T4: three bare codes stacked in one sentence — detector must fire"
+  vars:
+    fixture: fixtures/github/epic-etapa3-execucao.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j5-stage3.md"]
+    entry: "12"
+    mock: true
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "maestra_issue_digest", args: { issue: 12 } }
+      - text: "Status da rodada: R20 toca #58 e F047, type=C. Seguimos com a implementação dos evals."
+  assert:
+    - type: javascript
+      value: file://asserts/internal-refs-explained-violation.mjs

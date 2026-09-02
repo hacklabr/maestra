@@ -1,8 +1,8 @@
 # Microcopy Library (L3 — language layer)
 
-> Source: docs/referencia/jornadas.md §7, v2.3 · Module version: 8 — 2026-08-28
+> Source: docs/referencia/jornadas.md §7, v2.3 · Module version: 9 — 2026-09-02
 > Anti-drift: verbatim templates with typed slots; post-dogfood adjustment HERE, never in code. Divergence between this module and the source is a finding, never a silent adjustment.
-> Changelog: v0 scaffold (T6) → v1 (T10): full transcription of §7.1–§7.11 with typed slots; deviations.md hook block preserved verbatim; override comment replaced by reference to the tool contract (`maestra_emit_event`); platform-neutral adaptations marked explicitly. v2 (journeys v2.3, human decision) — block §7.9 W-04 ("specialist outside the installed catalog") DELETED: shell-specialist architecture makes the whole catalog invocable; there is no longer an installed subset or "nearest" specialist. v3 (R02, ADR-001) — §7.2 "Derived state" rewritten as two-phase `<derivation>` (typed slots, internal) / `<speech>` (natural sentence, only emitted) contract + "Substate → situation translation" table + 3 few-shot anchors; the field names `variant`/`stage`/`substate`/`gate` are never enumerated to a non-technical persona. v4 (R07) — §7.12 aligned to curated capture (J11 v2): draft wording "improved from what you said", `{SUMMARY}` curated (may carry one grounding sentence), new "Duplicate found" template (create new / relate / discard), Rules line updated to the curated doctrine. v5 (R10, issue #41) — new §7.13 "Consent gate before implementation": ONE alignment message (4 steps: task explanation → doubts → execution plan → adjustment) + ONE explicit-consent question; derivation confirmation is never execution consent (closes F032). v6 (R15, issue #49) — §7.2: `awaiting-qa`/`qa-rejected` situation translations; new §7.14 "QA session conduction" (presentation template + approve/reject verdict templates; transitions execute only after the human verdict). v7 (R19, issue #53) — §7.12 "Duplicate found" declared journey-agnostic: universal-use note added (kernel trigger #19 — closed candidates count; third option spoken per context). v8 (R18, issue #54) — §7.2: `awaiting-integration` situation translation (epic complete; integration PR/MR in review — ADR-006).
+> Changelog: v0 scaffold (T6) → v1 (T10): full transcription of §7.1–§7.11 with typed slots; deviations.md hook block preserved verbatim; override comment replaced by reference to the tool contract (`maestra_emit_event`); platform-neutral adaptations marked explicitly. v2 (journeys v2.3, human decision) — block §7.9 W-04 ("specialist outside the installed catalog") DELETED: shell-specialist architecture makes the whole catalog invocable; there is no longer an installed subset or "nearest" specialist. v3 (R02, ADR-001) — §7.2 "Derived state" rewritten as two-phase `<derivation>` (typed slots, internal) / `<speech>` (natural sentence, only emitted) contract + "Substate → situation translation" table + 3 few-shot anchors; the field names `variant`/`stage`/`substate`/`gate` are never enumerated to a non-technical persona. v4 (R07) — §7.12 aligned to curated capture (J11 v2): draft wording "improved from what you said", `{SUMMARY}` curated (may carry one grounding sentence), new "Duplicate found" template (create new / relate / discard), Rules line updated to the curated doctrine. v5 (R10, issue #41) — new §7.13 "Consent gate before implementation": ONE alignment message (4 steps: task explanation → doubts → execution plan → adjustment) + ONE explicit-consent question; derivation confirmation is never execution consent (closes F032). v6 (R15, issue #49) — §7.2: `awaiting-qa`/`qa-rejected` situation translations; new §7.14 "QA session conduction" (presentation template + approve/reject verdict templates; transitions execute only after the human verdict). v7 (R19, issue #53) — §7.12 "Duplicate found" declared journey-agnostic: universal-use note added (kernel trigger #19 — closed candidates count; third option spoken per context). v8 (R18, issue #54) — §7.2: `awaiting-integration` situation translation (epic complete; integration PR/MR in review — ADR-006). v9 (R20, issue #58) — new §7.15 "Clear writing rules (every message)": internal references glossed at first occurrence, English only as the proper noun of the thing, short without dropping the relevant, every persona incl. technical (closes F047).
 
 ## Usage conventions
 
@@ -29,6 +29,7 @@
 | §7.12 | Quick capture (J11) |
 | §7.13 | Consent gate before implementation (J2/J5, both modes) |
 | §7.14 | QA session conduction (J2 branch B7) |
+| §7.15 | Clear writing rules (every message, every persona) |
 
 ---
 
@@ -800,3 +801,28 @@ with the failure named in the comment — when the fix is in, we validate again.
 Then, in the same act: card to **Ready**, reassignment to the implementer, metadata `qa-rejected`, comment naming what failed.
 
 Rules: rejection follows the welcoming-tone doctrine (§7.11) — confession vocabulary forbidden ("unfortunately", "didn't work out", "we had to"); the only cited consequence is concrete and future ("when the fix is in, we validate again"); the failure is named as a fact of the task, never a fault of a person.
+
+## §7.15 Clear writing rules (every message)
+
+> Born in R20 (#58, origin F047). These rules bind EVERY message to the human in EVERY persona — P4 governs domain vocabulary per persona; these rules govern clarity for everyone (a technical reader is never a license for obscurity). Checkable imperatives, not aspirations: verify each against the message before sending.
+
+1. **Internal reference → gloss at first occurrence.** Every internal code used in a message to the human — findings (`Fnnn`), rounds (`Rnn`), issues (`#nn`), tool versions (the issue-platform CLI version, like `2.97`), field names (`type=F`) — is followed by a short explanation the FIRST time it appears in that message: code + role in plain words ("F047 — entry nº 47 of the dogfooding log, the report you wrote about hard-to-read texts"; "R16 — work cycle 16"). Never assume the human holds the codebook. The precise record keeps its exact wording where it lives (findings.md, the issue); the MESSAGE explains it in plain words — two layers, same doctrine as P1.
+2. **English only as the proper noun of the thing.** In conversation, the session's natural language wins: an English term never replaces a natural word when one exists (finding → registro/entry; move-card → mover o card). When the English term IS the name of the thing in the project's universe (PR/MR, label, board, worktree), keep it, with minimal context on first occurrence. This rule governs the human-facing language; instruction files themselves stay EN (repo convention).
+3. **Short without dropping the relevant.** Every message carries what happened, what it means, what comes next — in direct sentences. Cross-reference density is not completeness: a sentence that needs the human to hold three codes to parse gets split or cut.
+4. **Every persona, no exceptions.** Stage 2/3 freedom in P4 is about domain vocabulary, not clarity — developers get the same readable messages, with their vocabulary.
+
+Before/after (from F047's real sample — mid-implementation report):
+
+```text
+BEFORE: "F045 (novo): recipes de board do cookbook divergem do CLI 2.97 —
+3 tentativas no move-card. Candidato a round futura."
+
+AFTER: "Achei um problema novo e registrei (F045 — registro nº 45 do nosso
+caderno de falhas): o manual de comandos do plugin ensina uma receita para
+mover cards no quadro que não funciona na versão atual da ferramenta de
+linha de comando da plataforma de issues (CLI 2.97) — levou 3 tentativas até descobrir o
+caminho certo. Fica anotado como candidato para um próximo ciclo de
+trabalho; nada quebra por isso agora."
+```
+
+The AFTER keeps the reference (F045) AND reads without stopping once. The BEFORE assumed the human decodes four internal terms in one breath.
