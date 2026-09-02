@@ -135,7 +135,23 @@
 - Tentativas/workaround: Lido o erro, corrigidos os nomes dos campos para o schema real, emissão bem-sucedida. A divergência documentação × código (trigger #16) deve ser formalizada como `doc-bug`.
 - Status: open
 
-<!-- Próximo ID: F047. Registre novas entradas abaixo, em ordem cronológica. (Ver F042/F046: IDs duplicados F040/F041/F042 pré-existentes aguardam decisão de renumeração.) -->
+<!-- Próximo ID: F050. Registre novas entradas abaixo, em ordem cronológica. (Ver F042/F046: IDs duplicados F040/F041/F042 pré-existentes aguardam decisão de renumeração.) -->
+
+## F049 — Receita `move-card` do cookbook sem `--limit` no `item-list` (item invisível além da página 20)
+- Data: 2026-09-02
+- Categoria: ergonomic-friction
+- Origem: R20, issue #59, birth da epic (add-to-board + move-card via maestra/ops)
+- Sintoma: A receita `move-card` do cookbook-github resolve o item id via `gh project item-list <N> --format json --jq '.items[] | select(.content.number==<N>) | .id'` sem `--limit`. O `item-list` pagina em 20 itens por padrão; com a issue #59 na posição 36/36 do board, o select retorna vazio silenciosamente (não erro) — o item simplesmente não é encontrado. O subagente ops detectou e corrigiu com `--limit 50`.
+- Tentativas/workaround: `--limit 50` no item-list resolveu. A receita do cookbook precisa incluir o limite (ou `--limit 100` canônico, alinhado ao padrão de paginação do read-hierarchy).
+- Status: open
+
+## F048 — Briefings rasos para demandas nascidas em texto livre (descoberta sem profundidade mínima)
+- Data: 2026-09-02
+- Categoria: instruction-ambiguous
+- Origem: relato do humano em sessão de triagem (demanda: "descoberta mais aprofundada para demandas em texto livre")
+- Sintoma: Demandas que chegam pela porta de entrada de texto livre (J1) têm produzido briefings pobres no Stage 1. A instrução atual (J1 → J3/kernel direto Phase 2) prescreve o formato da conversa de descoberta, mas não prescreve profundidade mínima nem dimensões obrigatórias de descoberta para esse ponto de entrada (o mais carente de contexto — sem corpo de issue, sem histórico). Consequência relatada: retrabalho na implementação ("um erro nessa etapa vira uma bola de neve").
+- Tentativas/workaround: Humano propôs reaproveitar como referência o prompt do Briefing-Writer do plugin Mesa (classificação de magnitude, entrevista estruturada em dimensões, coverage map com profundidade explícita). Virou demanda nesta sessão.
+- Status: open
 
 ## F020 — Onda de Stage 3 (#7, #8, #9) criada com metadado `epic: 3` mas sem link de sub-issue
 - Data: 2026-07-28
@@ -755,3 +771,11 @@
 - Sintoma: a sessão R17 leu `docs/dogfooding/findings.md` de um checkout main **atrás do origin** (arquivo terminava em F038, marcador dizia F030) enquanto R16/R18/R19 já haviam registrado F040–F044 no origin. A regra "ID incremental: próximo ID livre indicado no cabeçalho" foi seguida contra estado desatualizado → novo F040 colidindo com o do R19 (corrigido para F045 na reconciliação) e apêndice de F039 colidindo com espaço de numeração já consumido. O pull que atualizou o main local aconteceu (via ops, na criação da worktree) DEPOIS dos primeiros registros da sessão, sem re-verificação do arquivo. Família do meta-registro F042 (R16): a regra de numeração não tem guarda contra main desatualizado nem contra registro concorrente.
 - Tentativas/workaround: dano da sessão corrigido na reconciliação (cabeçalho F039 restaurado; F040→F045 renumerado com nota; adendo movido). Duplicatas pré-existentes (F040/F041/F042 duplos da era R16/R19) permanecem — renumeração exige decisão autorizada (nota no F042). Candidatos: (a) regra "fetch antes do primeiro registro de finding"; (b) guarda de ID no hook de escrita.
 - Status: open
+
+## F047 — Textos do facilitador com custo cognitivo alto: IDs internos sem explicação, jargão não traduzido, densidade excessiva
+- Data: 2026-09-02
+- Categoria: ergonomic-friction
+- Origem: relato do humano (uso diário do Maestra; exemplo: relatório de implementação citando F045/F046/F031/R16/R18 sem explicação, termos em inglês como "finding"/"move-card", "gh 2.97", "type=F")
+- Sintoma: O humano relata que os textos escritos pela Maestra são mentalmente custosos de entender, especialmente no meio de tarefas de implementação. Padrões citados: (1) IDs internos (F0nn, Rnn, #nn) usados sem nenhuma explicação do que são; (2) jargão/términos em inglês misturados ao português sem tradução ou contexto (finding, move-card, type=F, gh 2.97); (3) frases densas que empilham referências cruzadas em vez de comunicar o essencial. O humano precisa repetidamente pedir "escreva para humanos lerem". A R02 (linguagem acolhedora) tratou de tom e enumeração de campos para a persona Product — não cobriu clareza de conteúdo (explicar referências internas, traduzir jargão, ser curto sem omitir o relevante) para a persona desenvolvedora.
+- Tentativas/workaround: O humano reescreve o pedido de clareza a cada sessão ("escreva para humanos lerem"); nenhuma mudança nas instruções até aqui.
+- Status: triaged→R20 (2026-09-02, épico #58)
