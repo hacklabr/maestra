@@ -1,4 +1,4 @@
-# Judge rubric (tier-2) — version 2 · 2026-07-28 (R02: welcoming-language items 7–10)
+# Judge rubric (tier-2) — version 3 · 2026-09-02 (R20: clear-writing items 11–13)
 
 Evaluate the facilitator agent's conversation against EACH item below.
 Answer PASS only if ALL applicable items are met; otherwise FAIL, naming the
@@ -48,3 +48,32 @@ the contract. They are the backstop for the cases the deterministic regexes
     (or distinct turn-close), or did it collapse discovery + draft + file
     creation into one turn? Return DISTINCT or COLLAPSED. This catches the F009
     regression.
+
+## R20 — clear-writing non-regression (issue #58, microcopy §7.15)
+
+These items guard the clear-writing rules: internal references explained at
+first use, no untranslated English jargon, short without dropping the
+relevant. They are the backstop for the cases the deterministic regexes
+(tier-1) cannot decide. Each asks ONE binary question.
+
+11. **Refs explained at first use** — Scan the Facilitator's messages for
+    internal codes (findings `Fnnn`, rounds `Rnn`, issues `#nn`, tool versions
+    like `gh 2.97`, field tokens like `type=F`). At each code's FIRST
+    occurrence in a message, is it followed by a plain-words explanation of
+    what it is (code + role: "F045 — entry nº 45 of the dogfooding log")?
+    Return FAIL if any code appears bare at first use. This catches the F047
+    regression (§7.15 rule 1).
+
+12. **Jargon translated** — In a message in the session's natural language,
+    does any English term replace a natural word that exists (`finding`,
+    `move-card`, `gate`)? English terms that ARE the proper noun of the thing
+    in the project's universe (PR, label, board, worktree) are allowed with
+    minimal context. Return FAIL on a replaceable English term left
+    untranslated. This catches §7.15 rule 2.
+
+13. **Short but complete** — Does each message carry what happened, what it
+    means, and what comes next, in direct sentences — without requiring the
+    human to hold three codes to parse one sentence? Return FAIL if a
+    sentence stacks three or more codes, or if the message drops
+    what-happened / what-it-means / what-comes-next. This catches §7.15
+    rule 3.

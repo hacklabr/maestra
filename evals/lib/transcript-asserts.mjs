@@ -553,6 +553,56 @@ export function assertInstructionsViaTool(transcript) {
   return ok(`instruction loading via plugin tool (${calls.length} call${calls.length === 1 ? "" : "s"}, all relative)`)
 }
 
+// ---------------------------------------------------------------------------
+// R20 — clear-writing non-regression (issue #58, origin F047, microcopy
+// §7.15 rule 1). Every internal reference in a message to the human carries a
+// plain-words gloss at FIRST occurrence. Crude by design — the semantic tier
+// (rubric items 11–13) is the real judge; this tier-1 backstop only pins the
+// F047 regression: the BEFORE sample MUST fail, the AFTER sample MUST pass.
+// ---------------------------------------------------------------------------
+
+/** Internal-reference patterns spoken to the human (§7.15 rule 1). */
+export const INTERNAL_REF_PATTERNS = [
+  { kind: "finding", re: /\bF\d{3}\b/g },
+  { kind: "round", re: /\bR\d{2}\b/g },
+  { kind: "issue", re: /#\d{2,}\b/g },
+  { kind: "tool-version", re: /\b(?:gh|glab)\s+\d+(?:\.\d+)+\b/g },
+  { kind: "field-token", re: /\btype=[A-Z]\b/g },
+]
+
+const GLOSS_PUNCT = /[—():]/
+const GLOSS_WORD = /\b(registro|entry|cycle|issue|versão|version|campo|field|caderno|log)\b/i
+const GLOSS_WINDOW = 120
+
+/**
+ * A gloss is punctuation (—, (, :) AND an explanatory word within ~120 chars
+ * on either side of the reference. Punctuation alone is NOT enough: the F047
+ * BEFORE sample ("F045 (novo): ...") carries "(" and ":" with zero
+ * explanation, and MUST fail. Each distinct reference is checked once — the
+ * rule binds the first occurrence; later bare uses are allowed.
+ */
+export function assertInternalRefsExplained(transcript) {
+  const text = allAgentText(transcript)
+  const unglossed = []
+  const seen = new Set()
+  for (const { kind, re } of INTERNAL_REF_PATTERNS) {
+    for (const m of text.matchAll(re)) {
+      const ref = m[0]
+      if (seen.has(ref)) continue
+      seen.add(ref)
+      const start = m.index ?? 0
+      const window = text.slice(Math.max(0, start - GLOSS_WINDOW), Math.min(text.length, start + ref.length + GLOSS_WINDOW))
+      if (!(GLOSS_PUNCT.test(window) && GLOSS_WORD.test(window))) {
+        unglossed.push(`${ref} (${kind})`)
+      }
+    }
+  }
+  if (unglossed.length > 0) {
+    return fail(`internal reference(s) without a plain-words gloss at first occurrence (§7.15 rule 1, F047 regression): ${unglossed.join(", ")} — every code gets explained the first time it appears in the message`)
+  }
+  return ok("every internal reference glossed at first occurrence")
+}
+
 /** Dispatches hard-fail rules by name (scenario-declared). */
 export function runHardFailRules(transcript, rules) {
   const RULES = {
