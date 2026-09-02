@@ -786,4 +786,4 @@
 - Origem: relato do humano em sessão de triagem (uso do Maestra em projetos; ex.: checkbox em modal + valor default via variável de ambiente)
 - Sintoma: A regra de escala (fluxo §3.3 / J1 Stage 2) eleva Mínimo→Condensado se QUALQUER um dos 5 critérios se aplica — em particular "toca ≥3 módulos/regiões do sistema". Demandas pequenas que atravessam áreas (checkbox numa modal + default configurável por variável de ambiente) são sugeridas como Condensada, acionando a burocracia da variante (múltiplas issues, mais de uma pessoa envolvida, reconsolidação) para trabalho de poucas horas. O eixo "tamanho do desenvolvimento" não existe na regra: o que diferencia Condensada de Completa deveria ser o porte do desenvolvimento (funcionalidade inteira de médio porte — um plugin, um módulo — vs. iniciativa muito complexa), e uma demanda pequena multi-área deveria permanecer Mínima. Override manual Condensed→Minimal já foi registrado antes (R14, issue #48 — ver F034).
 - Tentativas/workaround: humano contesta a sugestão na conversa de triagem e corrige manualmente.
-- Status: open
+- Status: triaged→R21 (2026-09-02, épico #60)
