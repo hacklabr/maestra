@@ -17,7 +17,7 @@
       - "tool:maestra_emit_event.*override"
       - "exec:.*(--add-label|issue edit)"
     requiredPatterns:
-      - "estimate|5 days|criterion"
+      - "estimate|assisted|capabilit|criterion"
       - "Condensed"
     expectEvent: override
     hardFail: ["override-before-mutation"]

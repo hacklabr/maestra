@@ -2,7 +2,7 @@
 
 > Source: docs/referencia/jornadas.md v2.1 (§2 calibração, §3 tabela de perguntas, §6 J1) + fluxo-de-desenvolvimento.md §3 · Module version: 2 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T8): tree 3.2, hierarchy derive>confirm>ask, limits, disguise, dedup (G-10), team.md + config.md, P7, first wave. v2 (issue #16) — Stage 5: structural parent-child link made mandatory (not just textual metadata); wave completeness rule added ("born complete, never incremental") (closes F014, F020). v3 (R16, issue #34) — issue classification: native type + dimension labels at triage (RF-45..48). v4 (R19, issue #53) — Step 0 declared an instance of the universal dedup gate (kernel trigger #19): references `search-similar` (cookbook §3) and extends the search to closed epics (demands already delivered). · Module version: 4 — 2026-08-28 v2 (R17, issue #52) — instruction loads (microcopy/protocols) switched to `maestra_read_instructions` (closes F039).
+> Changelog: v1 — initial version (T8): tree 3.2, hierarchy derive>confirm>ask, limits, disguise, dedup (G-10), team.md + config.md, P7, first wave. v2 (issue #16) — Stage 5: structural parent-child link made mandatory (not just textual metadata); wave completeness rule added ("born complete, never incremental") (closes F014, F020). v3 (R16, issue #34) — issue classification: native type + dimension labels at triage (RF-45..48). v4 (R19, issue #53) — Step 0 declared an instance of the universal dedup gate (kernel trigger #19): references `search-similar` (cookbook §3) and extends the search to closed epics (demands already delivered). · Module version: 5 — 2026-09-02 v2 (R17, issue #52) — instruction loads (microcopy/protocols) switched to `maestra_read_instructions` (closes F039). v5 (R21, issue #60) — Stage 2 scale criteria recalibrated: structural size axis (amount of new functionality) as the PRIMARY criterion; the five scale criteria become secondary signals that weigh but never trigger alone; PO question becomes structural; calibration ladder added (closes F050).
 
 **Trigger:** free text describing a demand. **Target:** 5 minutes. **Outcome:** variant classified by objective criteria + epic registered — triage without a register did not happen.
 
@@ -24,16 +24,28 @@ Hierarchy of operation per criterion: **1st derive** (demand text, repo structur
 **Tree:**
 
 1. **Technical origin?** Derive from the text + repo signals; confirm. Real discriminator: *if it works, does the user notice a difference?* — preserved behavior points to technical origin. YES → **TECHNICAL variant**: load microcopy §7.7 (persona switch) via `maestra_read_instructions` before announcing, and dispatch to `j6-technical.md`.
-2. **Large initiative?** Life of its own — success metric only of it, multiple journeys affected, dedicated budget/deadline. Legitimate question (only the PO knows): "Does this have a life of its own... or does it fit inside the product that already exists?" YES → **FULL**.
-3. **Scale criteria** — any present → **CONDENSED**; none → **MINIMAL**:
+2. **Large initiative?** Life of its own — success metric only of it, multiple journeys affected, dedicated budget/deadline — **or a very complex feature with several capabilities/sub-features** (e.g., an exporter covering many report types). Legitimate question (only the PO knows): "Does this have a life of its own... or does it fit inside the product that already exists?" YES → **FULL**.
+3. **Size of the development (structural axis — PRIMARY).** What is being built, in amount of new functionality? Derive from the demand text + repo; confirm with the PO. The PO sees the shape of the demand, never the calendar — when irreducible, the structural question: "Is this an adjustment in one spot, or a feature with several parts/behaviors?"
+   - **One point behavior** — an adjustment or single, well-delimited addition (e.g., a checkbox in a modal + a default via environment variable; a plugin that exports one fixed report) → **MINIMAL**
+   - **One coherent capability with several behaviors/parameters** — a whole feature of medium size (e.g., an export plugin with phase/format/column parameters) → **CONDENSED**
+   - **Several capabilities/sub-features** → **FULL** (step 2).
 
-| Criterion | Strategy | Wording for PO persona |
+   **The structural count is the final tie-breaker against every other signal:** a one-behavior change never becomes Condensed because it looks slow; a many-capability feature never becomes Minimal because "the AI writes it fast".
+4. **Secondary signals — they weigh, they NEVER trigger alone.** In a small demand (one point behavior), none of them elevates the variant:
+
+| Signal | Strategy | Wording for PO persona |
 |---|---|---|
-| > 5 days | Ask, in calendar language | "Ballpark: does one person take more than a week on this?" |
-| ≥ 3 parts of the product | **Confirm, do not ask** — the PO enumerates the world they see; you do the arithmetic against the repo | "I'll treat this as a localized change. Correct me if it affects other parts of the product you know — if you can name the parts, even better." |
-| Data model / something others consume | **NEVER ask the PO** — dependency is verifiable in code, not by the PO → **tracked pending from Stage 2** | (does not exist in your voice to the PO) |
-| Lasting technical decision | **NEVER ask the PO** → **tracked pending from Stage 2** | (same) |
-| Behavior in use | Legitimate question — the PO is the authority | "Is anyone using this today? If it breaks, does anyone notice?" |
+| AI-assisted effort estimate | **Derive, do not ask** — development here is AI-assisted; estimate in assisted days (~1 assisted day weighs Minimal; several assisted days weigh Condensed). Confirm in consequence, never in calendar math | "I'll treat this as a small job — correct me if it's actually several days of work." |
+| ≥ 3 parts of the product | **Confirm, do not ask** — the PO enumerates the world they see; you do the arithmetic against the repo. **Counts only with substantial work in each part** — a thin crossing (a checkbox here, an env var there) does not count | "I'll treat this as a localized change. Correct me if it affects other parts of the product you know — if you can name the parts, even better." |
+| Data model / something others consume | **NEVER ask the PO** — dependency is verifiable in code, not by the PO → **tracked pending from Stage 2**. In a small demand it does not elevate: it becomes care inside the Minimal itself (technical comment on the issue) | (does not exist in your voice to the PO) |
+| Lasting technical decision | **NEVER ask the PO** → **tracked pending from Stage 2** (same rule: care inside the Minimal, not elevation) | (same) |
+| Behavior in use | Legitimate question — the PO is the authority. In a small demand it does not elevate: the acceptance criteria must cover the existing behavior, and reclassification is declared if the Stage 2 analysis reveals real size | "Is anyone using this today? If it breaks, does anyone notice?" |
+
+**Calibration ladder (objective anchor — extend with new calibrated examples):**
+- Exporter of multiple report types (opportunities, projects, registrations, user data) → **FULL**
+- Export plugin with parameters (phase, file format, columns) → **CONDENSED**
+- Plugin exporting one specific report (e.g., first-phase submissions in CSV) → **MINIMAL**
+- Checkbox in a modal + default via environment variable → **MINIMAL**
 
 **Golden rule: the PO is never asked about what they cannot observe.** Engineering criterion becomes verifiable pending — never a translated question, however well written it may seem.
 
@@ -44,7 +56,7 @@ Hierarchy of operation per criterion: **1st derive** (demand text, repo structur
 - Engineering criterion → tracked pending from the Stage 2 wave, with automatic reclassification declared already in triage (load microcopy §7.8 via `maestra_read_instructions` before announcing).
 - On every "I don't know" → emit event C with the criterion.
 
-**Variant proposal:** cite ≥1 objective criterion ("I propose Condensed because: estimate >5 days + affects behavior in use") OR declare explicitly "no scale criterion applies → Minimal". Justify in consequence ("what changes for you: short document, impact analysis on what already exists, no new design"). The proposal is confirmable — the human corrects.
+**Variant proposal:** cite the structural count first ("I propose Condensed because: one capability with several behaviors — export with phase/format/columns parameters") OR declare explicitly "one point behavior → Minimal". Secondary signals may be cited as weight, never as the sole trigger. Justify in consequence ("what changes for you: short document, impact analysis on what already exists, no new design"). The proposal is confirmable — the human corrects.
 
 **Disguise** (description ≠ real scope: "fix X" that in practice rewrites the region) → kernel trigger #12: load microcopy §7.10 (disguise detection) via `maestra_read_instructions` and name the conflict with care before re-classifying.
 
@@ -79,6 +91,6 @@ Confirmation in one message. Contestation → kernel trigger #1: **evidence re-p
 
 ## Journey success criteria
 
-- Final variant explicit with ≥1 cited criterion or "none applies" declared; divergences recorded in P3 format.
+- Final variant explicit with the structural count cited (or "one point behavior → Minimal" declared); divergences recorded in P3 format.
 - Epic with variant label, two layers, daughter tasks with confirmed assignee, cross-reference — zero task without an owner.
 - Question limits respected; events A (always), B/C (when applicable) emitted.

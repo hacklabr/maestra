@@ -120,9 +120,9 @@ Não existem fluxos separados para tipos diferentes de demanda. Existe **este fl
 
 | Variante | Quando usar | Origem da demanda | Exemplo |
 |---|---|---|---|
-| **Completo** | Produto novo ou iniciativa grande | Etapa 1 | Novo produto, nova plataforma |
-| **Condensado** | Nova funcionalidade em produto existente | Etapa 1 | Adicionar exportação de relatórios |
-| **Mínimo** | Mudança pequena e bem delimitada | Etapa 1 | Ajuste de regra de negócio, correção, plugin/tema simples |
+| **Completo** | Produto novo, iniciativa grande ou funcionalidade muito complexa | Etapa 1 | Novo produto, nova plataforma, exportador de múltiplos tipos de relatório |
+| **Condensado** | Funcionalidade inteira de porte médio em produto existente | Etapa 1 | Plugin de exportação de relatórios com parâmetros (fase, formato, colunas) |
+| **Mínimo** | Mudança pequena e bem delimitada | Etapa 1 | Ajuste de regra de negócio, correção, plugin/tema simples, checkbox + configuração |
 | **Técnica** | Refatoração de algo já implementado | **Etapa 2** | Melhorar performance ou arquitetura de uma funcionalidade existente |
 
 A variante **Técnica** é a única que inverte a origem: a demanda nasce na Engenharia, e a Etapa 1 entra como aprovadora — ver detalhes na seção 3.4.
@@ -143,24 +143,43 @@ flowchart TD
     Q1 -->|"Sim"| T["VARIANTE TÉCNICA<br>(Etapa 2 lidera — seção 3.4)"]
     Q1 -->|"Não"| Q2{"Produto novo ou<br>iniciativa grande?"}
     Q2 -->|"Sim"| C1["VARIANTE COMPLETA<br>(fluxo integral)"]
-    Q2 -->|"Não"| Q3{"Critérios de escala:<br>algum se aplica?"}
-    Q3 -->|"Sim"| C2["VARIANTE CONDENSADA<br>(seção 3.3)"]
-    Q3 -->|"Não"| C3["VARIANTE MÍNIMA<br>(seção 3.3)"]
+    Q2 -->|"Não"| Q3{"Tamanho do desenvolvimento:<br>quanta funcionalidade nova?"}
+    Q3 -->|"1 capacidade com vários<br>comportamentos/parâmetros"| C2["VARIANTE CONDENSADA<br>(seção 3.3)"]
+    Q3 -->|"1 comportamento pontual"| C3["VARIANTE MÍNIMA<br>(seção 3.3)"]
+    Q3 -->|"várias capacidades"| C1
 ```
 
 ### 3.3 Critérios objetivos de escala
 
-Uma demanda de produto existente sobe de **Mínimo** para **Condensado** se **qualquer um** dos critérios abaixo se aplicar:
+A classificação mede o **tamanho do desenvolvimento** — a quantidade de funcionalidade nova construída — como eixo principal:
 
-- Estimativa maior que **5 dias** de trabalho
-- Toca **3 ou mais** módulos/regiões do sistema
+| Tamanho | O que é | Variante |
+|---|---|---|
+| **1 comportamento pontual** | Ajuste/adição delimitada em superfície existente; plugin/tema de propósito único | **Mínimo** |
+| **1 capacidade coerente com vários comportamentos/parâmetros** | Funcionalidade inteira de porte médio (plugin com parâmetros, módulo novo) | **Condensado** |
+| **Várias capacidades/sub-recursos** | Funcionalidade muito complexa | **Completo** |
+
+A contagem estrutural é o **desempate final** contra qualquer outro sinal: um comportamento só nunca sobe para Condensado por parecer lento; várias capacidades nunca descem para Mínimo porque "a IA escreve rápido".
+
+**Sinais secundários — pesam, nunca gatilham sozinhos:**
+
+- Estimativa de esforço em **dias de trabalho assistido por IA** (~1 dia assistido pesa Mínimo; vários dias assistidos pesam Condensado) — o desenvolvimento aqui é assistido; estimar nesses termos
+- Toca **3 ou mais** módulos/regiões — conta só com **trabalho substancial em cada um**; atravessamento fino (um checkbox aqui, uma variável de ambiente ali) não conta
 - Altera **modelo de dados** ou **contrato público** (API, hooks, interface exposta)
 - Exige **decisão técnica nova** com consequência duradoura
 - Afeta **comportamento já usado** por usuários (risco de regressão relevante)
 
+Numa demanda pequena (1 comportamento pontual), os três últimos sinais **não sobem a variante**: viram pendências rastreadas e cuidados dentro da própria Mínima — comentário técnico na issue + critérios de aceite cobrindo o comportamento existente — com reclassificação declarada se a análise da Etapa 2 revelar porte maior.
+
 E sobe de **Condensado** para **Completo** se for, na prática, uma iniciativa com identidade própria: métricas de sucesso próprias, múltiplas jornadas afetadas ou orçamento/prazo dedicados.
 
-> **Calibração:** os números acima (5 dias, 3 módulos) são valores iniciais sugeridos. A equipe deve revê-los nas retrospectivas e ajustá-los à realidade — mas sempre mantendo critérios **objetivos e escritos aqui**, nunca no "a gente sente que...".
+> **Calibração — escada de exemplos (âncora objetiva):**
+> - Exportador de múltiplos tipos de relatório (editais, projetos, inscrições, dados cadastrais) → **Completo**
+> - Plugin de exportação com parâmetros (fase, formato, colunas) → **Condensado**
+> - Plugin que exporta um relatório específico (ex.: inscrições da 1ª fase em CSV) → **Mínimo**
+> - Checkbox numa modal + valor default via variável de ambiente → **Mínimo**
+>
+> Os exemplos e números acima são valores calibráveis. A equipe deve revê-los nas retrospectivas e ajustá-los à realidade — mas sempre mantendo critérios **objetivos e escritos aqui**, nunca no "a gente sente que...".
 
 ### 3.4 Detalhamento por variante
 
@@ -227,7 +246,7 @@ A refatoração inverte o fluxo: a demanda **nasce na Etapa 2**, e a Etapa 1 ent
 
 ### 3.6 Riscos que a triagem precisa capturar
 
-1. **Tudo vira "Mínimo" por conveniência.** Por isso os critérios de escala são objetivos: se um deles se aplica, a demanda sobe de variante, sem exceção informal.
+1. **Tudo vira "Mínimo" por conveniência — ou "Condensado" por sinal isolado.** Por isso o eixo principal é estrutural (quantidade de funcionalidade nova) e os sinais secundários são objetivos e escritos: a contagem decide, e nenhum sinal sobe sozinho uma demanda pequena — sem exceção informal nos dois sentidos.
 2. **Refatoração disfarçada de feature (e vice-versa).** A tarefa diz "corrigir X" mas na prática reescreve o módulo. Se o escopo real é reescrever, segue a variante Técnica — com caracterização, baseline e meta.
 3. **Reclassificação é legítima.** Se durante o trabalho a demanda crescer, qualquer pessoa pode pedir reclassificação — registra-se a mudança de label e segue a variante nova. O que não pode é executar uma demanda grande com artefatos de demanda pequena.
 4. **Variantes divergirem com o tempo.** Como as variantes vivem neste documento único, qualquer ajuste no processo se aplica às quatro. Não criar documentos separados por variante.
