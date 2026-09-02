@@ -143,6 +143,7 @@
 - Origem: R20, issue #59, birth da epic (add-to-board + move-card via maestra/ops)
 - Sintoma: A receita `move-card` do cookbook-github resolve o item id via `gh project item-list <N> --format json --jq '.items[] | select(.content.number==<N>) | .id'` sem `--limit`. O `item-list` pagina em 20 itens por padrão; com a issue #59 na posição 36/36 do board, o select retorna vazio silenciosamente (não erro) — o item simplesmente não é encontrado. O subagente ops detectou e corrigiu com `--limit 50`.
 - Tentativas/workaround: `--limit 50` no item-list resolveu. A receita do cookbook precisa incluir o limite (ou `--limit 100` canônico, alinhado ao padrão de paginação do read-hierarchy).
+- Adendo (2026-09-02, R21, issue #60): segunda ocorrência — move-card do #60 para "in review" exigiu retry com `-L 200` (item na posição além da página padrão de 30). A receita segue sem o limite.
 - Status: open
 
 ## F048 — Briefings rasos para demandas nascidas em texto livre (descoberta sem profundidade mínima)
@@ -730,6 +731,7 @@
 - Origem: R19, issue #53, reconciliação — verificação no main mergeado (4d21562)
 - Sintoma: `npm run ci` na árvore main falhou na etapa de testes com 3 falhas — todas de arquivos sob `.worktrees/r18-branch-do-epico/` (worktree de sessão paralela em andamento, incluindo o mesmo submódulo não inicializado do F041). O vitest não exclui `.worktrees/` por padrão; worktrees aninhados são tratados como testes do repo. A suíte própria do main está verde.
 - Tentativas/workaround: `npx vitest run --exclude "**/.worktrees/**"` → 300/300. Candidato: `test.exclude` no vitest config.
+- Adendo (2026-09-02, QA da R20): recorrência — 3 falhas no `npm test` do main mergeado (0f1d029), todas vindas de `.worktrees/r21-descoberta-texto-livre/` (sessão paralela R21 com o submódulo do catálogo não inicializado — F041/F043). Suíte do worktree R20 verde standalone (326/326) e `eval:dry` do main 66/66: confirmado que as falhas não pertencem à R20.
 - Status: open
 
 ## F041 — Shell `maestra/specialist` spawnado sem marcador `persona::` — ask_peer desabilitado e sessão invisível aos pares
@@ -778,7 +780,7 @@
 - Origem: relato do humano (uso diário do Maestra; exemplo: relatório de implementação citando F045/F046/F031/R16/R18 sem explicação, termos em inglês como "finding"/"move-card", "gh 2.97", "type=F")
 - Sintoma: O humano relata que os textos escritos pela Maestra são mentalmente custosos de entender, especialmente no meio de tarefas de implementação. Padrões citados: (1) IDs internos (F0nn, Rnn, #nn) usados sem nenhuma explicação do que são; (2) jargão/términos em inglês misturados ao português sem tradução ou contexto (finding, move-card, type=F, gh 2.97); (3) frases densas que empilham referências cruzadas em vez de comunicar o essencial. O humano precisa repetidamente pedir "escreva para humanos lerem". A R02 (linguagem acolhedora) tratou de tom e enumeração de campos para a persona Product — não cobriu clareza de conteúdo (explicar referências internas, traduzir jargão, ser curto sem omitir o relevante) para a persona desenvolvedora.
 - Tentativas/workaround: O humano reescreve o pedido de clareza a cada sessão ("escreva para humanos lerem"); nenhuma mudança nas instruções até aqui.
-- Status: triaged→R20 (2026-09-02, épico #58)
+- Status: resolved (R20, épico #58, PR #61, merge 0f1d029 — microcopy §7.15 + não-regressão por eval)
 
 ## F050 — Sobreclassificação: demandas pequenas multi-área sugeridas como Condensada (critério "qualquer um" sem eixo de tamanho)
 - Data: 2026-09-02
