@@ -135,7 +135,7 @@
 - Tentativas/workaround: Lido o erro, corrigidos os nomes dos campos para o schema real, emissão bem-sucedida. A divergência documentação × código (trigger #16) deve ser formalizada como `doc-bug`.
 - Status: open
 
-<!-- Próximo ID: F050. Registre novas entradas abaixo, em ordem cronológica. (Ver F042/F046: IDs duplicados F040/F041/F042 pré-existentes aguardam decisão de renumeração.) -->
+<!-- Próximo ID: F051. Registre novas entradas abaixo, em ordem cronológica. (Ver F042/F046: IDs duplicados F040/F041/F042 pré-existentes aguardam decisão de renumeração.) -->
 
 ## F049 — Receita `move-card` do cookbook sem `--limit` no `item-list` (item invisível além da página 20)
 - Data: 2026-09-02
@@ -779,3 +779,11 @@
 - Sintoma: O humano relata que os textos escritos pela Maestra são mentalmente custosos de entender, especialmente no meio de tarefas de implementação. Padrões citados: (1) IDs internos (F0nn, Rnn, #nn) usados sem nenhuma explicação do que são; (2) jargão/términos em inglês misturados ao português sem tradução ou contexto (finding, move-card, type=F, gh 2.97); (3) frases densas que empilham referências cruzadas em vez de comunicar o essencial. O humano precisa repetidamente pedir "escreva para humanos lerem". A R02 (linguagem acolhedora) tratou de tom e enumeração de campos para a persona Product — não cobriu clareza de conteúdo (explicar referências internas, traduzir jargão, ser curto sem omitir o relevante) para a persona desenvolvedora.
 - Tentativas/workaround: O humano reescreve o pedido de clareza a cada sessão ("escreva para humanos lerem"); nenhuma mudança nas instruções até aqui.
 - Status: triaged→R20 (2026-09-02, épico #58)
+
+## F050 — Sobreclassificação: demandas pequenas multi-área sugeridas como Condensada (critério "qualquer um" sem eixo de tamanho)
+- Data: 2026-09-02
+- Categoria: ergonomic-friction
+- Origem: relato do humano em sessão de triagem (uso do Maestra em projetos; ex.: checkbox em modal + valor default via variável de ambiente)
+- Sintoma: A regra de escala (fluxo §3.3 / J1 Stage 2) eleva Mínimo→Condensado se QUALQUER um dos 5 critérios se aplica — em particular "toca ≥3 módulos/regiões do sistema". Demandas pequenas que atravessam áreas (checkbox numa modal + default configurável por variável de ambiente) são sugeridas como Condensada, acionando a burocracia da variante (múltiplas issues, mais de uma pessoa envolvida, reconsolidação) para trabalho de poucas horas. O eixo "tamanho do desenvolvimento" não existe na regra: o que diferencia Condensada de Completa deveria ser o porte do desenvolvimento (funcionalidade inteira de médio porte — um plugin, um módulo — vs. iniciativa muito complexa), e uma demanda pequena multi-área deveria permanecer Mínima. Override manual Condensed→Minimal já foi registrado antes (R14, issue #48 — ver F034).
+- Tentativas/workaround: humano contesta a sugestão na conversa de triagem e corrige manualmente.
+- Status: open
