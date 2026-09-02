@@ -4,14 +4,17 @@ import { join } from "node:path"
 import { parse as parseYaml } from "yaml"
 import { EVALS_ROOT, loadGitHubFixture, loadRepoFixture } from "../lib/load-fixtures.mjs"
 import {
+  assertAnchorsCovered,
   assertApprovalLockJ3,
   assertAssigneeAfterConfirmation,
   assertCallOrder,
+  assertCoverageMapPresent,
   assertEvidenceBeforeVerdict,
   assertFailClosedSpawn,
   assertFalseableSummary,
   assertForbiddenPatterns,
   assertInstructionsViaTool,
+  assertMagnitudeDeclared,
   assertNoCloseDelivered,
   assertNoFieldEnumeration,
   assertNoJargon,
@@ -37,7 +40,7 @@ import { createStubExecutor } from "../lib/stub-tools.mjs"
 //    and existing assert files. Runs with ZERO live model.
 // ---------------------------------------------------------------------------
 
-const SCENARIO_FILES = ["anti-bypass.yaml", "j8-guard.yaml", "j1-triage.yaml", "j2-resume.yaml", "fm-vinculantes.yaml", "j9-panel-shell.yaml", "r02-welcoming-language.yaml", "r15-qa-session.yaml", "instructions-loading.yaml", "dry-run.yaml"]
+const SCENARIO_FILES = ["anti-bypass.yaml", "j8-guard.yaml", "j1-triage.yaml", "j2-resume.yaml", "fm-vinculantes.yaml", "j9-panel-shell.yaml", "r02-welcoming-language.yaml", "j3-deep-discovery.yaml", "r15-qa-session.yaml", "instructions-loading.yaml", "dry-run.yaml"]
 const ASSERT_DIR = join(EVALS_ROOT, "asserts")
 
 describe("eval harness — structure validation", () => {
@@ -462,6 +465,101 @@ describe("tier-1 assert functions", () => {
     const result = assertApprovalLockJ3(premature)
     expect(result.pass).toBe(false)
     expect(result.reason).toContain("VIOLATION C10/F009")
+  })
+
+  it("assertMagnitudeDeclared: declared with evidence before questions; regressions caught", () => {
+    const good = transcript({
+      turns: [
+        {
+          role: "agent",
+          content: 'Scope: SIMPLE — evidence: single domain, one user type, no integration surface. If wrong, tell me.\n1. How does the operator notice today?',
+        },
+      ],
+    })
+    expect(assertMagnitudeDeclared(good, "SIMPLE").pass).toBe(true)
+
+    // no declaration at all
+    const silent = transcript({ turns: [{ role: "agent", content: "How does the operator notice today?" }] })
+    expect(assertMagnitudeDeclared(silent).pass).toBe(false)
+
+    // declared AFTER the first question
+    const late = transcript({
+      turns: [{ role: "agent", content: "How does it work today?\nScope: SIMPLE — evidence: single domain. If wrong, tell me." }],
+    })
+    expect(assertMagnitudeDeclared(late).pass).toBe(false)
+
+    // evidence missing
+    const noEvidence = transcript({ turns: [{ role: "agent", content: "Scope: SIMPLE. If wrong, tell me." }] })
+    expect(assertMagnitudeDeclared(noEvidence).pass).toBe(false)
+
+    // rubric misclassification vs expected
+    expect(assertMagnitudeDeclared(good, "COMPOSITE").pass).toBe(false)
+  })
+
+  it("assertAnchorsCovered: 5 anchors required", () => {
+    const full = transcript({
+      turns: [
+        {
+          role: "agent",
+          content:
+            "**Problem / why now:** x. **For whom / usage context:** y. **Measure of success:** z. **Out of scope:** w. **Current state:** v.",
+        },
+      ],
+    })
+    expect(assertAnchorsCovered(full).pass).toBe(true)
+
+    const missing = transcript({ turns: [{ role: "agent", content: "**Problem / why now:** x. **Out of scope:** w." }] })
+    const result = assertAnchorsCovered(missing)
+    expect(result.pass).toBe(false)
+    expect(result.reason).toContain("measure of success")
+  })
+
+  it("assertCoverageMapPresent: map + menu + closing; vague/shallow cells caught", () => {
+    const good = transcript({
+      turns: [
+        {
+          role: "agent",
+          content: [
+            "| problem / why now | ●●● | — |",
+            "| measure of success | ●● | no baseline for today's detection time |",
+            "| out of scope | ●●● | — |",
+            "Deepening menu (pick at most one round):",
+            "1. Detection-time baseline — explore how late low stock is noticed today.",
+            "Closing: approve as-is / deepen 1 area / cut scope.",
+          ].join("\n"),
+        },
+      ],
+    })
+    expect(assertCoverageMapPresent(good).pass).toBe(true)
+
+    // no depth table
+    const noMap = transcript({ turns: [{ role: "agent", content: "Deepening menu:\n1. X — explore.\napprove as-is / cut scope" }] })
+    expect(assertCoverageMapPresent(noMap).pass).toBe(false)
+
+    // vague shallow cell
+    const vague = transcript({
+      turns: [
+        {
+          role: "agent",
+          content: "| a | ● | needs more depth |\n| b | ●●● | — |\n| c | ●●● | — |\nDeepening menu:\n1. X — explore it.\napprove as-is / cut scope",
+        },
+      ],
+    })
+    expect(assertCoverageMapPresent(vague).pass).toBe(false)
+
+    // menu with 4 options
+    const bloated = transcript({
+      turns: [
+        {
+          role: "agent",
+          content:
+            "| a | ●●● | — |\n| b | ●●● | — |\n| c | ●●● | — |\nDeepening menu:\n1. A — x.\n2. B — y.\n3. C — z.\n4. D — w.\napprove as-is / cut scope",
+        },
+      ],
+    })
+    const result = assertCoverageMapPresent(bloated)
+    expect(result.pass).toBe(false)
+    expect(result.reason).toContain("≤3")
   })
 })
 

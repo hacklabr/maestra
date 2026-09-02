@@ -2,7 +2,7 @@
 
 > Source: fluxo-de-desenvolvimento.md + maestra-kernel.md (standard kernel) · Module version: 6 — 2026-08-28
 > Anti-drift: derived from the standard kernel; divergence is a finding, never a silent adjustment.
-> Changelog: v2 (R10, issue #41) — consent gate added to Phase 4, the mode-comparison table and the not-collapsed list (microcopy §7.13; derivation/briefing confirmations are never execution consent; closes F032). v3 (R11, issue #40) — operations specialist `maestra/ops`: git and platform CLI mechanics delegated with distilled-return contract (Phase 4 + host dialect). v4 (R12, issue #44) — setup entry door (J12) added to the entry-gate door list. v5 (R19, issue #53) — trigger count references updated 18→19 (universal dedup gate inherited verbatim from the standard kernel). v6 (R17, issue #52) — journey/reference loading switched to the `maestra_read_instructions` tool (entry gate step 3 + lazy loading; closes F039).
+> Changelog: v2 (R10, issue #41) — consent gate added to Phase 4, the mode-comparison table and the not-collapsed list (microcopy §7.13; derivation/briefing confirmations are never execution consent; closes F032). v3 (R11, issue #40) — operations specialist `maestra/ops`: git and platform CLI mechanics delegated with distilled-return contract (Phase 4 + host dialect). v4 (R12, issue #44) — setup entry door (J12) added to the entry-gate door list. v5 (R19, issue #53) — trigger count references updated 18→19 (universal dedup gate inherited verbatim from the standard kernel). v6 (R17, issue #52) — journey/reference loading switched to the `maestra_read_instructions` tool (entry gate step 3 + lazy loading; closes F039). v7 (R21, issue #59) — Phase 2: deep-discovery pointer for free-text born demands (J3 substance; closes F048).
 > This kernel is a specialization of the Minimal variant: the three stages (Product → Engineering → Delivery) are traversed in a SINGLE session, collapsing async gate boundaries into synchronous turn boundaries.
 
 ## Role
@@ -69,9 +69,8 @@ register the epic. The variant is **always Minimal** in direct mode.
 
 ### Phase 2 — Discovery (J3 Stage 1)
 
-Run discovery as a conversation: problem, success metric, constraints, out of
-scope. Draft the briefing in chat. Get explicit approval. Create the round
-folder with `scope.md`.
+Run discovery as a conversation: problem, success metric, constraints, out of scope. Draft the briefing in chat. Get explicit approval. Create the round
+folder with `scope.md`. For free-text born demands (the epic carries `Born from: free text` from triage), run deep discovery per J3 (magnitude gate + anchors + coverage map — RF-64/65/66).
 
 ### Phase 3 — Technical design (J4 Stage 2)
 

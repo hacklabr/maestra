@@ -515,6 +515,95 @@ export function assertFailClosedSpawn(transcript) {
   return ok("fail-closed intact: visible warning, session outside the map, respawn with marker")
 }
 
+// ---------------------------------------------------------------------------
+// R21 — deep discovery for free-text born demands (RF-64/65/66, epic #59).
+// Pins the deep-mode contract: magnitude declared out loud BEFORE the first
+// elicitation question, 5 briefing anchors, coverage map with named specifics
+// + deepening menu (≤3 options) + approve/deepen/cut closing.
+// ---------------------------------------------------------------------------
+
+/**
+ * RF-64: the first agent text turn opens with the magnitude gate spoken out
+ * loud — "Scope: [SIMPLE/COMPOSITE] — evidence: [X, Y, Z]" — immediately
+ * correctable, and BEFORE the first elicitation question. `expected`
+ * (vars.expectedMagnitude) pins the rubric classification for the fixture.
+ */
+export function assertMagnitudeDeclared(transcript, expected = null) {
+  const first = agentTexts(transcript)[0] ?? ""
+  const m = /Scope:\s*(SIMPLE|COMPOSITE)\b/i.exec(first)
+  if (!m) {
+    return fail('magnitude gate not declared out loud in the first agent turn (RF-64 — "Scope: [SIMPLE/COMPOSITE] — evidence: …" is mandatory for free-text born demands)')
+  }
+  if (!/evidence\s*:/i.test(first)) {
+    return fail("magnitude declared WITHOUT the rubric evidence (RF-64 — the classification facts must be spoken, not just the label)")
+  }
+  const qIdx = first.indexOf("?")
+  if (qIdx !== -1 && m.index > qIdx) {
+    return fail("magnitude declared AFTER the first elicitation question (RF-64 — classify before asking)")
+  }
+  if (!/if wrong|correct me|tell me/i.test(first)) {
+    return fail('magnitude declaration not immediately correctable (RF-64 — "If wrong, tell me.")')
+  }
+  if (expected && m[1].toUpperCase() !== String(expected).toUpperCase()) {
+    return fail(`magnitude ${m[1].toUpperCase()} ≠ expected ${String(expected).toUpperCase()} — rubric misclassification (mixed/uncertain evidence → COMPOSITE)`)
+  }
+  return ok(`magnitude ${m[1].toUpperCase()} declared out loud with evidence, before the first question`)
+}
+
+/** RF-65: the draft covers the 5 anchors — problem/why-now, for-whom/usage
+ *  context, measure of success, out-of-scope, current-state anchor. */
+const ANCHOR_PATTERNS = [
+  [/problem/i, "problem"],
+  [/why.?now/i, "why-now"],
+  [/for whom|for-whom|usage context/i, "for-whom/usage context"],
+  [/measure of success|success (metric|measure)/i, "measure of success"],
+  [/out of scope/i, "out-of-scope boundary"],
+  [/current state/i, "current-state anchor"],
+]
+
+export function assertAnchorsCovered(transcript) {
+  const text = allAgentText(transcript)
+  const missing = ANCHOR_PATTERNS.filter(([re]) => !re.test(text)).map(([, label]) => label)
+  if (missing.length > 0) {
+    return fail(`briefing draft missing anchor(s): ${missing.join(", ")} (RF-65 — the 5 anchors are mandatory for free-text born drafts)`)
+  }
+  return ok("5 briefing anchors covered in the draft")
+}
+
+/**
+ * RF-66: per-anchor depth table (●/●●/●●●) where every shallow/partial cell
+ * names the SPECIFIC missing detail; deepening menu with ≤3 options; closing
+ * always offers approve as-is / deepen / cut scope.
+ */
+export function assertCoverageMapPresent(transcript) {
+  const text = allAgentText(transcript)
+  const dotLines = text.split("\n").filter((l) => l.includes("●"))
+  if (dotLines.length < 3) {
+    return fail("coverage map absent or incomplete (RF-66 — per-anchor depth table with ● / ●● / ●●● is mandatory for free-text born drafts)")
+  }
+  const vague = /needs more depth|precisa de mais profundidade/i.exec(text)
+  if (vague) {
+    return fail(`coverage map cell vague: "${vague[0]}" (RF-66 — a shallow cell must name the SPECIFIC missing detail)`)
+  }
+  const shallowOrPartial = dotLines.filter((l) => (/●{1,3}(?!●)/.exec(l)?.[0] ?? "").length < 3)
+  const unspecific = shallowOrPartial.filter((l) => l.slice(l.lastIndexOf("●") + 1).replace(/[|\s—–-]/g, "").length < 12)
+  if (unspecific.length > 0) {
+    return fail(`shallow/partial coverage cell(s) without the SPECIFIC missing detail: ${unspecific.map((l) => `"${l.trim().slice(0, 60)}"`).join(", ")} (RF-66)`)
+  }
+  const menuIdx = text.search(/deepening menu|menu de aprofundamento/i)
+  if (menuIdx === -1) {
+    return fail("deepening menu missing (RF-66 — ≤3 ranked options below the coverage map)")
+  }
+  const options = text.slice(menuIdx).match(/^\s*\d+\.\s/gm) ?? []
+  if (options.length > 3) {
+    return fail(`deepening menu with ${options.length} options (RF-66 — ≤3; never an iteration engine)`)
+  }
+  if (!/approve as-is/i.test(text) || !/cut scope/i.test(text)) {
+    return fail("closing options missing (RF-66 — the close always offers: approve as-is / deepen 1–2 areas / cut scope)")
+  }
+  return ok(`coverage map with named specifics + deepening menu (${options.length} option(s)) + approve/deepen/cut closing`)
+}
+
 /**
  * Instruction loading (R17): kernel/journeys/reference/templates files enter
  * the context via the plugin tool maestra_read_instructions with a RELATIVE
