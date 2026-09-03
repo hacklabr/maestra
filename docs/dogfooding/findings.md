@@ -135,7 +135,7 @@
 - Tentativas/workaround: Lido o erro, corrigidos os nomes dos campos para o schema real, emissão bem-sucedida. A divergência documentação × código (trigger #16) deve ser formalizada como `doc-bug`.
 - Status: open
 
-<!-- Próximo ID: F051. Registre novas entradas abaixo, em ordem cronológica. (Ver F042/F046: IDs duplicados F040/F041/F042 pré-existentes aguardam decisão de renumeração.) -->
+<!-- Próximo ID: F051. Registre novas entradas abaixo, em ordem cronológica. (Ver F042/F046: IDs duplicados F040/F041/F042 pré-existentes aguardam decisão de renumeração. F024: 3ª ocorrência — R22, 2026-09-02 — Evento D: doc pede `contested_criterion`, schema zod exige `disputed_criterion`; 1 retry. Detalhe no retro da R22.) -->
 
 ## F049 — Receita `move-card` do cookbook sem `--limit` no `item-list` (item invisível além da página 20)
 - Data: 2026-09-02
