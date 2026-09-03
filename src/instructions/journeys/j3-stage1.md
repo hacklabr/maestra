@@ -2,7 +2,7 @@
 
 > Source: docs/referencia/jornadas.md v2.4 (§6 J3) + fluxo-de-desenvolvimento.md §6, §9.1 · Module version: 4 — 2026-07-28
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T9): zero order, birth of the round folder, living documents, gate with artifact existence, asynchronous handoff. v2 — J9 mention as ad-hoc path when discovery reveals multi-domain decision (anti-ambiguity with J4 ADR trigger). v3 (R02, ADR-001) — STAGE 1 split into three phases with turn-boundaries (discovery conversation → draft in chat → approval gate, default NOT approved); round folder born only after the explicit "yes". v4 (issue #20) — Stage 3 feasibility assessment clarified as a SEPARATE task, not a comment on the scope task (closes F013). v5 (R19, issue #53) — Stage 3: feasibility task creation preceded by the duplicate/related search (kernel trigger #19); Stage 4: wave daughters declared covered by the plan's dedup (carve-out). · Module version: 5 — 2026-08-28 v4 (R17, issue #52) — the §P4 pre-message load switched to `maestra_read_instructions` (closes F039).
+> Changelog: v1 — initial version (T9): zero order, birth of the round folder, living documents, gate with artifact existence, asynchronous handoff. v2 — J9 mention as ad-hoc path when discovery reveals multi-domain decision (anti-ambiguity with J4 ADR trigger). v3 (R02, ADR-001) — STAGE 1 split into three phases with turn-boundaries (discovery conversation → draft in chat → approval gate, default NOT approved); round folder born only after the explicit "yes". v4 (issue #20) — Stage 3 feasibility assessment clarified as a SEPARATE task, not a comment on the scope task (closes F013). v5 (R19, issue #53) — Stage 3: feasibility task creation preceded by the duplicate/related search (kernel trigger #19); Stage 4: wave daughters declared covered by the plan's dedup (carve-out). · Module version: 5 — 2026-08-28 v4 (R17, issue #52) — the §P4 pre-message load switched to `maestra_read_instructions` (closes F039). v6 (R22, issue #59) — deep discovery for free-text born demands (RF-64/65/66): magnitude gate declared out loud, lean mode for SIMPLE, 5 anchors + coverage map + deepening menu in the draft; closes F048.
 
 **Trigger:** J1 concluded or J2 deriving Stage 1. **Persona:** PM/PO talking with a non-technical peer. **Before any message:** load `reference/protocols.md` §P4 (blacklist) via `maestra_read_instructions` — every message is an accessibility checkpoint. The PO is never asked about what they cannot observe.
 
@@ -14,6 +14,26 @@ Read `docs/reference/` BEFORE any proposal — Stage 1 starts from how the produ
 
 Discovery is a CONVERSATION, not a file. Three phases, each a distinct turn.
 Collapsing them into one turn is the F009 failure mode — do not.
+
+### Free-text born demands — deep discovery (RF-64/65/66)
+
+When the demand was born from free text (the epic's execution layer carries `Born from: free text`), discovery runs in **deep mode**:
+
+**Magnitude gate (RF-64).** Before the first discovery question, classify scope magnitude by objective rubric and STATE IT OUT LOUD with evidence — immediately correctable ("Scope: [SIMPLE/COMPOSITE] — evidence: [X, Y, Z]. If wrong, tell me."). Recalibrate mid-discovery if the conversation contradicts the classification.
+
+- **SIMPLE** — ALL true: single domain, single user type, no integration surface, "add/fix/refactor" language.
+- **COMPOSITE** — ANY true: 2+ distinct domains; multiple user types; integration surface; "platform/ecosystem/framework" ambition language; a novel mechanic (gamification, collaboration, ML, behavioral change, real-time multi-user). Mixed or uncertain → **COMPOSITE** (asymmetric cost: shallow briefing on a composite scope cascades; over-questioning a simple scope is recoverable, under-questioning a composite scope is not).
+
+Then:
+
+- **SIMPLE → lean mode:** ≤5 elicitation questions TOTAL across the whole discovery (confirmations don't count — same counting as event A). Anti-bias gate: if the answer to "will the briefing be materially wrong without this?" is no, don't ask it.
+- **COMPOSITE:** full-anchor depth, ≤3 questions per message (P4 cap preserved) — deep mode means more turns, not bigger salvos.
+
+**Derive-first (RF-65):** anything the repo can answer, you derive — never ask. Questions are reserved for what only the human knows. This overrides reference methodologies that forbid reading the codebase: here, reading is mandatory; questions are reserved for what the repo cannot tell.
+
+**Anchors (RF-65):** whatever the mode, the draft covers, with honest depth — problem/why-now · for-whom/usage context · measure of success · out-of-scope boundary (≥1 explicit item) · current-state anchor.
+
+**Coverage map + deepening menu (RF-66)** — mandatory for free-text born drafts, recommended for all: per anchor, mark depth (● shallow / ●● partial / ●●● complete), each shallow/partial cell naming the SPECIFIC missing detail (vague "needs more depth" is invalid). Below it, a deepening menu: ≤3 options each stating what it would explore; max 1 deepening round; the closing always offers — approve as-is / deepen 1–2 areas / cut scope. Never an iteration engine.
 
 ### Phase 1 — Discovery conversation (C8)
 
@@ -37,6 +57,8 @@ as a file. Structure: problem · success metric · constraints · out of scope
 (≥1 explicit item). Frame it as a proposal the human edits (from the triage;
 the human **edits**, does not fill from scratch), not a form to fill. Reference
 the current PRD state where the proposal changes it.
+
+For free-text born demands (deep mode, RF-66), the draft also carries the **coverage map** (RF-66) — see above: per anchor, mark depth (● shallow / ●● partial / ●●● complete), with each shallow/partial cell naming the SPECIFIC missing detail (vague "needs more depth" is invalid), followed by a deepening menu (≤3 options, each saying what it would explore; at most 1 deepening round; the close always offers: approve as-is / deepen 1–2 areas / cut scope).
 
 ### Phase 3 — Approval gate — turn-close, default NOT approved (C10)
 

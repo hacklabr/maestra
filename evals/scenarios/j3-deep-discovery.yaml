@@ -1,0 +1,126 @@
+# R22 — deep discovery for free-text born demands (RF-64/65/66, epic #59).
+# Golden inputs pin the deep-mode contract for epics carrying
+# `Born from: free text` (RF-67): magnitude declared OUT LOUD with evidence
+# BEFORE the first elicitation question, draft with the 5 anchors, coverage
+# map (●/●●/●●● with named specifics) + deepening menu (≤3 options) +
+# approve/deepen/cut closing — and, for SIMPLE, lean mode (≤5 elicitations).
+#
+# Mock-driven (vars.mock) like r02-welcoming-language.yaml: the golden speech
+# is what the model must produce; the PR gate stays green regardless of the
+# live model. Live-model verification: npm run eval.
+
+# T1 — SIMPLE free-text born demand (low-stock alert): magnitude declared,
+# lean mode (≤5 elicitation questions total), coverage map + menu.
+- description: "R22 T1: J3 deep discovery SIMPLE — magnitude declared out loud, ≤5 elicitations, coverage map + deepening menu"
+  vars:
+    fixture: fixtures/github/r22-freetext-born.json
+    modules: ["journeys/j3-stage1.md"]
+    entry: "71"
+    mock: true
+    expectedMagnitude: "SIMPLE"
+    questionCaps: { maxPerTurn: 3, maxTotal: 5 }
+    humanScript:
+      - "Exactly. Today the operator only notices when the item is already out; a win is flagging low stock at least 1 day before the stockout."
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "maestra_issue_digest", args: { issue: 71 } }
+      - toolCall: { name: "bash", args: { command: "gh issue view 71 --json body --jq .body" } }
+      - text: |
+          Scope: SIMPLE — evidence: single domain (stock alerts), one user type (the operator), no integration surface, additive "add an alert" language. If wrong, tell me.
+
+          The repo already shows the alert would live in the ops dashboard, so I won't ask that. Two things only you can tell me:
+          1. How does the operator notice low stock today?
+          2. What number would make you call this a win?
+      - text: |
+          Here's the draft I'm proposing for the low-stock-alert round (R05):
+
+          **Problem / why now:** operators only notice low stock after the stockout; two stockouts last month made this urgent.
+          **For whom / usage context:** the warehouse operator, on the ops dashboard they already check every morning.
+          **Measure of success:** low-stock items flagged at least 1 day before the stockout.
+          **Out of scope:** automatic reordering (stays manual).
+          **Current state:** the ops dashboard shows current stock (PRD), but nothing flags low levels.
+
+          Coverage map:
+          | anchor | depth | what's missing |
+          |---|---|---|
+          | problem / why now | ●●● | — |
+          | for whom / usage context | ●●● | — |
+          | measure of success | ●● | no baseline for today's detection time |
+          | out of scope | ●●● | — |
+          | current state | ●●● | — |
+
+          Deepening menu (pick at most one round):
+          1. Detection-time baseline — explore how late low stock is noticed today, to anchor the success metric.
+
+          Closing: approve as-is / deepen 1 area / cut scope.
+
+          Posso registrar esse rascunho como o briefing do round?
+  assert:
+    - type: javascript
+      value: file://asserts/magnitude-declared.mjs
+    - type: javascript
+      value: file://asserts/question-count.mjs
+    - type: javascript
+      value: file://asserts/anchors-covered.mjs
+    - type: javascript
+      value: file://asserts/coverage-map-present.mjs
+    - type: javascript
+      value: file://asserts/approval-lock-j3.mjs
+
+# T2 — COMPOSITE free-text born demand (gamified loyalty program): magnitude
+# declared (2+ domains, multiple user types, novel mechanic), 5 anchors
+# covered with full depth, coverage map present.
+- description: "R22 T2: J3 deep discovery COMPOSITE — magnitude declared with rubric evidence, 5 anchors covered, coverage map + deepening menu"
+  vars:
+    fixture: fixtures/github/r22-freetext-born.json
+    modules: ["journeys/j3-stage1.md"]
+    entry: "72"
+    mock: true
+    expectedMagnitude: "COMPOSITE"
+    humanScript:
+      - "Points for buyers only. The pressure: churn rose 20% last quarter. Success in one number: 60-day repurchase rate."
+    mockSteps:
+      - toolCall: { name: "maestra_status", args: {} }
+      - toolCall: { name: "maestra_issue_digest", args: { issue: 72 } }
+      - toolCall: { name: "bash", args: { command: "gh issue view 72 --json body --jq .body" } }
+      - text: |
+          Scope: COMPOSITE — evidence: 2+ distinct domains (rewards ledger/billing + buyer engagement), multiple user types (buyers, sellers, ops), a novel mechanic (gamification). If wrong, tell me.
+
+          The repo shows checkout and order flow exist with no points concept, so I derive that anchor. Three things only you can tell me:
+          1. Who earns points — buyers only, or sellers too?
+          2. What is the business pressure to do this now?
+          3. What does success look like in one number?
+      - text: |
+          Here's the draft I'm proposing for the loyalty-program round (R06):
+
+          **Problem / why now:** churn rose 20% last quarter; retention is now the board's top metric.
+          **For whom / usage context:** buyers earn and redeem points at checkout; sellers see redemption reports; ops configures campaigns.
+          **Measure of success:** 60-day repurchase rate uplift for enrolled buyers.
+          **Out of scope:** seller-side rewards (buyers only in this round).
+          **Current state:** checkout and order flow exist (PRD); there is no points or rewards concept today.
+
+          Coverage map:
+          | anchor | depth | what's missing |
+          |---|---|---|
+          | problem / why now | ●●● | — |
+          | for whom / usage context | ●●● | — |
+          | measure of success | ●● | no cohort baseline for repurchase today |
+          | out of scope | ●●● | — |
+          | current state | ●●● | — |
+
+          Deepening menu (pick at most one round):
+          1. Repurchase baseline — explore the current 60-day repurchase cohort to anchor the uplift target.
+          2. Points economics — explore accrual/redemption rates against margin, with ops.
+
+          Closing: approve as-is / deepen 1–2 areas / cut scope.
+
+          Posso registrar esse rascunho como o briefing do round?
+  assert:
+    - type: javascript
+      value: file://asserts/magnitude-declared.mjs
+    - type: javascript
+      value: file://asserts/anchors-covered.mjs
+    - type: javascript
+      value: file://asserts/coverage-map-present.mjs
+    - type: javascript
+      value: file://asserts/approval-lock-j3.mjs

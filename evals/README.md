@@ -63,7 +63,10 @@ never retry to mask instructions regression.
 | 16 | Contradiction → doc-bug | AB-16 | order + label |
 | 19 | No issue born without prior duplicate/related search | AB-19 | order search→create |
 
-Additional scenarios: `j1-triagem.yaml` (calibration: ≤3/turn, ≤5 total, ≤3
+Additional scenarios: `j3-deep-discovery.yaml` (**RF-64/65/66**, R21 — deep
+discovery for free-text born demands: magnitude declared out loud with
+evidence before the first question, 5 anchors, coverage map + deepening menu,
+lean mode ≤5 elicitations for SIMPLE), `j1-triagem.yaml` (calibration: ≤3/turn, ≤5 total, ≤3
 Minimal, PO rule of thumb, dedup, **Full Q2 + funnel slice with P7 wave**),
 `j2-retomada.yaml` (B1–B6), `j8-guarda.yaml` (refusal with 5 principles;
 Débora/Tiago/Paula arcs), `fm-vinculantes.yaml` (**FM-04, FM-06, FM-12,

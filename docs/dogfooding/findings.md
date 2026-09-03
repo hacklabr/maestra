@@ -152,7 +152,7 @@
 - Origem: relato do humano em sessão de triagem (demanda: "descoberta mais aprofundada para demandas em texto livre")
 - Sintoma: Demandas que chegam pela porta de entrada de texto livre (J1) têm produzido briefings pobres no Stage 1. A instrução atual (J1 → J3/kernel direto Phase 2) prescreve o formato da conversa de descoberta, mas não prescreve profundidade mínima nem dimensões obrigatórias de descoberta para esse ponto de entrada (o mais carente de contexto — sem corpo de issue, sem histórico). Consequência relatada: retrabalho na implementação ("um erro nessa etapa vira uma bola de neve").
 - Tentativas/workaround: Humano propôs reaproveitar como referência o prompt do Briefing-Writer do plugin Mesa (classificação de magnitude, entrevista estruturada em dimensões, coverage map com profundidade explícita). Virou demanda nesta sessão.
-- Status: open
+- Status: triaged→R22
 
 ## F020 — Onda de Stage 3 (#7, #8, #9) criada com metadado `epic: 3` mas sem link de sub-issue
 - Data: 2026-07-28

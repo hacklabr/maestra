@@ -13,6 +13,7 @@ tests:
   - file://scenarios/fm-vinculantes.yaml
   - file://scenarios/j9-panel-shell.yaml
   - file://scenarios/r02-welcoming-language.yaml
+  - file://scenarios/j3-deep-discovery.yaml
   - file://scenarios/r15-qa-session.yaml
   - file://scenarios/r20-clear-writing.yaml
   - file://scenarios/instructions-loading.yaml

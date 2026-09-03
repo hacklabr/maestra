@@ -2,7 +2,7 @@
 
 > Source: docs/referencia/jornadas.md §7, v2.3 · Module version: 9 — 2026-09-02
 > Anti-drift: verbatim templates with typed slots; post-dogfood adjustment HERE, never in code. Divergence between this module and the source is a finding, never a silent adjustment.
-> Changelog: v0 scaffold (T6) → v1 (T10): full transcription of §7.1–§7.11 with typed slots; deviations.md hook block preserved verbatim; override comment replaced by reference to the tool contract (`maestra_emit_event`); platform-neutral adaptations marked explicitly. v2 (journeys v2.3, human decision) — block §7.9 W-04 ("specialist outside the installed catalog") DELETED: shell-specialist architecture makes the whole catalog invocable; there is no longer an installed subset or "nearest" specialist. v3 (R02, ADR-001) — §7.2 "Derived state" rewritten as two-phase `<derivation>` (typed slots, internal) / `<speech>` (natural sentence, only emitted) contract + "Substate → situation translation" table + 3 few-shot anchors; the field names `variant`/`stage`/`substate`/`gate` are never enumerated to a non-technical persona. v4 (R07) — §7.12 aligned to curated capture (J11 v2): draft wording "improved from what you said", `{SUMMARY}` curated (may carry one grounding sentence), new "Duplicate found" template (create new / relate / discard), Rules line updated to the curated doctrine. v5 (R10, issue #41) — new §7.13 "Consent gate before implementation": ONE alignment message (4 steps: task explanation → doubts → execution plan → adjustment) + ONE explicit-consent question; derivation confirmation is never execution consent (closes F032). v6 (R15, issue #49) — §7.2: `awaiting-qa`/`qa-rejected` situation translations; new §7.14 "QA session conduction" (presentation template + approve/reject verdict templates; transitions execute only after the human verdict). v7 (R19, issue #53) — §7.12 "Duplicate found" declared journey-agnostic: universal-use note added (kernel trigger #19 — closed candidates count; third option spoken per context). v8 (R18, issue #54) — §7.2: `awaiting-integration` situation translation (epic complete; integration PR/MR in review — ADR-006). v9 (R20, issue #58) — new §7.15 "Clear writing rules (every message)": internal references glossed at first occurrence, English only as the proper noun of the thing, short without dropping the relevant, every persona incl. technical (closes F047). v10 (R21, issue #60) — §7.4: `{CITED_CRITERION}` example updated to the structural size ruler (recalibration R21).
+> Changelog: v0 scaffold (T6) → v1 (T10): full transcription of §7.1–§7.11 with typed slots; deviations.md hook block preserved verbatim; override comment replaced by reference to the tool contract (`maestra_emit_event`); platform-neutral adaptations marked explicitly. v2 (journeys v2.3, human decision) — block §7.9 W-04 ("specialist outside the installed catalog") DELETED: shell-specialist architecture makes the whole catalog invocable; there is no longer an installed subset or "nearest" specialist. v3 (R02, ADR-001) — §7.2 "Derived state" rewritten as two-phase `<derivation>` (typed slots, internal) / `<speech>` (natural sentence, only emitted) contract + "Substate → situation translation" table + 3 few-shot anchors; the field names `variant`/`stage`/`substate`/`gate` are never enumerated to a non-technical persona. v4 (R07) — §7.12 aligned to curated capture (J11 v2): draft wording "improved from what you said", `{SUMMARY}` curated (may carry one grounding sentence), new "Duplicate found" template (create new / relate / discard), Rules line updated to the curated doctrine. v5 (R10, issue #41) — new §7.13 "Consent gate before implementation": ONE alignment message (4 steps: task explanation → doubts → execution plan → adjustment) + ONE explicit-consent question; derivation confirmation is never execution consent (closes F032). v6 (R15, issue #49) — §7.2: `awaiting-qa`/`qa-rejected` situation translations; new §7.14 "QA session conduction" (presentation template + approve/reject verdict templates; transitions execute only after the human verdict). v7 (R19, issue #53) — §7.12 "Duplicate found" declared journey-agnostic: universal-use note added (kernel trigger #19 — closed candidates count; third option spoken per context). v8 (R18, issue #54) — §7.2: `awaiting-integration` situation translation (epic complete; integration PR/MR in review — ADR-006). v9 (R20, issue #58) — new §7.15 "Clear writing rules (every message)": internal references glossed at first occurrence, English only as the proper noun of the thing, short without dropping the relevant, every persona incl. technical (closes F047). v10 (R21, issue #60) — §7.4: `{CITED_CRITERION}` example updated to the structural size ruler (recalibration R21). v11 (R22, issue #59) — new §7.16 "Deep discovery": magnitude declaration, recalibration, coverage map + deepening menu templates (closes F048; substance in J3; RF-64/65/66).
 
 ## Usage conventions
 
@@ -30,6 +30,7 @@
 | §7.13 | Consent gate before implementation (J2/J5, both modes) |
 | §7.14 | QA session conduction (J2 branch B7) |
 | §7.15 | Clear writing rules (every message, every persona) |
+| §7.16 | Deep discovery (free-text) — magnitude + coverage map |
 
 ---
 
@@ -826,3 +827,45 @@ trabalho; nada quebra por isso agora."
 ```
 
 The AFTER keeps the reference (F045) AND reads without stopping once. The BEFORE assumed the human decodes four internal terms in one breath.
+
+---
+
+## §7.16 Deep discovery — free-text born demands (J3 STAGE 1 deep mode)
+
+### Magnitude declaration (before the first discovery question)
+
+```text
+Scope: {MAGNITUDE} — evidence: {EVIDENCE_LIST}. If wrong, tell me.
+```
+
+| Slot | Type | Condition |
+|---|---|---|
+| `{MAGNITUDE}` | `SIMPLE` or `COMPOSITE` | Derived by rubric (J3 deep-discovery gate). Declared BEFORE the first discovery question. |
+| `{EVIDENCE_LIST}` | comma-separated clues | Derived from the demand text + repo signals (domains, users, integration surface, ambition language, novel mechanic) — never invented. |
+
+Rules: one line, stated out loud BEFORE the first discovery question; immediately correctable; recalibration allowed mid-discovery (J3).
+
+### Mid-discovery recalibration
+
+```text
+I'm recalibrating — this scope is {MAGNITUDE} because {NEW_EVIDENCE}. Switching to {lean/standard} discovery.
+```
+
+### Coverage map (free-text drafts, mandatory)
+
+```text
+| Anchor | Depth | Notes |
+|---|---|---|
+| Problem | ●●● | — |
+| For-whom/context | ●● | Have: {HAVE}. Missing: {SPECIFIC_MISSING_DETAIL} |
+| ... | ... | ... |
+
+### Where would you like me to deepen?
+
+Pick up to 2 (one focused round on each):
+[1] {AREA} — what I'd explore: {WHAT_ID_EXPLORE}
+[2] {AREA} — ...
+Choose one: approve as-is / deepen 1–2 areas / cut scope.
+```
+
+Rules: force-rank menu options by information gap; never offer deepening for a ●●● complete area; max 1 round; no re-suggestion after a "no".
