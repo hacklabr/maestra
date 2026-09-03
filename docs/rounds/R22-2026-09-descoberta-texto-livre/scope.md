@@ -1,10 +1,10 @@
-# Scope of round R21 — Descoberta profunda para demandas em texto livre
+# Scope of round R22 — Descoberta profunda para demandas em texto livre
 
 > Epic: [#59](https://github.com/hacklabr/maestra/issues/59) · Variant: Minimal (modo direto)
 > Briefing: rascunho apresentado no chat (com coverage map) e aprovado sem rodadas de aprofundamento em sessão direta em 2026-09-02.
 > Origem: [F048](../dogfooding/findings.md) — briefings rasos para demandas nascidas em texto livre, com retrabalho na implementação ("um erro nessa etapa vira uma bola de neve").
 > Linhagem (não duplicata): [#20](https://github.com/hacklabr/maestra/issues/20) / R01–R02 definiram a **conduta** da descoberta (conversa → rascunho no chat → arquivo após aprovação); esta round ataca a **profundidade** para a porta de entrada mais carente de contexto. Dedup confirmado pelo humano (2026-09-02): demanda nova.
-> Colisão com sessão paralela R20 (epic #58, mesma data): pasta R20 já existia ao re-listar antes do nascimento → **Rnn = 21**; RF-58–63 tomadas pela R20 → estas começam em **RF-64** (regra verify-on-commit). Superfície compartilhada: `reference/microcopy.md` — coordenação de merge no design.
+> **Dupla colisão de numeração (adendo 2026-09-02):** ao nascer, a pasta R20 (epic #58, mesma data) já existia → nasceu como R21 (RF-58–63 tomadas pela R20 → estas começam em **RF-64**); no merge local, a main já continha **R21-2026-09-calibracao-variante-tamanho** (epic #60, sessão paralela) → **renumerada para R22** no ato (regra verify-on-commit; microcopy resecionada §7.15→§7.16; versões j1→v6, kernel→v8, microcopy→v11). Superfície compartilhada com R20: `reference/microcopy.md` — coordenação de merge no design.
 
 ## Variant
 

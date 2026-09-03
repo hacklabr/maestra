@@ -1,6 +1,6 @@
 {
-  "id": "r21-freetext-born",
-  "description": "Two free-text born epics (RF-67 marker `Born from: free text` in the execution layer, read raw via `gh issue view`): #71 SIMPLE (low-stock alert — single domain/user, additive language) and #72 COMPOSITE (gamified loyalty program — 2+ domains, multiple user types, novel mechanic). Stage for the J3 deep-discovery golden cases (R21, issue #59).",
+  "id": "r22-freetext-born",
+  "description": "Two free-text born epics (RF-67 marker `Born from: free text` in the execution layer, read raw via `gh issue view`): #71 SIMPLE (low-stock alert — single domain/user, additive language) and #72 COMPOSITE (gamified loyalty program — 2+ domains, multiple user types, novel mechanic). Stage for the J3 deep-discovery golden cases (R22, issue #59).",
   "digests": {
     "71": {
       "platform": {

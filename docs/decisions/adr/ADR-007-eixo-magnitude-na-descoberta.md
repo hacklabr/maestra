@@ -2,7 +2,7 @@
 
 **Status:** Current
 **Date:** 2026-09-02
-**Round:** R21
+**Round:** R22
 
 ## Contexto
 
@@ -21,9 +21,9 @@ O plugin Mesa oferece um método de descoberta estruturado (Briefing-Writer: cla
 
 - **Positiva:** briefing raso de demanda texto-livre deixa de ser invisível (coverage map expõe profundidade) e de ser o caminho padrão (magnitude obrigatória) — o erro deixa de ser silencioso.
 - **Custo:** eixo extra para aprender (magnitude ≠ variante); 5 perguntas extras para demandas compostas (aceito: custo assimétrico — rascar composto é irreversível a jusante).
-- **Risco:** coverage map virar motor de iteração (anti-padrão conhecido: máx. 1 rodada, registrado no fluxo (R21) e coberto pela regra de "never an iteration engine".
+- **Risco:** coverage map virar motor de iteração (anti-padrão conhecido: máx. 1 rodada, registrado no fluxo (R22) e coberto pela regra de "never an iteration engine".
 - **Superfície compartilhada:** `reference/microcopy.md` com R20 (round paralela, mesma data) — merge coordination necessária (instruções tocam o mesmo arquivo; coordenação de merge registrada no design da round.
 
 ## Referências
 
-- Issue #59 (epic R21) · `docs/rounds/R21-2026-09-descoberta-texto-livre/scope.md · finding F048 · `docs/rounds/R21-.../scope.md`
+- Issue #59 (epic R22) · `docs/rounds/R22-2026-09-descoberta-texto-livre/scope.md` · finding F048

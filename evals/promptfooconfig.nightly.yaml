@@ -16,6 +16,7 @@ tests:
   - file://scenarios/r02-welcoming-language.yaml
   - file://scenarios/j3-deep-discovery.yaml
   - file://scenarios/r15-qa-session.yaml
+  - file://scenarios/r20-clear-writing.yaml
   - file://scenarios/instructions-loading.yaml
 
 # Tier-2: versioned rubric applied to ALL scenarios (binary per item).

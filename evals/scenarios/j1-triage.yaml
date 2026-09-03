@@ -1,7 +1,9 @@
 # J1 — triage calibration (journeys §2/§3): question limits,
 # hierarchy derive>confirm>ask, destination of "don't know", PO vocabulary.
+# R21: structural size axis is primary; the five scale criteria are secondary
+# signals that weigh but never trigger alone.
 
-- description: "J1 fast path to Minimal: ≤3 questions total, variant with 'none of the criteria apply'"
+- description: "J1 fast path to Minimal: ≤3 questions total, variant with 'one point behavior'"
   vars:
     fixture: fixtures/github/triagem-limpa.json
     repo: fixtures/repo/rodada-aberta.json
@@ -14,7 +16,7 @@
     questionCaps: { maxPerTurn: 3, maxTotal: 3 }
     requiredPatterns:
       - "Minimal"
-      - "no criteria|none of the criteria"
+      - "one (point )?behavior|one spot|single|no scale criterion"
       - "\\btype\\b"   # R16/RF-45: triage derives and announces the native issue type
     expectEvent: "A"
     hardFail: ["assignee-after-confirmation"]
@@ -32,7 +34,7 @@
     - type: javascript
       value: file://asserts/hard-fail.mjs
 
-- description: "J1 Condensed: objective criteria cited in the proposal; questions only the irreducible"
+- description: "J1 Condensed: one capability with several behaviors cited in the proposal; questions only the irreducible"
   vars:
     fixture: fixtures/github/triagem-limpa.json
     repo: fixtures/repo/rodada-aberta.json
@@ -44,7 +46,7 @@
     questionCaps: { maxPerTurn: 3, maxTotal: 5 }
     requiredPatterns:
       - "Condensed"
-      - "5 days|estimate"
+      - "capabilit|behaviors|parts|estimate|assisted"
     expectEvent: "A"
     hardFail: ["assignee-after-confirmation"]
   assert:
@@ -200,6 +202,96 @@
       value: file://asserts/tool-order.mjs
     - type: javascript
       value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/two-layer-issues.mjs
+    - type: javascript
+      value: file://asserts/hard-fail.mjs
+
+- description: "J1 small multi-area demand stays Minimal: thin cross-cutting does not elevate (R21 structural axis)"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j1-triage.md"]
+    persona: stage-1
+    entry: "Add a checkbox to the export modal to set a flag; the flag's default value should be configurable via an environment variable."
+    humanScript:
+      - "I confirm."
+    questionCaps: { maxPerTurn: 3, maxTotal: 3 }
+    requiredPatterns:
+      - "Minimal"
+      - "one (point )?behavior|one spot|single|thin"
+      - "\\btype\\b"
+    expectEvent: "A"
+    hardFail: ["assignee-after-confirmation"]
+  assert:
+    - type: javascript
+      value: file://asserts/question-count.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/no-jargon.mjs
+    - type: javascript
+      value: file://asserts/event-emitted.mjs
+    - type: javascript
+      value: file://asserts/two-layer-issues.mjs
+    - type: javascript
+      value: file://asserts/hard-fail.mjs
+
+- description: "J1 single-purpose plugin stays Minimal: being a plugin does not fix the variant (R21)"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/rodada-aberta.json
+    modules: ["journeys/j1-triage.md"]
+    persona: stage-1
+    entry: "I want a plugin that exports one specific report: the list of registrations submitted in the opportunity's first phase, in CSV."
+    humanScript:
+      - "I confirm."
+    questionCaps: { maxPerTurn: 3, maxTotal: 3 }
+    requiredPatterns:
+      - "Minimal"
+      - "one (point )?behavior|single|purpose|one (fixed|specific) report"
+      - "\\btype\\b"
+    expectEvent: "A"
+    hardFail: ["assignee-after-confirmation"]
+  assert:
+    - type: javascript
+      value: file://asserts/question-count.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/no-jargon.mjs
+    - type: javascript
+      value: file://asserts/event-emitted.mjs
+    - type: javascript
+      value: file://asserts/two-layer-issues.mjs
+    - type: javascript
+      value: file://asserts/hard-fail.mjs
+
+- description: "J1 multi-report exporter → Full: several capabilities/sub-features without own life (R21)"
+  vars:
+    fixture: fixtures/github/triagem-limpa.json
+    repo: fixtures/repo/repo-sem-team.json
+    modules: ["journeys/j1-triage.md"]
+    persona: stage-1
+    entry: "We need a report exporter plugin: reports for opportunities, for projects (sets of opportunities), for a single opportunity, for registrations, and for the users' registration data — each type with its own layouts."
+    humanScript:
+      - "No own budget or deadline — but it's really several report types in one."
+      - "Confirm the classification."
+    questionCaps: { maxPerTurn: 3, maxTotal: 5 }
+    requiredPatterns:
+      - "Full"
+      - "several capabilities|sub-features|several parts|complex"
+    expectEvent: "A"
+    hardFail: ["assignee-after-confirmation"]
+  assert:
+    - type: javascript
+      value: file://asserts/question-count.mjs
+    - type: javascript
+      value: file://asserts/required-patterns.mjs
+    - type: javascript
+      value: file://asserts/no-jargon.mjs
+    - type: javascript
+      value: file://asserts/event-emitted.mjs
     - type: javascript
       value: file://asserts/two-layer-issues.mjs
     - type: javascript

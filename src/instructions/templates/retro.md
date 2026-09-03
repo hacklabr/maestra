@@ -21,7 +21,7 @@
 ## Process learnings
 <!-- What we would do differently in the next round: poorly estimated tasks,
      incomplete technical design, confusing handoff, calibration of the triage
-     criteria (5 days, 3 modules) -->
+     criteria (structural size axis, secondary signals) -->
 
 ## Closing without reconciliation?
 <!-- Only fill if this retro is being written in a RETROACTIVE

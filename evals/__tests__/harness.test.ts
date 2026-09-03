@@ -14,6 +14,7 @@ import {
   assertFalseableSummary,
   assertForbiddenPatterns,
   assertInstructionsViaTool,
+  assertInternalRefsExplained,
   assertMagnitudeDeclared,
   assertNoCloseDelivered,
   assertNoFieldEnumeration,
@@ -40,7 +41,7 @@ import { createStubExecutor } from "../lib/stub-tools.mjs"
 //    and existing assert files. Runs with ZERO live model.
 // ---------------------------------------------------------------------------
 
-const SCENARIO_FILES = ["anti-bypass.yaml", "j8-guard.yaml", "j1-triage.yaml", "j2-resume.yaml", "fm-vinculantes.yaml", "j9-panel-shell.yaml", "r02-welcoming-language.yaml", "j3-deep-discovery.yaml", "r15-qa-session.yaml", "instructions-loading.yaml", "dry-run.yaml"]
+const SCENARIO_FILES = ["anti-bypass.yaml", "j8-guard.yaml", "j1-triage.yaml", "j2-resume.yaml", "fm-vinculantes.yaml", "j9-panel-shell.yaml", "r02-welcoming-language.yaml", "r15-qa-session.yaml", "r20-clear-writing.yaml", "j3-deep-discovery.yaml", "instructions-loading.yaml", "dry-run.yaml"]
 const ASSERT_DIR = join(EVALS_ROOT, "asserts")
 
 describe("eval harness — structure validation", () => {
@@ -52,7 +53,7 @@ describe("eval harness — structure validation", () => {
       for (const test of doc) scenarios.push({ ...test, _file: file })
     }
 
-    expect(scenarios.length).toBeGreaterThanOrEqual(50) // 16 AB + 6 J8 + 8 J1 + 6 J2 + 4 FM + 5 SH + 5 R02 + 2 R15 + 1 IL + 2 DRY (≥)
+    expect(scenarios.length).toBeGreaterThanOrEqual(50) // 16 AB + 6 J8 + 8 J1 + 6 J2 + 4 FM + 5 SH + 5 R02 + 2 R15 + 4 R20 + 1 IL + 2 DRY (≥)
 
     for (const s of scenarios) {
       expect(s.description, `scenario without description in ${s._file}`).toBeTruthy()
@@ -441,6 +442,71 @@ describe("tier-1 assert functions", () => {
     const result = assertUnblockWhenPaused(pausedBad, "paused")
     expect(result.pass).toBe(false)
     expect(result.reason).toContain("unblock")
+  })
+
+  // ---- R20 — clear-writing non-regression asserts (issue #58, microcopy §7.15) ----
+
+  it("assertInternalRefsExplained: F047 BEFORE sample fails, AFTER sample passes", () => {
+    // BEFORE — the real F047 sample: four internal terms, zero explanation
+    const before = transcript({
+      turns: [{ role: "agent", content: "F045 (novo): recipes de board do cookbook divergem do gh 2.97 — 3 tentativas no move-card. Candidato a round futura." }],
+    })
+    const beforeResult = assertInternalRefsExplained(before)
+    expect(beforeResult.pass).toBe(false)
+    expect(beforeResult.reason).toContain("F045")
+    expect(beforeResult.reason).toContain("gh 2.97")
+
+    // AFTER — same references, each glossed in plain words at first occurrence
+    const after = transcript({
+      turns: [
+        {
+          role: "agent",
+          content:
+            "Achei um problema novo e registrei (F045 — registro nº 45 do nosso caderno de falhas): o manual de comandos do plugin ensina uma receita para mover cards no quadro que não funciona na versão atual da ferramenta de linha de comando do GitHub (gh 2.97) — levou 3 tentativas até descobrir o caminho certo. Fica anotado como candidato para um próximo ciclo de trabalho; nada quebra por isso agora.",
+        },
+      ],
+    })
+    expect(assertInternalRefsExplained(after).pass).toBe(true)
+  })
+
+  it("assertInternalRefsExplained: every ref kind detected; glossed refs pass", () => {
+    // all five kinds bare in one dense sentence (T4 golden) — all flagged
+    const dense = transcript({
+      turns: [{ role: "agent", content: "Status da rodada: R20 toca #58 e F047, type=C. Seguimos com a implementação dos evals." }],
+    })
+    const denseResult = assertInternalRefsExplained(dense)
+    expect(denseResult.pass).toBe(false)
+    expect(denseResult.reason).toContain("R20")
+    expect(denseResult.reason).toContain("#58")
+    expect(denseResult.reason).toContain("F047")
+    expect(denseResult.reason).toContain("type=C")
+
+    // glossed forms of each kind pass
+    const glossed = transcript({
+      turns: [
+        {
+          role: "agent",
+          content:
+            "Estamos no ciclo de trabalho R20 (round 20 — a rodada dos textos para humanos). A próxima tarefa é a issue #58: o pedido de regras de escrita clara. Registrei o campo type=C (campo do tipo do evento) no log.",
+        },
+      ],
+    })
+    expect(assertInternalRefsExplained(glossed).pass).toBe(true)
+  })
+
+  it("assertInternalRefsExplained: gloss binds only the first occurrence; no refs at all passes", () => {
+    // first occurrence glossed, later bare use of the same ref is allowed
+    const reused = transcript({
+      turns: [
+        { role: "agent", content: "Registrei no caderno de falhas (F046 — registro nº 46, a entrada sobre o card travado)." },
+        { role: "agent", content: "O F046 fica como candidato para o próximo ciclo." },
+      ],
+    })
+    expect(assertInternalRefsExplained(reused).pass).toBe(true)
+
+    // message without any internal reference — nothing to gloss
+    const clean = transcript({ turns: [{ role: "agent", content: "A exportação está pronta; o próximo passo é a sua validação." }] })
+    expect(assertInternalRefsExplained(clean).pass).toBe(true)
   })
 
   it("assertApprovalLockJ3: no file write before approval; collapse detected", () => {

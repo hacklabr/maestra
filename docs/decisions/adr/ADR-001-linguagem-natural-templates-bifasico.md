@@ -315,3 +315,23 @@ Para cada template de fala destinado a persona não-técnica, após o refactor:
 Se (b) passa mas (c) falha: over-naturalizou, quebrou o contrato. Se (c) passa
 mas (b) falha: under-naturalizou, manteve o bug. Os dois critérios juntos
 definem a janela correta.
+
+---
+
+## Adendo datado — 2026-09-02 (R20, issue #58): extensão da doutrina para clareza de conteúdo, toda persona
+
+A R20 (origem: F047 — textos mentalmente custosos, IDs internos sem
+explicação, jargão não traduzido, frases densas) estende esta ADR do **tom**
+para a **clareza do conteúdo**, agora para **toda persona, inclusive
+técnica**: microcopy §7.15 nasce com quatro imperativos verificáveis —
+(1) referência interna glossada na primeira ocorrência; (2) inglês só como
+nome próprio da coisa; (3) curto sem omitir o relevante (o que aconteceu, o
+que significa, o que vem depois); (4) toda persona, sem exceção.
+Não-regressão por eval (cenário `r20-clear-writing`).
+
+A mesma janela de falsificabilidade do contrato bifásico aplica à clareza:
+(a) a mensagem natural deve ser legível sem decifrar códigos internos; (b) o
+registro preciso mantém a referência exata onde vive (findings.md, issue);
+(c) uma terceira pessoa, lendo a fala, ainda consegue dizer o que aconteceu
+e qual é a próxima ação. Simplificar até perder a referência quebra (b);
+jargão que obriga o leitor a decifrar quebra (a).

@@ -1,4 +1,4 @@
-# R21 — deep discovery for free-text born demands (RF-64/65/66, epic #59).
+# R22 — deep discovery for free-text born demands (RF-64/65/66, epic #59).
 # Golden inputs pin the deep-mode contract for epics carrying
 # `Born from: free text` (RF-67): magnitude declared OUT LOUD with evidence
 # BEFORE the first elicitation question, draft with the 5 anchors, coverage
@@ -11,9 +11,9 @@
 
 # T1 — SIMPLE free-text born demand (low-stock alert): magnitude declared,
 # lean mode (≤5 elicitation questions total), coverage map + menu.
-- description: "R21 T1: J3 deep discovery SIMPLE — magnitude declared out loud, ≤5 elicitations, coverage map + deepening menu"
+- description: "R22 T1: J3 deep discovery SIMPLE — magnitude declared out loud, ≤5 elicitations, coverage map + deepening menu"
   vars:
-    fixture: fixtures/github/r21-freetext-born.json
+    fixture: fixtures/github/r22-freetext-born.json
     modules: ["journeys/j3-stage1.md"]
     entry: "71"
     mock: true
@@ -70,9 +70,9 @@
 # T2 — COMPOSITE free-text born demand (gamified loyalty program): magnitude
 # declared (2+ domains, multiple user types, novel mechanic), 5 anchors
 # covered with full depth, coverage map present.
-- description: "R21 T2: J3 deep discovery COMPOSITE — magnitude declared with rubric evidence, 5 anchors covered, coverage map + deepening menu"
+- description: "R22 T2: J3 deep discovery COMPOSITE — magnitude declared with rubric evidence, 5 anchors covered, coverage map + deepening menu"
   vars:
-    fixture: fixtures/github/r21-freetext-born.json
+    fixture: fixtures/github/r22-freetext-born.json
     modules: ["journeys/j3-stage1.md"]
     entry: "72"
     mock: true

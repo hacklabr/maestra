@@ -1,8 +1,8 @@
 # J10 — Variant Reclassification
 
-> Source: docs/referencia/jornadas.md v2.1 (§6 J10) + fluxo-de-desenvolvimento.md §3.6.3 · Module version: 1 — 2026-07-28
+> Source: docs/referencia/jornadas.md v2.1 (§6 J10) + fluxo-de-desenvolvimento.md §3.6.3 · Module version: 2 — 2026-09-02
 > Anti-drift: module derived from the source; divergence is a finding, never a silent adjustment.
-> Changelog: v1 — initial version (T9): triggers, evaluation with criteria, atomic execution, current wave sanitation.
+> Changelog: v1 — initial version (T9): triggers, evaluation with criteria, atomic execution, current wave sanitation. v2 (R21, issue #60) — Stage 1 criteria example updated to the structural size ruler (recalibration R21).
 
 **Origin:** reclassification is legitimate — if during work the demand grows (or shrinks), anyone can request it. What is not allowed is executing a large demand with small-demand artifacts. MVP: minimum version **reactive + systemic triggers**.
 
@@ -14,7 +14,7 @@
 
 ## STAGE 1 — Evaluation and decision
 
-- Present the **objective criteria that changed** (e.g., "the estimate went over 5 days and now touches what others consume — the criteria point to Condensed").
+- Present the **objective criteria that changed** (e.g., "what was one behavior became a whole capability with parameters, and now touches what others consume — the criteria point to Condensed").
 - **Explicit human decision.** Against the criteria → P3 override via `maestra_emit_event type=override` (direction + contested criterion registered — event D in the same emission), with a risk warning in 1 sentence when the reclassification is DOWNWARD against a present criterion. Never a block: the decision is sovereign.
 - Success criterion: explicit decision; never a large demand with small-demand artifacts.
 
