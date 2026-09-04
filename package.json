@@ -1,6 +1,6 @@
 {
   "name": "maestra",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Development workflow facilitator plugin (triage → three stages → reconciliation) for OpenCode and Mimo Code",
   "type": "module",
   "main": "dist/index.js",

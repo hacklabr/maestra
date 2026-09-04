@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-09-04
+
+### Added
+
+- Deep discovery for free-text born demands (R22, issue #59, ADR-007):
+  magnitude gate, anchors, and coverage map (RF-64..68) for demands born from
+  free text — addressing shallow free-text briefings (dogfooding finding F048).
+
+- Variant scale recalibration (R21, issue #60): variant criteria now weigh the
+  structural size axis over raw area count — addressing finding F050
+  (calibrar variante pelo tamanho).
+
+### Changed
+
+- Clear-writing rules (R20, issue #58): microcopy §7.15 — refs glossed, no
+  untranslated jargon, short-but-complete; `r20-clear-writing` eval scenario
+  (internal-refs gloss assert, rubric items 11-13) as non-regression guard.
+
+### Fixed
+
+- Neutral-vocab compliance in microcopy §7.15 (CLI 2.97, PR/MR).
+
 ## [1.3.0] - 2026-08-28
 
 ### Added
@@ -136,6 +158,9 @@ for OpenCode and Mimo Code. The plugin is the discipline; the issue platform
 - Round setup conventions and discovery conduct in journeys.
 - Protocol P6 board movement rewrite and P1 metadata atomicity.
 
-[Unreleased]: https://github.com/hacklabr/maestra/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/hacklabr/maestra/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/hacklabr/maestra/compare/v1.3.0...v1.4.0
+[1.3.0]: https://github.com/hacklabr/maestra/compare/v1.2.0...v1.3.0
+[1.2.0]: https://github.com/hacklabr/maestra/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/hacklabr/maestra/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/hacklabr/maestra/releases/tag/v1.0.0
