@@ -1,6 +1,7 @@
 # Template — `AGENTS.md` do projeto-alvo
 
-> Source: round R13 scope (issue #46) — J12 STAGE 5.1 · Module version: 1 — 2026-08-11
+> Source: round R13 scope (issue #46) — J12 STAGE 5.1 · Module version: 2 — 2026-09-11
+> Changelog: v1 — initial version. v2 (R23, issue #64) — third standing-rule closing block added: "Issues seguem os padrões Maestra" (issue lifecycle rules binding EVERY session in the target project, Maestra-facilitated or not: stage-0 birth + native type, card movement on work start/delivery, mid-flight demands become stage-0 issues).
 > Anti-drift: the AGENTS.md format is a contract for agents — it points to the docs, never copies their content. Short and dense: max ~250 lines. Payload in the target project's docs language (PT-BR by default); code/commands always real.
 > Placeholders in `{BRACES}` are filled from the STAGE 0 inventory (stack manifests) and the STAGE 4 analysis. Stack undetectable → `<!-- TODO: preencher -->`, never an invented generic command.
 
@@ -77,12 +78,31 @@ Decisão nova = ADR novo em `docs/reference/decisions/` (sequência de 4
 dígitos a partir do máximo existente), que referencia o substituído. Nunca
 edite um ADR aceito; nunca renumere ADRs existentes. Formato:
 `docs/reference/decisions/0000-template-adr.md`.
+
+## Issues seguem os padrões Maestra
+
+Este projeto usa o fluxo Maestra na plataforma de issues. Toda sessão —
+mesmo as que não são facilitadas pela Maestra — segue estas regras:
+
+- **Criação:** toda issue nasce com o label `stage-0` ("pré-triagem") e
+  tipo nativo, quando a plataforma suporta. Prefira a captura rápida da
+  Maestra (`/agent maestra-issue-writer`) quando disponível. Nunca crie
+  estrutura de épico/variante fora de uma sessão Maestra.
+- **Início do trabalho:** ao começar a trabalhar numa issue, atribua-se
+  como responsável e mova o card para a coluna de trabalho em andamento
+  (`In progress` ou equivalente no board do projeto) **no mesmo ato** —
+  nunca "depois".
+- **Entrega:** abriu PR/MR → mova o card para a coluna de revisão
+  (`In review` ou equivalente) e garanta referência cruzada PR/MR ↔ issue.
+- **Demanda nova no meio do caminho:** registre como issue `stage-0` e
+  siga a tarefa em curso — nunca implemente fora da issue aberta.
+  Registrado, não se perde.
 ```
 
 **Usage rules:**
 
-- The seven numbered sections are mandatory and in this order; the two closing
-  blocks (skills, ADRs) are standing rules — they never carry project content.
+- The seven numbered sections are mandatory and in this order; the three closing
+  blocks (skills, ADRs, Maestra issue rules) are standing rules — they never carry project content.
 - Filling a section with copied doc content violates the contract — the
   AGENTS.md points; the docs hold the content.
 - When the setup's refactor sub-stage (J12 STAGE 5.2) moves a block out of a
