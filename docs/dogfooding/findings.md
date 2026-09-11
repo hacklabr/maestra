@@ -782,6 +782,22 @@
 - Tentativas/workaround: O humano reescreve o pedido de clareza a cada sessão ("escreva para humanos lerem"); nenhuma mudança nas instruções até aqui.
 - Status: resolved (R20, épico #58, PR #61, merge 0f1d029 — microcopy §7.15 + não-regressão por eval)
 
+## F051 — Issues criadas sem labels/padrões Maestra por sessões não-Maestra em projetos com setup feito
+- Data: 2026-09-11
+- Categoria: board-state
+- Origem: relato do humano em sessão direta (uso do Maestra em projetos com setup J12 já executado)
+- Sintoma: Issues vêm sendo criadas em projetos com a Maestra ativada por sessões comuns de desenvolvimento (não facilitadas pelo Maestra), sem os labels de variante/etapa e fora dos padrões do fluxo (duas camadas P1, hierarquia, board). O template `src/instructions/templates/agents-md.md` (R13, issue #46) — que o setup J12 STAGE 5 usa para gerar o AGENTS.md do projeto — não contém nenhuma orientação sobre criação de issues segundo os padrões Maestra. Resultado: a disciplina de criação de issues só existe dentro das sessões Maestra; qualquer outra sessão cria issues livres, divergentes do esperado pelo fluxo.
+- Tentativas/workaround: nenhuma — correção manual após o fato, quando percebido.
+- Status: open
+
+## F052 — RF-68 duplicado entre scopes R21 e R22 (regra de verificação de colisão de ID não seguida)
+- Data: 2026-09-11
+- Categoria: instruction-ambiguous
+- Origem: sessão direta da R23 (#64) — descoberto ao derivar o próximo RF livre antes de escrever o scope.md
+- Sintoma: `docs/rounds/R21-…/scope.md` e `docs/rounds/R22-…/scope.md` ambos introduzem "RF-68" (evals de não-regressão, conteúdos diferentes). A regra J3 ("RF/RNF = máximo existente + 1; verificar no commit — colisão → renumerar o mais recente e registrar em deviations.md") não foi aplicada: o deviations.md da R22 registra a colisão dupla de **número de round**, mas não a colisão de **ID de requisito**.
+- Tentativas/workaround: na R23, o próximo ID livre foi derivado como RF-69 (68 consumido em duplicata). Renumeração retroativa do RF-68 da R22 não feita — exige decisão autorizada.
+- Status: open
+
 ## F050 — Sobreclassificação: demandas pequenas multi-área sugeridas como Condensada (critério "qualquer um" sem eixo de tamanho)
 - Data: 2026-09-02
 - Categoria: ergonomic-friction
