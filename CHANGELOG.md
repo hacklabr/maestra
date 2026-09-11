@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Setup version drift in maestra_status (R24, issue #66): the tool stamps
+  `- setup-verified: <version>` on the `__maestra_config__` branch (idempotent
+  — written only on change) and alerts the pending re-setup steps, by name,
+  when the running plugin version moved past the stamped one (RF-71..74).
+  Projects without a stamp adopt the current version silently.
+
 ## [1.4.0] - 2026-09-04
 
 ### Added

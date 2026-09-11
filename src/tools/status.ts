@@ -8,6 +8,7 @@ import { hasConfigFile, hasLegacyDotMaestra } from "../platform/config-store.js"
 import type { FetchProbe } from "../platform/detect.js"
 import type { ConfigWriteResult } from "../platform/config-store.js"
 import { PLUGIN_VERSION } from "../version.js"
+import { verifySetupStamp } from "../platform/setup-check.js"
 
 /**
  * maestra_status — deterministic environment probe (D1 contract, D-01, G-01).
@@ -78,7 +79,7 @@ async function probeBoard(exec: ExecFn, forge: { kind: "github" | "gitlab"; host
 
 export const maestraStatusTool = tool({
   description:
-    "Environment probe for the Fluxo workflow: detected host (OpenCode/Mimo), issue platform + host (GitHub/GitLab/self-hosted), CLI presence and auth (gh/glab), API reachability, capability matrix {platform, cli, mcp, board, hierarchy}, board access, MCP configured (never 'available'), repo layout, plugin version. Run BEFORE any mutation (precondition of J1/J2).",
+    "Environment probe for the Fluxo workflow: detected host (OpenCode/Mimo), issue platform + host (GitHub/GitLab/self-hosted), CLI presence and auth (gh/glab), API reachability, capability matrix {platform, cli, mcp, board, hierarchy}, board access, MCP configured (never 'available'), repo layout, plugin version, setup version drift (pending re-setup steps against the `- setup-verified:` stamp on the config branch). Run BEFORE any mutation (precondition of J1/J2).",
   args: {},
   async execute(_args, context) {
     const exec = getExec()
@@ -141,6 +142,12 @@ export const maestraStatusTool = tool({
       notes.push("legacy .maestra/ found — run maestra-config migrate (config lives on branch __maestra_config__)")
     }
 
+    // Setup version drift (RF-71..74, issue #66): stamp on the config branch
+    // + pending re-setup alert when the running version moved. Read-only
+    // no-op when versions match (no commit per session).
+    const setupCheck = await verifySetupStamp(context.directory, PLUGIN_VERSION)
+    notes.push(...setupCheck.notes)
+
     const report = {
       pluginVersion: PLUGIN_VERSION,
       host: { id: host.id, evidence: host.evidence },
@@ -161,6 +168,13 @@ export const maestraStatusTool = tool({
         rounds: existsSync(join(context.directory, "docs", "rounds")),
         teamMd,
         maestraConfig,
+      },
+      setup: {
+        verifiedWith: setupCheck.verifiedWith,
+        current: setupCheck.current,
+        pendingSteps: setupCheck.pendingSteps,
+        stamped: setupCheck.stamped,
+        downgraded: setupCheck.downgraded,
       },
       notes,
     }
