@@ -7,7 +7,9 @@ import { maestraStatusTool } from "../status.js"
 import { defaultExec } from "../../platform/exec.js"
 import { setExec, setFetch, setHostDetect, setMcpScan } from "../../platform/runtime.js"
 import { makeExecStub } from "../../platform/__tests__/helpers.js"
-import { initRepoWithOrphanConfig } from "../../platform/__tests__/git-repo.js"
+import { addRemote, initBareRemote, initRepoWithOrphanConfig } from "../../platform/__tests__/git-repo.js"
+import { PLUGIN_VERSION } from "../../version.js"
+import { SETUP_STEPS } from "../../platform/setup-check.js"
 
 const ctx = (directory: string) => ({ sessionID: "test", directory }) as never
 
@@ -182,5 +184,55 @@ describe("maestra_status", () => {
     expect(report.platform).toEqual({ kind: "github", host: "github.com", project: "acme/loja" })
     expect(report.notes.join(" ")).toContain("push degraded")
     expect(report.repo.maestraConfig).toBe(true) // bootstrapped by this very run
+  })
+
+  it("setup stamp: first run adopts the current version silently; rerun on same version writes nothing", async () => {
+    const dir = await makeRepo("github")
+    const bare = await initBareRemote("maestra-status-setup-remote-")
+    await addRemote(dir, bare)
+    const { exec } = makeExecStub([
+      [/^gh --version/, { stdout: "gh version 2.96.0\n" }],
+      [/^gh auth status/, { stdout: "✓ Logged in" }],
+      [/^glab --version/, { stderr: "command not found", code: 127 }],
+      [/^gh project list --owner acme/, { stdout: "1\tFluxo\t…" }],
+    ])
+    setExec(exec)
+    setFetch(async () => ({ status: 200 }))
+
+    const first = parse(await maestraStatusTool.execute({}, ctx(dir)))
+    expect(first.setup.stamped).toBe(true)
+    expect(first.setup.verifiedWith).toBe(PLUGIN_VERSION)
+    expect(first.setup.pendingSteps).toEqual([])
+    expect(first.notes.join(" ")).not.toContain("re-setup")
+
+    const second = parse(await maestraStatusTool.execute({}, ctx(dir)))
+    expect(second.setup.stamped).toBe(false)
+    expect(second.setup.verifiedWith).toBe(PLUGIN_VERSION)
+  })
+
+  it("setup drift: alert names the steps born after the stamped version", async () => {
+    const dir = await initRepoWithOrphanConfig(
+      {
+        "config.md":
+          "- platform: github\n- host: github.com\n- project: acme/loja\n- setup-verified: 1.0.0\n",
+      },
+      "maestra-status-drift-",
+    )
+    await mkdir(join(dir, "docs", "reference"), { recursive: true })
+    const { exec } = makeExecStub([
+      [/^gh --version/, { stdout: "gh version 2.96.0\n" }],
+      [/^gh auth status/, { stdout: "✓ Logged in" }],
+      [/^glab --version/, { stderr: "command not found", code: 127 }],
+      [/^gh project list --owner acme/, { stdout: "1\tFluxo\t…" }],
+    ])
+    setExec(exec)
+
+    const report = parse(await maestraStatusTool.execute({}, ctx(dir)))
+    expect(report.setup.pendingSteps.length).toBe(SETUP_STEPS.length)
+    expect(report.setup.stamped).toBe(true)
+    expect(report.setup.verifiedWith).toBe(PLUGIN_VERSION)
+    const joined = report.notes.join(" ")
+    expect(joined).toContain("re-setup pending")
+    expect(joined).toContain("agentic-organization")
   })
 })
