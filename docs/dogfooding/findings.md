@@ -813,3 +813,11 @@
 - Sintoma: Mesmo sob a instrução J1 v5 (eixo estrutural primário, recalibração pós-F050), o facilitador sugeriu Condensed para uma demanda de UM comportamento observável (maestra_status detectar drift de versão do setup e alertar etapas faltantes), listando partes internas da implementação (persistir carimbo de versão, comparar versões, manifesto de etapas, emitir alerta) como se fossem "vários comportamentos". O humano corrigiu para Minimal na primeira contestação. A reavaliação honesta concluiu que encanamento interno de uma capacidade única não são "comportamentos" no sentido da escada — mas a escada de calibração (J1 Stage 2) não tem exemplo desse formato (recurso com partes internas múltiplas e comportamento observável único → Minimal), deixando a interpretação aberta. Recorrência da família F050 sob a regra já recalibrada.
 - Tentativas/workaround: Humano corrigiu ("considero minimal"); facilitador reavaliou e aceitou como consistente com os critérios (re-derivação genuína — sem override registrado). Candidato: acrescentar à escada exemplo calibrado, ex.: "checagem de drift de versão numa ferramenta de status existente → Minimal".
 - Status: open
+
+## F053 — Worktrees residuais de rounds mergeados quebram `npm run ci` (vitest coleta testes de `.worktrees/`)
+- Data: 2026-09-21
+- Categoria: ergonomic-friction
+- Origem: sessão de release v1.5.0 (`npm run ci` antes do commit de release)
+- Sintoma: O fluxo cria um worktree por round (`.worktrees/<round>`), mas nada os remove após o merge. O vitest (sem `vitest.config.*`, glob default) coleta os testes dentro de `.worktrees/` — no caso, R21/R23/R24 já mergeados — e falha com 3 testes vermelhos porque o submódulo `src/catalog/agency-agents` não é checked out dentro do worktree (loader acha 0 personas). O CI de main fica vermelho por sujeira residual, não por regressão real; `git worktree remove` ainda exige `--force` porque worktree com submódulo não pode ser movido/removido normalmente.
+- Tentativas/workaround: `git worktree remove --force` nos três worktrees mergeados e limpos; CI voltou ao verde (1341 tests + evals 66/66). Candidatos: (a) etapa de limpeza no fechamento/reconciliação da round (remover worktree pós-merge), (b) `vitest.config.ts` com `exclude: ["**/.worktrees/**"]` como defesa estática.
+- Status: open
