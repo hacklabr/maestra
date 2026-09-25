@@ -821,3 +821,11 @@
 - Sintoma: O fluxo cria um worktree por round (`.worktrees/<round>`), mas nada os remove após o merge. O vitest (sem `vitest.config.*`, glob default) coleta os testes dentro de `.worktrees/` — no caso, R21/R23/R24 já mergeados — e falha com 3 testes vermelhos porque o submódulo `src/catalog/agency-agents` não é checked out dentro do worktree (loader acha 0 personas). O CI de main fica vermelho por sujeira residual, não por regressão real; `git worktree remove` ainda exige `--force` porque worktree com submódulo não pode ser movido/removido normalmente.
 - Tentativas/workaround: `git worktree remove --force` nos três worktrees mergeados e limpos; CI voltou ao verde (1341 tests + evals 66/66). Candidatos: (a) etapa de limpeza no fechamento/reconciliação da round (remover worktree pós-merge), (b) `vitest.config.ts` com `exclude: ["**/.worktrees/**"]` como defesa estática.
 - Status: open
+
+## F054 — Installer V1 grava entrada que o OpenCode V2 rejeita ("configured plugin path must be a directory"); plugin não carrega
+- Data: 2026-09-24
+- Categoria: tool-retry
+- Origem: validação live pós-instalação do suporte V2 (R25) — usuário rodou o installer e reiniciou o OpenCode; `/api/plugin` mostrava só plugins builtin.
+- Sintoma: o installer grava `"plugin": ["file://…​/dist/index.js"]` (contrato V1: arquivo). O V2 normaliza a chave legacy `plugin`, converte o file URL em path, mas exige **diretório** — log do servidor: `WARN "configured plugin path must be a directory" target=…​/dist/index.js` (×2, incl. opencode-mesa). Entrada experimental em `plugins: ["file://…​/repo"]` (diretório raiz do pacote) é **ignorada em silêncio** — sem WARN, sem load. Resultado: plugin instalado que nunca carrega, sem erro visível ao usuário.
+- Tentativas/workaround: (1) mover p/ chave `plugins` — ignorada; (2) ler o loader do binário V2 (`isFile → warn+drop`); (3) doc oficial "Configure plugins": V2 descobre **arquivos .ts/.js diretos e diretórios de pacote** em `~/.config/opencode/plugins/` — criado shim `~/.config/opencode/plugins/maestra.js` com `export { default } from "file://…​/dist/index.js"` → plugin ativo (`source.type=local`), 5 tools registradas com schema correta e `maestra_read_instructions` executando ao vivo. Fix do installer segue este mecanismo (opencode host).
+- Status: triaged→R25
