@@ -190,6 +190,11 @@ MD
   check_file "issue-writer kernel installed" "$home/.config/$configdir/maestra/instructions/kernel/issue-writer-kernel.md"
   check_file "instructions copied" "$home/.config/$configdir/maestra/instructions/kernel/maestra-kernel.md"
   check_grep "plugin registered" "maestra\|dist/index.js" "$home/.config/$configdir/$configdir.json"
+  # R25 (F054): OpenCode V2 loads via the discovery shim, not the config entry
+  if [ "$host" = opencode ]; then
+    check_file "v2 discovery shim generated" "$home/.config/$configdir/plugins/maestra.js"
+    check_grep "v2 discovery re-exports dist entry" "export { default } from" "$home/.config/$configdir/plugins/maestra.js"
+  fi
   # design A: shell specialist + ops subagent + greppable full catalog
   local n_subagents
   n_subagents=$(find "$home/.config/$configdir/agents/maestra" -name "*.md" 2>/dev/null | wc -l)
@@ -246,6 +251,19 @@ for host in opencode mimocode; do
   done
 done
 
+# ---------------------------------------------------------------------------
+# V2 dual entrypoint (R25): host-independent — one pass against the dist build
+# ---------------------------------------------------------------------------
+V2_OUT="$WORK/v2.txt"
+node "$ROOT/scripts/smoke/run-tool.mjs" v2 "$WORK/opencode-github/repo" > "$V2_OUT" 2>&1 \
+  && ok "v2: runner exit 0" || bad "v2: runner exit 0"
+check_grep "v2: dual export (id/setup/server)" "ok: dual export has server" "$V2_OUT"
+check_grep "v2: 5 tools via transform" "ok: 5 tools registered via transform" "$V2_OUT"
+check_grep "v2: JSON Schema inputs" "ok: tools carry bare JSON Schema inputs" "$V2_OUT"
+check_grep "v2: banner on context hook" "ok: banner pushed on context hook" "$V2_OUT"
+check_grep "v2: ask_peer executes via adapter" "ok: ask_peer executes through the V2 adapter" "$V2_OUT"
+check_grep "v2: server() returns V1 hooks" "server() returns the V1 hooks map" "$V2_OUT"
+
 echo
-echo "smoke: $PASSED passed, $FAILED failed (4 cells)"
+echo "smoke: $PASSED passed, $FAILED failed (4 cells + v2)"
 [ "$FAILED" -eq 0 ]

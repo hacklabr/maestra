@@ -55,6 +55,12 @@ function detectHosts(flag: HostId | "both" | null): HostSpec[] {
 }
 
 function installForHost(host: HostSpec): void {
+  if (host.id === "mimocode") {
+    console.warn(
+      "[maestra] DEPRECATION: Mimo Code support is deprecated (R25) — untested as of " +
+        "the OpenCode V2 migration and scheduled for removal; OpenCode is the primary host.",
+    )
+  }
   const instructionsDir = join(host.configDir, "maestra", "instructions")
   mkdirSync(instructionsDir, { recursive: true })
   cpSync(INSTRUCTIONS_SRC, instructionsDir, { recursive: true })
@@ -111,10 +117,31 @@ function installForHost(host: HostSpec): void {
 
 function registerPlugin(host: HostSpec): void {
   const pkgRoot = resolve(PKG_DIST, "..")
+  const isNpmInstall = pkgRoot.includes("node_modules")
   // npm-installed package → registry spec; local dev checkout → absolute file URL
-  const pluginSpec = pkgRoot.includes("node_modules")
-    ? "maestra"
-    : pathToFileURL(join(pkgRoot, "index.js")).href
+  const pluginSpec = isNpmInstall ? "maestra" : pathToFileURL(join(pkgRoot, "index.js")).href
+
+  // OpenCode V2 (F054/R25): the legacy `plugin` key entry (a FILE url) is
+  // rejected by V2 ("configured plugin path must be a directory") and a
+  // `plugins` directory entry is silently ignored — but V2 DISCOVERS direct
+  // .js files under <config>/plugins/. A one-line shim there re-exports the
+  // dual-generation entrypoint and loads in V2; the config key below keeps
+  // V1 (and npm-package installs, where the bare name passes both) working.
+  if (host.id === "opencode" && !isNpmInstall) {
+    const discoveryDir = join(host.configDir, "plugins")
+    mkdirSync(discoveryDir, { recursive: true })
+    const shimPath = join(discoveryDir, "maestra.js")
+    writeFileSync(
+      shimPath,
+      [
+        "// Managed by the maestra installer — OpenCode V2 discovery entry (R25).",
+        `export { default } from ${JSON.stringify(pluginSpec)}`,
+        "",
+      ].join("\n"),
+      "utf-8",
+    )
+    console.log(`[maestra] ${host.id}: v2 discovery  → ${shimPath}`)
+  }
 
   const configPath = join(host.configDir, host.configFile)
   let config: Record<string, unknown> = {}
@@ -128,11 +155,27 @@ function registerPlugin(host: HostSpec): void {
     }
   }
 
+  // Dedup across BOTH config keys: we keep writing the V1 `plugin` key (V2
+  // normalizes it automatically — one key serves V1, V2 and Mimo), but a user
+  // who migrated to `plugins` manually must not get a duplicate registration.
+  const specOf = (p: unknown): string | undefined => {
+    if (typeof p === "string") return p
+    if (Array.isArray(p)) return typeof p[0] === "string" ? p[0] : undefined
+    if (p && typeof p === "object" && "package" in p) {
+      const pkg = (p as { package?: unknown }).package
+      return typeof pkg === "string" ? pkg : undefined
+    }
+    return undefined
+  }
+  const isMaestra = (p: unknown): boolean => {
+    const spec = specOf(p)
+    return spec !== undefined && (spec === pluginSpec || spec.includes("maestra"))
+  }
+  const alreadyRegistered =
+    (Array.isArray(config.plugin) && (config.plugin as unknown[]).some(isMaestra)) ||
+    (Array.isArray(config.plugins) && (config.plugins as unknown[]).some(isMaestra))
+
   const plugins = Array.isArray(config.plugin) ? [...(config.plugin as unknown[])] : []
-  const alreadyRegistered = plugins.some((p) => {
-    const spec = Array.isArray(p) ? p[0] : p
-    return typeof spec === "string" && (spec === pluginSpec || spec.includes("maestra"))
-  })
   if (!alreadyRegistered) plugins.push(pluginSpec)
   config.plugin = plugins
 

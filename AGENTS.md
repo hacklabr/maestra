@@ -1,6 +1,8 @@
 # AGENTS.md — maestra
 
-> Plugin para **OpenCode** e **Mimo Code** que facilita o fluxo de
+> Plugin para **OpenCode** (V2 — alvo primário — e V1 ≥ 1.18.29, via entrypoint
+> duplo `setup`/`server`, R25) e **Mimo Code** (deprecated — sem teste desde a
+> migração V2; remoção via ROADMAP) que facilita o fluxo de
 > desenvolvimento (triagem → três estágios → reconciliação, com gates e quatro
 > variantes de profundidade). O plugin é a **disciplina**; a plataforma de
 > issues (GitHub/GitLab) é a **memória** — nunca há estado local à sessão.
@@ -41,6 +43,10 @@
 ```
 src/
 ├── host.ts                    # Heurística de host (opencode/mimocode)
+├── host-types.ts              # Contrato estrutural V1/Mimo (spec D4)
+├── index.ts                   # Entrypoint duplo: setup (V2) + server (V1)
+├── v1-entry.ts                # Hooks V1 (corpo histórico do index.ts)
+├── v2-entry.ts                # setup V2: tool.transform + hooks + banner
 ├── adapter.ts                 # Adapter da plataforma de issues (GH/GL)
 ├── tools/                     # Ferramentas expostas: status, issue_digest,
 │                              # emit_event, ask_peer, read_instructions

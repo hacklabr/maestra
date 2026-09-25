@@ -4,14 +4,17 @@ import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 import { loadPersonaById } from "../catalog/loader.js"
 import { parsePersonaMarker } from "./persona-marker.js"
+import { isShellSpawn } from "./spawn-tools.js"
 
 /**
  * Persona-expansion hook (shell-specialist architecture, option A).
  *
- * tool.execute.before on task/actor — STRICT scope: only when
- * subagent_type === "maestra/especialista" (zero blast radius on other spawns).
- * Verified mechanics: output.args is mutable in both hosts and propagates to
- * execution (OC session/tools.ts:106-124; Mimo session/prompt.ts:1071-1097).
+ * tool.execute.before on the shell-spawn tool (task/actor/subagent — see
+ * spawn-tools.ts) — STRICT scope: only maestra shell spawns (zero blast
+ * radius on other spawns).
+ * Verified mechanics: the args object is mutable in both host generations and
+ * propagates to execution (OC session/tools.ts:106-124; Mimo
+ * session/prompt.ts:1071-1097; OC V2 `execute.before` event.input).
  *
  * Behavior:
  *  - marker `persona::<id>@<mesaId>` found → the persona file's systemPrompt
@@ -26,11 +29,11 @@ import { parsePersonaMarker } from "./persona-marker.js"
  *    tracker recognizes the failure signature and does not register).
  */
 
-const SHELL_AGENT = "maestra/specialist"
-
 export interface PersonaExpansionOptions {
   catalogRoot: string
 }
+
+export const EXPANSION_FAILURE_SIGNATURE = "[FLUXO PLUGIN ERROR — persona not found]"
 
 function buildPersonaBlock(personaId: string, systemPrompt: string): string {
   return [
@@ -44,8 +47,6 @@ function buildPersonaBlock(personaId: string, systemPrompt: string): string {
     `Then respond normally, in the session's language, within the persona.`,
   ].join("\n")
 }
-
-export const EXPANSION_FAILURE_SIGNATURE = "[FLUXO PLUGIN ERROR — persona not found]"
 
 function buildFailureBlock(personaId: string, catalogRoot: string): string {
   return [
@@ -61,10 +62,9 @@ export function createPersonaExpansionHook(opts: PersonaExpansionOptions) {
     input: { tool: string; sessionID: string; callID: string },
     output: { args: Record<string, unknown> },
   ): Promise<void> => {
-    if (input.tool !== "task" && input.tool !== "actor") return
+    if (!isShellSpawn(input.tool, output.args)) return
 
-    const args = output.args as { subagent_type?: unknown; prompt?: unknown }
-    if (args.subagent_type !== SHELL_AGENT) return
+    const args = output.args as { prompt?: unknown }
     if (typeof args.prompt !== "string") return
 
     const marker = parsePersonaMarker(args.prompt)

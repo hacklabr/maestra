@@ -5,6 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-09-24
+
+### Added
+
+- OpenCode V2 support (R25): the plugin default-exports a dual-generation
+  entrypoint — `id` + `setup(ctx)` for OpenCode V2 (`ctx.tool.transform`
+  tool registration with JSON Schema derived from zod, `ctx.tool.hook`
+  execute.before/after, banner via `ctx.session.hook("context")`) and
+  `server()` for OpenCode V1 (≥ 1.18.29 object entrypoint). `Plugin.define`
+  is used as a type-only contract — no runtime dependency on
+  `@opencode/plugin` (RF-75..77).
+
+- ask_peer host seam (RF-78): `PeerSessionApi` with one implementation per
+  host generation. The V2 adapter collects the peer's answer via
+  `prompt → wait → context` (V2's prompt returns an admission, not the
+  answer) and derives busy state from `time.idle` vs `time.updated`. The
+  no-delegation instruction is now textual in both generations (V2's
+  PromptInput has no tools map; V1 keeps the mechanical `tools: false`).
+
+- Spawn-tool union for the persona-expansion and peer-tracker hooks: they now
+  match `task | actor | subagent` × `subagent_type | agent` — OpenCode V2
+  renamed the spawn tool to `subagent` (`task` is a deprecated alias).
+
+- V2 smoke leg (`scripts/smoke/run-tool.mjs v2`) validating the dual export,
+  tool registration, banner and `server()` against the real `dist/` build.
+
+### Changed
+
+- Installer registration is now V2-loadable (RF-79, dogfooding F054): the
+  legacy `plugin` key entry (a file URL) is rejected by OpenCode V2
+  ("configured plugin path must be a directory") — for local dev checkouts
+  the installer additionally writes a discovery shim at
+  `<config>/plugins/maestra.js` re-exporting the dual entrypoint, which V2
+  loads natively (`source.type=local`). Dedup scans both `plugin` and
+  `plugins` config keys; npm-installed registrations keep using the bare
+  package name. Verified live: plugin active, 5 tools registered with
+  typed schemas, `maestra_read_instructions` executing against the
+  installed instructions tree.
+
+### Deprecated
+
+- Mimo Code support (R25 decision): untested as of the OpenCode V2 migration
+  and scheduled for removal (see ROADMAP); the installer warns on
+  `--host mimocode`. OpenCode is the primary host.
+
 ## [1.5.0] - 2026-09-21
 
 ### Added

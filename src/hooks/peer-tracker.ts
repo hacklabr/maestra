@@ -1,5 +1,6 @@
 import { recordPeerSession } from "../tools/ask-peer.js"
 import { parsePersonaMarker } from "./persona-marker.js"
+import { extractSpawnSessionId, isShellSpawn } from "./spawn-tools.js"
 import { EXPANSION_FAILURE_SIGNATURE } from "./persona-expansion.js"
 
 /**
@@ -22,8 +23,6 @@ import { EXPANSION_FAILURE_SIGNATURE } from "./persona-expansion.js"
  * The facilitator itself is never spawned via the shell → never enters the
  * map → structurally excluded from ask_peer (pending decision #2).
  */
-const SHELL_AGENT = "maestra/specialist"
-
 const NO_MARKER_WARNING = [
   "",
   "[maestra] Shell spawned WITHOUT persona:: marker — this session CANNOT use ask_peer",
@@ -36,10 +35,9 @@ export function createPeerTrackerHook() {
     input: { tool: string; sessionID: string; callID: string; args?: Record<string, unknown> },
     output: { title?: string; output: string; metadata?: Record<string, unknown> },
   ): Promise<void> => {
-    if (input.tool !== "task" && input.tool !== "actor") return
-    if (input.args?.subagent_type !== SHELL_AGENT) return
+    if (!isShellSpawn(input.tool, input.args)) return
 
-    const prompt = input.args.prompt
+    const prompt = input.args?.prompt
     if (typeof prompt === "string" && prompt.includes(EXPANSION_FAILURE_SIGNATURE)) {
       // Persona-expansion already failed loudly — do not register, do not warn again
       return
@@ -52,8 +50,8 @@ export function createPeerTrackerHook() {
       return
     }
 
-    const sessionId = output.metadata?.sessionId ?? output.metadata?.actor_id
-    if (typeof sessionId !== "string" || !sessionId) return
+    const sessionId = extractSpawnSessionId(output.metadata)
+    if (!sessionId) return
 
     recordPeerSession(marker.personaId, sessionId, marker.mesaId)
   }

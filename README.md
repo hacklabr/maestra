@@ -48,6 +48,13 @@ Each stage only starts when the previous one is complete, and acceptance criteri
 
 ## Installation
 
+> **Host compatibility (R25):** the plugin runs on **OpenCode V2** (primary
+> target) and **OpenCode V1** (≥ 1.18.29) from one dual-generation entrypoint
+> (`setup` for V2, `server` for V1). **Mimo Code is deprecated** — untested as
+> of the V2 migration and scheduled for removal. The installer registers the
+> plugin under the `plugin` config key; OpenCode V2 normalizes it to `plugins`
+> automatically.
+
 **Single line (curl):**
 
 ```bash

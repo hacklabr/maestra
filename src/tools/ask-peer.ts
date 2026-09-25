@@ -1,5 +1,6 @@
 import { tool } from "../host-types.js"
 import type { ToolContext } from "../host-types.js"
+import { makeV1PeerApi, type PeerSessionApi } from "./peer-session-api.js"
 
 /**
  * ask_peer — specialist↔specialist consultation inside a sequential mesa turn (J9).
@@ -38,29 +39,19 @@ const peerSessions = new Map<string, PeerEntry[]>()
 /** `${mesa|avulso}:${callerPersona}:${peerPersona}` → consultations used. */
 const consultationCounts = new Map<string, number>()
 
-/** Structural subset of the host SDK client (identical in OpenCode and Mimo). */
-type SdkSessionClient = {
-  session: {
-    status(opts?: {
-      query?: { directory?: string }
-    }): Promise<{ data?: Record<string, { type: string }> }>
-    prompt(opts: {
-      path: { id: string }
-      body: {
-        agent?: string
-        parts: Array<{ type: string; text: string }>
-        tools?: Record<string, boolean>
-      }
-    }): Promise<{
-      data?: { parts?: Array<{ type: string; text?: string }> }
-    }>
-  }
-}
-
-let sdkClient: SdkSessionClient | null = null
+/**
+ * Host-generation seam (spec D4): V1 by default (wrapped from the SDK client
+ * via setSdkClient); the V2 entry installs the ctx.session implementation
+ * via setPeerApi. Both satisfy PeerSessionApi.
+ */
+let peerApi: PeerSessionApi | null = null
 
 export function setSdkClient(client: unknown): void {
-  sdkClient = client as SdkSessionClient
+  peerApi = client ? makeV1PeerApi(client) : null
+}
+
+export function setPeerApi(api: PeerSessionApi | null): void {
+  peerApi = api
 }
 
 /** Registers a spawned shell session. Called by the peer-tracker hook. */
@@ -132,7 +123,7 @@ export const askPeerTool = tool({
     question: tool.schema.string().describe("The question. Be specific and concise."),
   },
   async execute(args, context: ToolContext) {
-    if (!sdkClient) {
+    if (!peerApi) {
       return "Error: SDK client not available (plugin not initialized)."
     }
 
@@ -159,20 +150,13 @@ export const askPeerTool = tool({
 
     // Gate 3 — anti-cycle busy-check: a peer mid-execution rejects questions.
     // A→B→C→A dies here: A is busy awaiting B's answer when C consults A.
-    try {
-      const statusResult = await sdkClient.session.status({
-        query: { directory: context.directory },
-      })
-      const peerStatus = statusResult.data?.[resolved.sessionId]
-      if (peerStatus && peerStatus.type === "busy") {
-        return (
-          `Error: peer "${peerPersona}" is currently busy (mid-execution). ` +
-          `Peer consultation is only possible when the peer is idle — ` +
-          `wait for the peer's turn to complete before consulting.`
-        )
-      }
-    } catch {
-      // Status check is best-effort; proceed on failure (Mesa behavior).
+    const busy = await peerApi.isBusy(resolved.sessionId, context.directory)
+    if (busy === true) {
+      return (
+        `Error: peer "${peerPersona}" is currently busy (mid-execution). ` +
+        `Peer consultation is only possible when the peer is idle — ` +
+        `wait for the peer's turn to complete before consulting.`
+      )
     }
 
     // Gate 4 — rate cap per caller→peer pair per mesa.
@@ -190,28 +174,16 @@ export const askPeerTool = tool({
 
     // Contamination path (deliberate, ported from Mesa): the question enters
     // the peer's REAL session history; the peer's next turn carries it.
-    // Delegation and nested consultations are disabled in the answer context.
+    // Delegation and nested consultations are disabled in the answer context
+    // (mechanically on V1; textual instruction on both — see peer-session-api).
     try {
-      const promptResult = await sdkClient.session.prompt({
-        path: { id: resolved.sessionId },
-        body: {
-          parts: [
-            {
-              type: "text",
-              text: `[Peer consultation from ${caller.persona}]\n\n${args.question}`,
-            },
-          ],
-          tools: {
-            task: false,
-            actor: false,
-            ask_peer: false,
-          },
-        },
+      const responseText = await peerApi.consult({
+        peerSessionId: resolved.sessionId,
+        callerPersona: caller.persona,
+        peerPersona,
+        question: args.question,
+        directory: context.directory,
       })
-
-      const parts = promptResult.data?.parts ?? []
-      const textParts = parts.filter((p) => p.type === "text" && p.text).map((p) => p.text!)
-      const responseText = textParts.length > 0 ? textParts.join("\n") : "(no response)"
 
       return {
         output: responseText,
